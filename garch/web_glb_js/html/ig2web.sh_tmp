@@ -1,0 +1,1 @@
+scp -p $1 wd20yl@rzdm:/home/people/emc/www/htdocs/gmb/yluo/test

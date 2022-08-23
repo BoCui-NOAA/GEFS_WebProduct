@@ -1,0 +1,1240 @@
+Tue Jun  4 11:00:00 UTC 2013
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+CDATE=2013060400
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+++++++ Submite the NCEP ENSPOST_06 job ++++++
+Job <720434> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_12 job ++++++
+Job <720435> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_18 job ++++++
+Job <720436> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_00 job ++++++
+Job <720573> is submitted to queue <dev>.
+++++++ Submite the NCEP BC ENSPOST_06 job ++++++
+++++++ Submite the NCEP BC ENSPOST_12 job ++++++
+++++++ Submite the NCEP BC ENSPOST_18 job ++++++
+++++++ Submite the NCEP BC ENSPOST_00 job ++++++
+++++++ Submite the CMC ENSPOST_00+12 job ++++++
+++++++ Submite the CMC ENSPOST_00+12 job ++++++
+++++++ Submite the CMC ENSPOST_00+12_BC job ++++++
+++++++ Submite the CMC ENSPOST_00+12_BC job ++++++
+++++++ Submite the ECM ENSPOST_12 job ++++++
+++++++ additional parameteres (t2m,uv250,uv850 ...)++++++
+++++++ Submite the ECM ENSPOST_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_12 job ++++++
+++++++ Submite the FNMOC ENSPOST_bc_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_bc_12 job ++++++
+++++++ Submite real time parallel job ++++++
+Job <720574> is submitted to queue <dev>.
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@t1c12f>
+Subject: Job 715248: <GENSARCH_main.sh> in cluster <tide> Done
+
+Job <GENSARCH_main.sh> was submitted from host <t10a1f> by user <Yan.Luo> in cluster <tide>.
+Job was executed on host(s) <t1c12f>, in queue <dev>, as user <Yan.Luo> in cluster <tide>.
+</u/Yan.Luo> was used as the home directory.
+</ensemble/save/Yan.Luo/earch/scripts> was used as the working directory.
+Started at Tue Jun  4 11:00:00 2013
+Results reported at Tue Jun  4 11:30:01 2013
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#/bin/sh
+#BSUB -J GENSARCH_main.sh
+#BSUB -o /ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.out
+#BSUB -e /ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.err
+#BSUB -q "dev"
+#BSUB -b 11:00
+#BSUB -W 3:00
+
+set -x
+
+date
+
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++"
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+
+
+###
+### get date
+###
+
+Date=${2:-$(date +%Y%m%d)}
+export CDATE=${Date}00
+echo "CDATE=$CDATE"
+
+### CDATE=YYYYMMDDHH Y2K comparable
+### export from outside of script
+
+if [ "$CDATE" = "" ]; then
+   echo "CDATE = $CDATE "
+   echo "JOB EXIT NOW !!!!!!"
+   exit
+fi
+
+
+export CDATE=$CDATE
+export SCOM=/com
+export DFROM=/p5com/gens/prod
+export DFROM=$SCOM/gens/prod
+
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++"
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+
+###
+### Define the time for each cycle and different days
+###
+
+export CDATEp06=`$nhours +06 $CDATE`
+export CDATEm06=`$nhours -06 $CDATE`
+
+(... more ...)
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :               6.17 sec.
+    Max Memory :             6 MB
+    Average Memory :         5.53 MB
+    Total Requested Memory : -
+    Delta Memory :           -
+    (Delta: the difference between total requested memory and actual max usage.)
+    Max Processes :          4
+    Max Threads :            5
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file </ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.err> for stderr output of this job.
+
+Wed Jun  5 11:00:03 UTC 2013
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+CDATE=2013060500
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+++++++ Submite the NCEP ENSPOST_06 job ++++++
+Job <755820> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_12 job ++++++
+Job <755821> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_18 job ++++++
+Job <755822> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_00 job ++++++
+Job <756487> is submitted to queue <dev>.
+++++++ Submite the NCEP BC ENSPOST_06 job ++++++
+++++++ Submite the NCEP BC ENSPOST_12 job ++++++
+++++++ Submite the NCEP BC ENSPOST_18 job ++++++
+++++++ Submite the NCEP BC ENSPOST_00 job ++++++
+++++++ Submite the CMC ENSPOST_00+12 job ++++++
+++++++ Submite the CMC ENSPOST_00+12 job ++++++
+++++++ Submite the CMC ENSPOST_00+12_BC job ++++++
+++++++ Submite the CMC ENSPOST_00+12_BC job ++++++
+++++++ Submite the ECM ENSPOST_12 job ++++++
+++++++ additional parameteres (t2m,uv250,uv850 ...)++++++
+++++++ Submite the ECM ENSPOST_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_12 job ++++++
+++++++ Submite the FNMOC ENSPOST_bc_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_bc_12 job ++++++
+++++++ Submite real time parallel job ++++++
+Job <756488> is submitted to queue <dev>.
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@t1c2f>
+Subject: Job 720574: <GENSARCH_main.sh> in cluster <tide> Done
+
+Job <GENSARCH_main.sh> was submitted from host <t1c12f> by user <Yan.Luo> in cluster <tide>.
+Job was executed on host(s) <t1c2f>, in queue <dev>, as user <Yan.Luo> in cluster <tide>.
+</u/Yan.Luo> was used as the home directory.
+</ensemble/save/Yan.Luo/earch/scripts> was used as the working directory.
+Started at Wed Jun  5 11:00:02 2013
+Results reported at Wed Jun  5 11:30:06 2013
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#/bin/sh
+#BSUB -J GENSARCH_main.sh
+#BSUB -o /ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.out
+#BSUB -e /ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.err
+#BSUB -q "dev"
+#BSUB -b 11:00
+#BSUB -W 3:00
+
+set -x
+
+date
+
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++"
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+
+
+###
+### get date
+###
+
+Date=${2:-$(date +%Y%m%d)}
+export CDATE=${Date}00
+echo "CDATE=$CDATE"
+
+### CDATE=YYYYMMDDHH Y2K comparable
+### export from outside of script
+
+if [ "$CDATE" = "" ]; then
+   echo "CDATE = $CDATE "
+   echo "JOB EXIT NOW !!!!!!"
+   exit
+fi
+
+
+export CDATE=$CDATE
+export SCOM=/com
+export DFROM=/p5com/gens/prod
+export DFROM=$SCOM/gens/prod
+
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++"
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+
+###
+### Define the time for each cycle and different days
+###
+
+export CDATEp06=`$nhours +06 $CDATE`
+export CDATEm06=`$nhours -06 $CDATE`
+
+(... more ...)
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :               4.85 sec.
+    Max Memory :             9 MB
+    Average Memory :         5.02 MB
+    Total Requested Memory : -
+    Delta Memory :           -
+    (Delta: the difference between total requested memory and actual max usage.)
+    Max Processes :          4
+    Max Threads :            5
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file </ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.err> for stderr output of this job.
+
+Thu Jun  6 11:00:00 UTC 2013
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+CDATE=2013060600
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+++++++ Submite the NCEP ENSPOST_06 job ++++++
+Job <790518> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_12 job ++++++
+Job <790519> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_18 job ++++++
+Job <790520> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_00 job ++++++
+Job <791209> is submitted to queue <dev>.
+++++++ Submite the NCEP BC ENSPOST_06 job ++++++
+++++++ Submite the NCEP BC ENSPOST_12 job ++++++
+++++++ Submite the NCEP BC ENSPOST_18 job ++++++
+++++++ Submite the NCEP BC ENSPOST_00 job ++++++
+++++++ Submite the CMC ENSPOST_00+12 job ++++++
+++++++ Submite the CMC ENSPOST_00+12 job ++++++
+++++++ Submite the CMC ENSPOST_00+12_BC job ++++++
+++++++ Submite the CMC ENSPOST_00+12_BC job ++++++
+++++++ Submite the ECM ENSPOST_12 job ++++++
+++++++ additional parameteres (t2m,uv250,uv850 ...)++++++
+++++++ Submite the ECM ENSPOST_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_12 job ++++++
+++++++ Submite the FNMOC ENSPOST_bc_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_bc_12 job ++++++
+++++++ Submite real time parallel job ++++++
+Job <791210> is submitted to queue <dev>.
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@t1c4f>
+Subject: Job 756488: <GENSARCH_main.sh> in cluster <tide> Done
+
+Job <GENSARCH_main.sh> was submitted from host <t1c2f> by user <Yan.Luo> in cluster <tide>.
+Job was executed on host(s) <t1c4f>, in queue <dev>, as user <Yan.Luo> in cluster <tide>.
+</u/Yan.Luo> was used as the home directory.
+</ensemble/save/Yan.Luo/earch/scripts> was used as the working directory.
+Started at Thu Jun  6 11:00:00 2013
+Results reported at Thu Jun  6 11:30:02 2013
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#/bin/sh
+#BSUB -J GENSARCH_main.sh
+#BSUB -o /ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.out
+#BSUB -e /ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.err
+#BSUB -q "dev"
+#BSUB -b 11:00
+#BSUB -W 3:00
+
+set -x
+
+date
+
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++"
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+
+
+###
+### get date
+###
+
+Date=${2:-$(date +%Y%m%d)}
+export CDATE=${Date}00
+echo "CDATE=$CDATE"
+
+### CDATE=YYYYMMDDHH Y2K comparable
+### export from outside of script
+
+if [ "$CDATE" = "" ]; then
+   echo "CDATE = $CDATE "
+   echo "JOB EXIT NOW !!!!!!"
+   exit
+fi
+
+
+export CDATE=$CDATE
+export SCOM=/com
+export DFROM=/p5com/gens/prod
+export DFROM=$SCOM/gens/prod
+
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++"
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+
+###
+### Define the time for each cycle and different days
+###
+
+export CDATEp06=`$nhours +06 $CDATE`
+export CDATEm06=`$nhours -06 $CDATE`
+
+(... more ...)
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :               3.53 sec.
+    Max Memory :             7 MB
+    Average Memory :         5.04 MB
+    Total Requested Memory : -
+    Delta Memory :           -
+    (Delta: the difference between total requested memory and actual max usage.)
+    Max Processes :          4
+    Max Threads :            5
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file </ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.err> for stderr output of this job.
+
+Fri Jun  7 11:00:00 UTC 2013
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+CDATE=2013060700
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+++++++ Submite the NCEP ENSPOST_06 job ++++++
+Job <825952> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_12 job ++++++
+Job <825954> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_18 job ++++++
+Job <825957> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_00 job ++++++
+Job <826603> is submitted to queue <dev>.
+++++++ Submite the NCEP BC ENSPOST_06 job ++++++
+++++++ Submite the NCEP BC ENSPOST_12 job ++++++
+++++++ Submite the NCEP BC ENSPOST_18 job ++++++
+++++++ Submite the NCEP BC ENSPOST_00 job ++++++
+++++++ Submite the CMC ENSPOST_00+12 job ++++++
+++++++ Submite the CMC ENSPOST_00+12 job ++++++
+++++++ Submite the CMC ENSPOST_00+12_BC job ++++++
+++++++ Submite the CMC ENSPOST_00+12_BC job ++++++
+++++++ Submite the ECM ENSPOST_12 job ++++++
+++++++ additional parameteres (t2m,uv250,uv850 ...)++++++
+++++++ Submite the ECM ENSPOST_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_12 job ++++++
+++++++ Submite the FNMOC ENSPOST_bc_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_bc_12 job ++++++
+++++++ Submite real time parallel job ++++++
+Job <826604> is submitted to queue <dev>.
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@t1c4f>
+Subject: Job 791210: <GENSARCH_main.sh> in cluster <tide> Done
+
+Job <GENSARCH_main.sh> was submitted from host <t1c4f> by user <Yan.Luo> in cluster <tide>.
+Job was executed on host(s) <t1c4f>, in queue <dev>, as user <Yan.Luo> in cluster <tide>.
+</u/Yan.Luo> was used as the home directory.
+</ensemble/save/Yan.Luo/earch/scripts> was used as the working directory.
+Started at Fri Jun  7 11:00:00 2013
+Results reported at Fri Jun  7 11:30:02 2013
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#/bin/sh
+#BSUB -J GENSARCH_main.sh
+#BSUB -o /ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.out
+#BSUB -e /ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.err
+#BSUB -q "dev"
+#BSUB -b 11:00
+#BSUB -W 3:00
+
+set -x
+
+date
+
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++"
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+
+
+###
+### get date
+###
+
+Date=${2:-$(date +%Y%m%d)}
+export CDATE=${Date}00
+echo "CDATE=$CDATE"
+
+### CDATE=YYYYMMDDHH Y2K comparable
+### export from outside of script
+
+if [ "$CDATE" = "" ]; then
+   echo "CDATE = $CDATE "
+   echo "JOB EXIT NOW !!!!!!"
+   exit
+fi
+
+
+export CDATE=$CDATE
+export SCOM=/com
+export DFROM=/p5com/gens/prod
+export DFROM=$SCOM/gens/prod
+
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++"
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+
+###
+### Define the time for each cycle and different days
+###
+
+export CDATEp06=`$nhours +06 $CDATE`
+export CDATEm06=`$nhours -06 $CDATE`
+
+(... more ...)
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :               4.60 sec.
+    Max Memory :             6 MB
+    Average Memory :         5.04 MB
+    Total Requested Memory : -
+    Delta Memory :           -
+    (Delta: the difference between total requested memory and actual max usage.)
+    Max Processes :          4
+    Max Threads :            5
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file </ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.err> for stderr output of this job.
+
+Sat Jun  8 11:00:00 UTC 2013
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+CDATE=2013060800
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+++++++ Submite the NCEP ENSPOST_06 job ++++++
+Job <860863> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_12 job ++++++
+Job <860865> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_18 job ++++++
+Job <860867> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_00 job ++++++
+Job <861506> is submitted to queue <dev>.
+++++++ Submite the NCEP BC ENSPOST_06 job ++++++
+++++++ Submite the NCEP BC ENSPOST_12 job ++++++
+++++++ Submite the NCEP BC ENSPOST_18 job ++++++
+++++++ Submite the NCEP BC ENSPOST_00 job ++++++
+++++++ Submite the CMC ENSPOST_00+12 job ++++++
+++++++ Submite the CMC ENSPOST_00+12 job ++++++
+++++++ Submite the CMC ENSPOST_00+12_BC job ++++++
+++++++ Submite the CMC ENSPOST_00+12_BC job ++++++
+++++++ Submite the ECM ENSPOST_12 job ++++++
+++++++ additional parameteres (t2m,uv250,uv850 ...)++++++
+++++++ Submite the ECM ENSPOST_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_12 job ++++++
+++++++ Submite the FNMOC ENSPOST_bc_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_bc_12 job ++++++
+++++++ Submite real time parallel job ++++++
+Job <861507> is submitted to queue <dev>.
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@t1c3f>
+Subject: Job 826604: <GENSARCH_main.sh> in cluster <tide> Done
+
+Job <GENSARCH_main.sh> was submitted from host <t1c4f> by user <Yan.Luo> in cluster <tide>.
+Job was executed on host(s) <t1c3f>, in queue <dev>, as user <Yan.Luo> in cluster <tide>.
+</u/Yan.Luo> was used as the home directory.
+</ensemble/save/Yan.Luo/earch/scripts> was used as the working directory.
+Started at Sat Jun  8 11:00:00 2013
+Results reported at Sat Jun  8 11:30:02 2013
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#/bin/sh
+#BSUB -J GENSARCH_main.sh
+#BSUB -o /ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.out
+#BSUB -e /ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.err
+#BSUB -q "dev"
+#BSUB -b 11:00
+#BSUB -W 3:00
+
+set -x
+
+date
+
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++"
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+
+
+###
+### get date
+###
+
+Date=${2:-$(date +%Y%m%d)}
+export CDATE=${Date}00
+echo "CDATE=$CDATE"
+
+### CDATE=YYYYMMDDHH Y2K comparable
+### export from outside of script
+
+if [ "$CDATE" = "" ]; then
+   echo "CDATE = $CDATE "
+   echo "JOB EXIT NOW !!!!!!"
+   exit
+fi
+
+
+export CDATE=$CDATE
+export SCOM=/com
+export DFROM=/p5com/gens/prod
+export DFROM=$SCOM/gens/prod
+
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++"
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+
+###
+### Define the time for each cycle and different days
+###
+
+export CDATEp06=`$nhours +06 $CDATE`
+export CDATEm06=`$nhours -06 $CDATE`
+
+(... more ...)
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :               3.38 sec.
+    Max Memory :             5 MB
+    Average Memory :         5.00 MB
+    Total Requested Memory : -
+    Delta Memory :           -
+    (Delta: the difference between total requested memory and actual max usage.)
+    Max Processes :          4
+    Max Threads :            5
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file </ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.err> for stderr output of this job.
+
+Sun Jun  9 11:00:00 UTC 2013
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+CDATE=2013060900
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+++++++ Submite the NCEP ENSPOST_06 job ++++++
+Job <892753> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_12 job ++++++
+Job <892756> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_18 job ++++++
+Job <892759> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_00 job ++++++
+Job <893314> is submitted to queue <dev>.
+++++++ Submite the NCEP BC ENSPOST_06 job ++++++
+++++++ Submite the NCEP BC ENSPOST_12 job ++++++
+++++++ Submite the NCEP BC ENSPOST_18 job ++++++
+++++++ Submite the NCEP BC ENSPOST_00 job ++++++
+++++++ Submite the CMC ENSPOST_00+12 job ++++++
+++++++ Submite the CMC ENSPOST_00+12 job ++++++
+++++++ Submite the CMC ENSPOST_00+12_BC job ++++++
+++++++ Submite the CMC ENSPOST_00+12_BC job ++++++
+++++++ Submite the ECM ENSPOST_12 job ++++++
+++++++ additional parameteres (t2m,uv250,uv850 ...)++++++
+++++++ Submite the ECM ENSPOST_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_12 job ++++++
+++++++ Submite the FNMOC ENSPOST_bc_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_bc_12 job ++++++
+++++++ Submite real time parallel job ++++++
+Job <893315> is submitted to queue <dev>.
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@t1c4f>
+Subject: Job 861507: <GENSARCH_main.sh> in cluster <tide> Done
+
+Job <GENSARCH_main.sh> was submitted from host <t1c3f> by user <Yan.Luo> in cluster <tide>.
+Job was executed on host(s) <t1c4f>, in queue <dev>, as user <Yan.Luo> in cluster <tide>.
+</u/Yan.Luo> was used as the home directory.
+</ensemble/save/Yan.Luo/earch/scripts> was used as the working directory.
+Started at Sun Jun  9 11:00:00 2013
+Results reported at Sun Jun  9 11:30:01 2013
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#/bin/sh
+#BSUB -J GENSARCH_main.sh
+#BSUB -o /ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.out
+#BSUB -e /ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.err
+#BSUB -q "dev"
+#BSUB -b 11:00
+#BSUB -W 3:00
+
+set -x
+
+date
+
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++"
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+
+
+###
+### get date
+###
+
+Date=${2:-$(date +%Y%m%d)}
+export CDATE=${Date}00
+echo "CDATE=$CDATE"
+
+### CDATE=YYYYMMDDHH Y2K comparable
+### export from outside of script
+
+if [ "$CDATE" = "" ]; then
+   echo "CDATE = $CDATE "
+   echo "JOB EXIT NOW !!!!!!"
+   exit
+fi
+
+
+export CDATE=$CDATE
+export SCOM=/com
+export DFROM=/p5com/gens/prod
+export DFROM=$SCOM/gens/prod
+
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++"
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+
+###
+### Define the time for each cycle and different days
+###
+
+export CDATEp06=`$nhours +06 $CDATE`
+export CDATEm06=`$nhours -06 $CDATE`
+
+(... more ...)
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :               3.40 sec.
+    Max Memory :             6 MB
+    Average Memory :         5.18 MB
+    Total Requested Memory : -
+    Delta Memory :           -
+    (Delta: the difference between total requested memory and actual max usage.)
+    Max Processes :          4
+    Max Threads :            5
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file </ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.err> for stderr output of this job.
+
+Mon Jun 10 11:00:01 UTC 2013
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+CDATE=2013061000
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+++++++ Submite the NCEP ENSPOST_06 job ++++++
+Job <923617> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_12 job ++++++
+Job <923619> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_18 job ++++++
+Job <923621> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_00 job ++++++
+Job <924165> is submitted to queue <dev>.
+++++++ Submite the NCEP BC ENSPOST_06 job ++++++
+++++++ Submite the NCEP BC ENSPOST_12 job ++++++
+++++++ Submite the NCEP BC ENSPOST_18 job ++++++
+++++++ Submite the NCEP BC ENSPOST_00 job ++++++
+++++++ Submite the CMC ENSPOST_00+12 job ++++++
+++++++ Submite the CMC ENSPOST_00+12 job ++++++
+++++++ Submite the CMC ENSPOST_00+12_BC job ++++++
+++++++ Submite the CMC ENSPOST_00+12_BC job ++++++
+++++++ Submite the ECM ENSPOST_12 job ++++++
+++++++ additional parameteres (t2m,uv250,uv850 ...)++++++
+++++++ Submite the ECM ENSPOST_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_12 job ++++++
+++++++ Submite the FNMOC ENSPOST_bc_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_bc_12 job ++++++
+++++++ Submite real time parallel job ++++++
+Job <924166> is submitted to queue <dev>.
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@t1c3f>
+Subject: Job 893315: <GENSARCH_main.sh> in cluster <tide> Done
+
+Job <GENSARCH_main.sh> was submitted from host <t1c4f> by user <Yan.Luo> in cluster <tide>.
+Job was executed on host(s) <t1c3f>, in queue <dev>, as user <Yan.Luo> in cluster <tide>.
+</u/Yan.Luo> was used as the home directory.
+</ensemble/save/Yan.Luo/earch/scripts> was used as the working directory.
+Started at Mon Jun 10 11:00:00 2013
+Results reported at Mon Jun 10 11:30:02 2013
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#/bin/sh
+#BSUB -J GENSARCH_main.sh
+#BSUB -o /ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.out
+#BSUB -e /ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.err
+#BSUB -q "dev"
+#BSUB -b 11:00
+#BSUB -W 3:00
+
+set -x
+
+date
+
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++"
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+
+
+###
+### get date
+###
+
+Date=${2:-$(date +%Y%m%d)}
+export CDATE=${Date}00
+echo "CDATE=$CDATE"
+
+### CDATE=YYYYMMDDHH Y2K comparable
+### export from outside of script
+
+if [ "$CDATE" = "" ]; then
+   echo "CDATE = $CDATE "
+   echo "JOB EXIT NOW !!!!!!"
+   exit
+fi
+
+
+export CDATE=$CDATE
+export SCOM=/com
+export DFROM=/p5com/gens/prod
+export DFROM=$SCOM/gens/prod
+
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++"
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+
+###
+### Define the time for each cycle and different days
+###
+
+export CDATEp06=`$nhours +06 $CDATE`
+export CDATEm06=`$nhours -06 $CDATE`
+
+(... more ...)
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :               3.27 sec.
+    Max Memory :             7 MB
+    Average Memory :         5.12 MB
+    Total Requested Memory : -
+    Delta Memory :           -
+    (Delta: the difference between total requested memory and actual max usage.)
+    Max Processes :          4
+    Max Threads :            5
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file </ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.err> for stderr output of this job.
+
+Tue Jun 11 11:00:00 UTC 2013
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+CDATE=2013061100
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+++++++ Submite the NCEP ENSPOST_06 job ++++++
+Job <957938> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_12 job ++++++
+Job <957944> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_18 job ++++++
+Job <957957> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_00 job ++++++
+Job <958660> is submitted to queue <dev>.
+++++++ Submite the NCEP BC ENSPOST_06 job ++++++
+++++++ Submite the NCEP BC ENSPOST_12 job ++++++
+++++++ Submite the NCEP BC ENSPOST_18 job ++++++
+++++++ Submite the NCEP BC ENSPOST_00 job ++++++
+++++++ Submite the CMC ENSPOST_00+12 job ++++++
+++++++ Submite the CMC ENSPOST_00+12 job ++++++
+++++++ Submite the CMC ENSPOST_00+12_BC job ++++++
+++++++ Submite the CMC ENSPOST_00+12_BC job ++++++
+++++++ Submite the ECM ENSPOST_12 job ++++++
+++++++ additional parameteres (t2m,uv250,uv850 ...)++++++
+++++++ Submite the ECM ENSPOST_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_12 job ++++++
+++++++ Submite the FNMOC ENSPOST_bc_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_bc_12 job ++++++
+++++++ Submite real time parallel job ++++++
+Job <958661> is submitted to queue <dev>.
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@t2c44f>
+Subject: Job 924166: <GENSARCH_main.sh> in cluster <tide> Done
+
+Job <GENSARCH_main.sh> was submitted from host <t1c3f> by user <Yan.Luo> in cluster <tide>.
+Job was executed on host(s) <t2c44f>, in queue <dev>, as user <Yan.Luo> in cluster <tide>.
+</u/Yan.Luo> was used as the home directory.
+</ensemble/save/Yan.Luo/earch/scripts> was used as the working directory.
+Started at Tue Jun 11 11:00:00 2013
+Results reported at Tue Jun 11 11:30:01 2013
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#/bin/sh
+#BSUB -J GENSARCH_main.sh
+#BSUB -o /ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.out
+#BSUB -e /ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.err
+#BSUB -q "dev"
+#BSUB -b 11:00
+#BSUB -W 3:00
+
+set -x
+
+date
+
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++"
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+
+
+###
+### get date
+###
+
+Date=${2:-$(date +%Y%m%d)}
+export CDATE=${Date}00
+echo "CDATE=$CDATE"
+
+### CDATE=YYYYMMDDHH Y2K comparable
+### export from outside of script
+
+if [ "$CDATE" = "" ]; then
+   echo "CDATE = $CDATE "
+   echo "JOB EXIT NOW !!!!!!"
+   exit
+fi
+
+
+export CDATE=$CDATE
+export SCOM=/com
+export DFROM=/p5com/gens/prod
+export DFROM=$SCOM/gens/prod
+
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++"
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+
+###
+### Define the time for each cycle and different days
+###
+
+export CDATEp06=`$nhours +06 $CDATE`
+export CDATEm06=`$nhours -06 $CDATE`
+
+(... more ...)
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :               1.73 sec.
+    Max Memory :             9 MB
+    Average Memory :         9.00 MB
+    Total Requested Memory : -
+    Delta Memory :           -
+    (Delta: the difference between total requested memory and actual max usage.)
+    Max Processes :          4
+    Max Threads :            5
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file </ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.err> for stderr output of this job.
+
+Wed Jun 12 11:00:00 UTC 2013
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+CDATE=2013061200
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+++++++ Submite the NCEP ENSPOST_06 job ++++++
+Job <998208> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_12 job ++++++
+Job <998210> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_18 job ++++++
+Job <998212> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_00 job ++++++
+Job <999021> is submitted to queue <dev>.
+++++++ Submite the NCEP BC ENSPOST_06 job ++++++
+++++++ Submite the NCEP BC ENSPOST_12 job ++++++
+++++++ Submite the NCEP BC ENSPOST_18 job ++++++
+++++++ Submite the NCEP BC ENSPOST_00 job ++++++
+++++++ Submite the CMC ENSPOST_00+12 job ++++++
+++++++ Submite the CMC ENSPOST_00+12 job ++++++
+++++++ Submite the CMC ENSPOST_00+12_BC job ++++++
+++++++ Submite the CMC ENSPOST_00+12_BC job ++++++
+++++++ Submite the ECM ENSPOST_12 job ++++++
+++++++ additional parameteres (t2m,uv250,uv850 ...)++++++
+++++++ Submite the ECM ENSPOST_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_12 job ++++++
+++++++ Submite the FNMOC ENSPOST_bc_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_bc_12 job ++++++
+++++++ Submite real time parallel job ++++++
+Job <999022> is submitted to queue <dev>.
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@t1c44f>
+Subject: Job 958661: <GENSARCH_main.sh> in cluster <tide> Done
+
+Job <GENSARCH_main.sh> was submitted from host <t2c44f> by user <Yan.Luo> in cluster <tide>.
+Job was executed on host(s) <t1c44f>, in queue <dev>, as user <Yan.Luo> in cluster <tide>.
+</u/Yan.Luo> was used as the home directory.
+</ensemble/save/Yan.Luo/earch/scripts> was used as the working directory.
+Started at Wed Jun 12 11:00:00 2013
+Results reported at Wed Jun 12 11:30:02 2013
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#/bin/sh
+#BSUB -J GENSARCH_main.sh
+#BSUB -o /ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.out
+#BSUB -e /ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.err
+#BSUB -q "dev"
+#BSUB -b 11:00
+#BSUB -W 3:00
+
+set -x
+
+date
+
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++"
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+
+
+###
+### get date
+###
+
+Date=${2:-$(date +%Y%m%d)}
+export CDATE=${Date}00
+echo "CDATE=$CDATE"
+
+### CDATE=YYYYMMDDHH Y2K comparable
+### export from outside of script
+
+if [ "$CDATE" = "" ]; then
+   echo "CDATE = $CDATE "
+   echo "JOB EXIT NOW !!!!!!"
+   exit
+fi
+
+
+export CDATE=$CDATE
+export SCOM=/com
+export DFROM=/p5com/gens/prod
+export DFROM=$SCOM/gens/prod
+
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++"
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+
+###
+### Define the time for each cycle and different days
+###
+
+export CDATEp06=`$nhours +06 $CDATE`
+export CDATEm06=`$nhours -06 $CDATE`
+
+(... more ...)
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :               1.74 sec.
+    Max Memory :             9 MB
+    Average Memory :         9.00 MB
+    Total Requested Memory : -
+    Delta Memory :           -
+    (Delta: the difference between total requested memory and actual max usage.)
+    Max Processes :          4
+    Max Threads :            5
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file </ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.err> for stderr output of this job.
+
+Thu Jun 13 11:00:00 UTC 2013
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+CDATE=2013061300
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+++++++ Submite the NCEP ENSPOST_06 job ++++++
+Job <8357> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_12 job ++++++
+Job <8359> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_18 job ++++++
+Job <8361> is submitted to queue <dev>.
+++++++ Submite the NCEP ENSPOST_00 job ++++++
+Job <8528> is submitted to queue <dev>.
+++++++ Submite the NCEP BC ENSPOST_06 job ++++++
+++++++ Submite the NCEP BC ENSPOST_12 job ++++++
+++++++ Submite the NCEP BC ENSPOST_18 job ++++++
+++++++ Submite the NCEP BC ENSPOST_00 job ++++++
+++++++ Submite the CMC ENSPOST_00+12 job ++++++
+++++++ Submite the CMC ENSPOST_00+12 job ++++++
+++++++ Submite the CMC ENSPOST_00+12_BC job ++++++
+++++++ Submite the CMC ENSPOST_00+12_BC job ++++++
+++++++ Submite the ECM ENSPOST_12 job ++++++
+++++++ additional parameteres (t2m,uv250,uv850 ...)++++++
+++++++ Submite the ECM ENSPOST_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_12 job ++++++
+++++++ Submite the FNMOC ENSPOST_bc_00 job ++++++
+++++++ Submite the FNMOC ENSPOST_bc_12 job ++++++
+++++++ Submite real time parallel job ++++++
+Job <8529> is submitted to queue <dev>.
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@t1c7f>
+Subject: Job 999022: <GENSARCH_main.sh> in cluster <tide> Done
+
+Job <GENSARCH_main.sh> was submitted from host <t1c44f> by user <Yan.Luo> in cluster <tide>.
+Job was executed on host(s) <t1c7f>, in queue <dev>, as user <Yan.Luo> in cluster <tide>.
+</u/Yan.Luo> was used as the home directory.
+</ensemble/save/Yan.Luo/earch/scripts> was used as the working directory.
+Started at Thu Jun 13 11:00:00 2013
+Results reported at Thu Jun 13 11:30:01 2013
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#/bin/sh
+#BSUB -J GENSARCH_main.sh
+#BSUB -o /ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.out
+#BSUB -e /ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.err
+#BSUB -q "dev"
+#BSUB -b 11:00
+#BSUB -W 3:00
+
+set -x
+
+date
+
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++"
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+
+
+###
+### get date
+###
+
+Date=${2:-$(date +%Y%m%d)}
+export CDATE=${Date}00
+echo "CDATE=$CDATE"
+
+### CDATE=YYYYMMDDHH Y2K comparable
+### export from outside of script
+
+if [ "$CDATE" = "" ]; then
+   echo "CDATE = $CDATE "
+   echo "JOB EXIT NOW !!!!!!"
+   exit
+fi
+
+
+export CDATE=$CDATE
+export SCOM=/com
+export DFROM=/p5com/gens/prod
+export DFROM=$SCOM/gens/prod
+
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+echo " +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++"
+echo " +++++++++++++++++++++++++++++++++++++++++++++++++"
+
+###
+### Define the time for each cycle and different days
+###
+
+export CDATEp06=`$nhours +06 $CDATE`
+export CDATEm06=`$nhours -06 $CDATE`
+
+(... more ...)
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :               1.73 sec.
+    Max Memory :             9 MB
+    Average Memory :         9.00 MB
+    Total Requested Memory : -
+    Delta Memory :           -
+    (Delta: the difference between total requested memory and actual max usage.)
+    Max Processes :          4
+    Max Threads :            5
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file </ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.err> for stderr output of this job.
+

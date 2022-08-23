@@ -1,0 +1,11 @@
+#!/bin/ksh
+#
+# show selected information from llq -l
+#
+/global/save/$LOGNAME/bin/llqwx $*|\
+  sed "s/----------- ----------- ----------- -- /ZQUNLIKLYQZ ZQUNLIKLYQZ AQUNLIKLYQZ ZY /g"|\
+  sed "s/Queue Date  Hold Until  Disp. Date  ST /ZQUNLIKLYQZ ZQUNLIKLYQZ AQUNLIKLYQZ ZZ /g"|\
+  sort -k1.12,1.12 -k1.37,1.38r -k1.25,1.35r -k1.1,1.11r|\
+  sed "s/ZQUNLIKLYQZ ZQUNLIKLYQZ AQUNLIKLYQZ ZZ /Queue Date  Hold Until  Disp. Date  ST /g"|\
+  sed "s/ZQUNLIKLYQZ ZQUNLIKLYQZ AQUNLIKLYQZ ZY /----------- ----------- ----------- -- /g"
+date +"            %m/%d %H:%M             %c    $*"

@@ -1,0 +1,7 @@
+Notes on the gvrfy jobs:
+
+On 3/26/2020, by YLuo:
+The high resolution deterministic global forecasts from ECMWF and CMC were no longer available on WCOSS at:
+/gpfs/td1/emc/global/noscrub/emc.glopara/global/ecm and /gpfs/td1/emc/global/noscrub/emc.glopara/global/cmc.
+Meanwhile, these globl shared data sets were also not transitioned to Dell. As a resuit, all gvrfy jobs stopped
+(no scores were calulated and no more plots available) from then. 

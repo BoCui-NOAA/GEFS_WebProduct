@@ -1,0 +1,120 @@
+### example 1
+#!/bin/sh
+#@ wall_clock_limit=00:30:00
+#@ requirements = Feature == "beta"
+#@ job_type = parallel
+#@ output = /ptmp/wx20yz/garch.o$(jobid)
+#@ error = /ptmp/wx20yz/garch.e$(jobid)
+#@ total_tasks = 30
+#@ node = 30
+#@ node_usage = shared
+#@ network.MPI=switch,not_shared,us
+#@ class = dev
+#@ account_no = GEN-MTN
+#
+#@ queue
+#
+
+#set -x
+
+cd /nfsuser/g01/wx20yz/gvrfy/scripts
+pwd
+
+nhours=/nwprod/util/exec/ndate
+
+if [ "$CDATE" -eq "" ]; then
+   echo "No data for CDATE, please check"
+   exit 8
+fi
+
+YMD=`echo $CDATE | cut -c1-8`
+YMDM1=`$nhours -24 $CDATE | cut -c1-8`
+YMDM2=`$nhours -48 $CDATE | cut -c1-8`
+YMDM3=`$nhours -72 $CDATE | cut -c1-8`
+YMDHM12=`$nhours -12 $CDATE `
+   
+vrfyex_16.sh_new $YMD   s 00
+vrfyex_16.sh_new $YMDM1 s 06
+vrfyex_16.sh_new $YMDM1 s 12
+vrfyex_16.sh_new $YMDM1 s 18
+vrfyex_16.sh_new $YMD   x 00
+vrfyex_16.sh_new $YMDM1 x 00
+vrfyex_16.sh_new $YMD   y 00
+vrfyex_16.sh_new $YMDM1 y 00
+#vrfyex_16.sh_new $YMD   z 00
+#vrfyex_16.sh_new $YMDM1 z 00
+vrfyex_16.sh_new $YMDM1 a 12
+vrfyex_16.sh_new $YMD   a 00
+vrfyex_16.sh_new_nc $YMD   s
+
+vrfyex_16.sh_qnew $YMDM3 sq 00
+
+vrfyex_16_cmc.sh $YMD   m 00
+vrfyex_16_cmc.sh $YMDM1 m 12
+
+if [ -s /com/mrf/prod/ecmwf.$YMDM1/ecmgrb25.t12z ]; then
+ cp /com/mrf/prod/ecmwf.$YMDM1/ecmgrb25.t12z /global/ecm/ecmgrb.${YMDM1}12
+fi
+if [ -s /com/mrf/prod/ecmwf.$YMDM1/ecmgrb25.t00z ]; then
+ cp /com/mrf/prod/ecmwf.$YMDM1/ecmgrb25.t00z /global/ecm/ecmgrb.${YMDM1}00
+fi
+
+#vrfyex_16_ecm_ukm_fno.sh_new $YMD   e 00
+#vrfyex_16_ecm_ukm_fno.sh_new $YMD   e 12
+vrfyex_16_ecm_ukm_fno.sh_new $YMDM1 k 12
+vrfyex_16_ecm_ukm_fno.sh_new $YMD   k 00
+vrfyex_16_ecm_ukm_fno.sh_new $YMDM1 n 12
+vrfyex_16_ecm_ukm_fno.sh_new $YMD   n 00
+vrfyex_16_ecm_ukm_fno.sh_new_nc $YMD   e
+
+### next job will replace vrfyex_16_ecm_ukm_fno.sh_new $YMD e 12
+VRFY_PUB_ECM12Z.sh $YMDHM12
+### next job will replace vrfyex_16_ecm_ukm_fno.sh_new $YMD e 00
+### since 02/06/2006
+VRFY_PUB_ECM12Z.sh $YMD\00  
+
+echo "++++++ Submite the VRFY job ++++++"
+export CDATE=$CDATE
+out=/gpfstmp/wx20yz/VRFY_continue.$CDATE
+job=/nfsuser/g01/wx20yz/gvrfy/scripts/VRFY_continue
+sub -e CDATE -j VRFY -o $out  $job
+
+echo "++++++ Generate Mean Analysis +++++"
+###   starting from 03/01/2006
+export CDATE=$CDATE
+/nfsuser/g01/wx20yz/gvrfy/scripts/ANL_MEAN.sh $CDATE
+
+###
+### moving all following jobs to VRFY_continue
+###   12/30/2004 -Yuejian Zhu
+
+#vrfyex_16_ecm_ens.sh $YMD e 12
+#vrfyex_16_ncep_ens.sh $YMD c 00
+
+#cd /nfsuser/g01/wx20yz/gvrfy/scripts
+#pwd
+#export VFSDAY=$YMDM1\06
+#export VFEDAY=$YMDM1\06
+#VRFY_PUB.sh vrfy_table
+
+#cd /nfsuser/g01/wx20yz/gvrfy/scripts
+#pwd
+#export VFSDAY=$YMDM1\18
+#export VFEDAY=$YMDM1\18
+#VRFY_PUB.sh vrfy_table
+
+
+####
+####  GrADs plotting job.
+####
+####   Updated daily ( started from Dec. 13th 2004 )
+
+#cd /nfsuser/g01/wx20yz/gvrfy/grads
+##CDATE=$YMDM1\00
+#CDATE=$CDATE    
+#export EDYMD=`echo $CDATE | cut -c1-8`
+#export STYMD=`$nhours -744 $CDATE | cut -c1-8`
+#$HOME/gvrfy/grads/RUN_VRFY01_GRADS.sh $STYMD $EDYMD grads_table_VRFY01
+#$HOME/gvrfy/grads/RUN_VRFY02_GRADS.sh $STYMD $EDYMD grads_table_VRFY02
+#$HOME/gvrfy/grads/RUN_VRFY03_GRADS.sh $STYMD $EDYMD grads_table_VRFY03
+#

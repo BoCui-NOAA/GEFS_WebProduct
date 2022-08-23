@@ -1,0 +1,616 @@
+Page 1           Source Listing                  VFMAIN
+2014-07-14 18:39                                 VFMAIN_0006.f
+
+      1 c
+      2 c This is main program of MRF model forecast verification on IBM-SP
+      3 c
+      4 c  main program    VFMAIN
+      5 c
+      6 c   subroutine                                                    
+      7 c              RMSAWT ---> to get mean error and RMS error
+      8 c              LATWMN ---> to get latitude mean values
+      9 c              SUMWAV ---> to sum the wave groups
+     10 c              ACGRID ---> to calaulate AC using grid values
+     11 c              GRD2WV ---> transfor latitude data from grid to wave
+     12 c              GET23Y ---> read 23 years Reanalysis data ( GRIB )
+     13 c              GETANL ---> read analysis and forecast files ( GRIB )
+     14 c              GRANGE ---> to calculate max. and min value of array
+     15 c   
+     16 c   available climatology:
+     17 c      levels--1000,925,850,700,600,500,400,300,250,200,150,100,70,50,30,20,10
+     18 c      fields--z,u,v,t and etc.
+     19 c
+     20 c   special namelist parameter:
+     21 c      ic    --icoeff ( 1=grid to wave, 0=grid only )
+     22 c
+     23 c   parameter  idmax  ---> maximum days to verification
+     24 c
+     25 c   Fortran 77 on IBMSP ====== coded by Yuejian Zhu (07/01/99)
+     26 c     add wind vector AC calculation by Yuejian Zhu (06/20/00)
+     27 c
+     28 C--------+---------+---------+---------+---------+----------+---------+--
+     29       program VFMAIN
+     30       parameter (idmax=25)
+     31       dimension fcst(144,73),fanl(144,73),clim(144,73)
+     32       dimension ufst(144,73),uanl(144,73),uclm(144,73)
+     33       dimension vfst(144,73),vanl(144,73),vclm(144,73)
+     34       dimension fstt(144,73),fant(144,73),clit(144,73),ctmp(144,73)
+     35       dimension clim1(144,73),clim2(144,73)
+     36       dimension clit1(144,73),clit2(144,73)
+     37       dimension af(20,73),ao(20,73),ac(20,73)
+     38       dimension bf(21,73),bo(21,73),bc(21,73)
+     39       dimension fnum(20,73),dnm1(20,73),dnm2(20,73)
+     40       dimension q1(4,73),q2(4,73),q3(4,73)
+     41       dimension w1(73),w2(73),w3(73)
+     42       dimension qx1(4),qx2(4),qx3(4),qx4(4),weight(73)
+     43       dimension ac1(idmax),ac2(idmax),ac3(idmax),ac4(idmax)
+     44       dimension rms(idmax),erm(idmax),rmc(idmax),erc(idmax)
+     45       dimension iymdh(idmax,5)
+     46       character*5 chem(4)
+     47       character*7 lhem(4)
+     48       character*3 cfld(200)
+     49       character*80 cfilea(2,100),cfilef(2,100),ca1,ca2,cf1,cf2 
+     50       namelist/files/ cfilea,cfilef
+     51       namelist/namin/ ihem,la1,la2,lo1,lo2,l1,l2,nhrs,ifd,ilv,iclim,ic
+     52       data chem /'N Hem','S Hem','Trop.','N Amr'/
+     53       data lhem /'20N-80N','20S-80S','20N-20S','20N-80N'/
+     54       cfld     = ' '
+     55       cfld(7)  = ' Z '
+     56       cfld(11) = ' T '
+     57       cfld(33) = ' U '
+
+Page 2           Source Listing                  VFMAIN
+2014-07-14 18:39                                 VFMAIN_0006.f
+
+     58       cfld(34) = ' V '
+     59       cfld(101)= 'Spd'
+     60       cfld(102)= 'Vtr'
+     61       open(unit=51,file='scores.out',err=1020)
+     62 c
+     63 c --- calculate the weight ( latitude dependence )
+     64 c
+     65       do lat = 37, 73
+     66         j  = lat - 36
+     67         xlat = (2.5*j - 2.5 )/57.296
+     68         weight(j)   = sin(xlat)
+     69         weight(lat) = sin(1.571-xlat)
+     70       enddo    
+     71 c
+     72 c     job will be controled by read card
+     73 c
+     74       read  (5,files,end=1000)
+     75       write (6,files)
+     76  1000 continue
+     77       read  (5,namin,end=1020)
+     78       write (6,namin)
+     79 c
+     80       len = nhrs/24 + 1
+     81 c
+     82       ac1 = 9.9999
+     83       ac2 = 9.9999
+     84       ac3 = 9.9999
+     85       ac4 = 9.9999
+     86       rms = 99.99
+     87       erm = 99.99
+     88       rmc = 99.99
+     89       erc = 99.99
+     90 c
+     91       do iday = 1,len
+     92        ca1 = cfilea(1,iday)
+     93        ca2 = cfilea(2,iday)
+     94        cf1 = cfilef(1,iday)
+     95        cf2 = cfilef(2,iday)
+     96 c      read (ca1,'(9x,i8)') ndatea
+     97        read (ca1,'(7x,i10)') ndatea
+     98        lpgb=len_trim(cf1)  
+     99        if (lpgb.eq.17) then
+    100 c       read (cf1,'(9x,i8)') ndatef
+    101         read (cf1,'(7x,i10)') ndatef
+    102         read (cf2,'(4x,i2)') ifh   
+    103        else
+    104 c       read (cf1,'(10x,i8)') ndatef
+    105         read (cf1,'(8x,i10)') ndatef
+    106         read (cf2,'(4x,i3)') ifh   
+    107        endif
+    108        ihr  = ndatef - ndatef/100*100
+    109        ndate=ndatef/100
+    110        jyy = ndate/10000
+    111        jy2 = jyy - (jyy/100)*100
+    112        jmm = (ndate-jyy*10000)/100
+    113        jdd = ndate - jyy*10000 - jmm*100
+    114        iymdh(iday,5) = jy2
+
+Page 3           Source Listing                  VFMAIN
+2014-07-14 18:39                                 VFMAIN_0006.f
+
+    115        iymdh(iday,3) = jmm
+    116        iymdh(iday,4) = jdd
+    117        iymdh(iday,2) = ihr
+    118        iymdh(iday,1) = ifh
+    119 c
+    120 c --- get the forecast grid data ( 144*73 = 10512 )
+    121 c
+    122        print *, '=== Read forecast field ==='
+    123        if (ifd.gt.100) then
+    124         call getanl(ufst,cf1,cf2,33,ilv,ndatef,ifh)
+    125         call getanl(vfst,cf1,cf2,34,ilv,ndatef,ifh)
+    126         if(ufst(1,1).eq.-9999.99) goto 998
+    127         if(vfst(1,1).eq.-9999.99) goto 998
+    128         call fitr30(ufst)
+    129         call fitr30(vfst)
+    130        else
+    131         call getanl(fcst,cf1,cf2,ifd,ilv,ndatef,ifh)
+    132         if(fcst(1,1).eq.-9999.99) goto 998
+    133         if(ifd.eq.33.or.ifd.eq.34) call fitr30(fcst)
+    134        endif
+    135 c
+    136 c --- get the analysis grid data ( 144*73 = 10512 )
+    137 c
+    138        print *, '=== Read analysis field ==='
+    139        if (ifd.gt.100) then
+    140         call getanl(uanl,ca1,ca2,33,ilv,ndatea,0)
+    141         call getanl(vanl,ca1,ca2,34,ilv,ndatea,0)
+    142         if(uanl(1,1).eq.-9999.99) goto 998
+    143         if(vanl(1,1).eq.-9999.99) goto 998
+    144         call fitr30(uanl)
+    145         call fitr30(vanl)
+    146        else
+    147         call getanl(fanl,ca1,ca2,ifd,ilv,ndatea,0)
+    148         if(fanl(1,1).eq.-9999.99) goto 998
+    149         if(ifd.eq.33.or.ifd.eq.34) call fitr30(fanl)
+    150        endif
+    151 c
+    152 c --- get the climatology
+    153 c
+    154       ndate=ndatea/100
+    155       jyy = ndate/10000
+    156       jmm = (ndate-jyy*10000)/100
+    157       jdd = ndate - jyy*10000 - jmm*100
+    158       im1 = jmm
+    159       if (jdd.le.15) im2=jmm - 1
+    160       if (im2.lt.1)  im2=im2 + 12
+    161       if (jdd.gt.15) im2=jmm + 1
+    162       if (im2.gt.12) im2=im2 - 12
+    163       percnt = 1.00-abs(temp)
+    164 
+    165       if (iclim.eq.0.and.ifd.lt.100) then
+    166 c...  Using CPC/Climatology ( if iclim=0 )
+    167        print *, '=== Read climates field ==='
+    168        call getcac(clim1,ifd,ilv,im1)
+    169        call getcac(clim2,ifd,ilv,im2)
+    170       else
+    171 c...  Using CDAS/Reanl 17 years climatology ( grib file )
+
+Page 4           Source Listing                  VFMAIN
+2014-07-14 18:39                                 VFMAIN_0006.f
+
+    172        print *, '=== Read climates field ==='
+    173        if (ifd.gt.100) then
+    174         call get23y(clim1,33,ilv,im1,ihr,ifh) 
+    175         call get23y(clim2,33,ilv,im2,ihr,ifh) 
+    176         call get23y(clit1,34,ilv,im1,ihr,ifh) 
+    177         call get23y(clit2,34,ilv,im2,ihr,ifh) 
+    178         call fitr30(clim1)
+    179         call fitr30(clim2)
+    180         call fitr30(clit1)
+    181         call fitr30(clit2)
+    182        else
+    183         call get23y(clim1,ifd,ilv,im1,ihr,ifh) 
+    184         call get23y(clim2,ifd,ilv,im2,ihr,ifh) 
+    185         if (ifd.eq.33.or.ifd.eq.34) call fitr30(clim1)
+    186         if (ifd.eq.33.or.ifd.eq.34) call fitr30(clim2)
+    187        endif
+    188       endif
+    189 
+    190       temp=(float(jdd)-15.)/30.
+    191       percnt = 1.00-abs(temp)
+    192       do i = 1,144
+    193        do j = 1,73
+    194         clim(i,j)= clim1(i,j)*percnt+(1.0-percnt)*clim2(i,j)
+    195         clit(i,j)= clit1(i,j)*percnt+(1.0-percnt)*clit2(i,j)
+    196        enddo
+    197       enddo
+    198 c....
+    199       if (ifd.eq.101) then
+    200        do i = 1, 144
+    201         do j = 1, 73
+    202          fcst(i,j)=sqrt(ufst(i,j)*ufst(i,j)+vfst(i,j)*vfst(i,j))
+    203          fanl(i,j)=sqrt(uanl(i,j)*uanl(i,j)+vanl(i,j)*vanl(i,j))
+    204          clim(i,j)=sqrt(clim(i,j)*clim(i,j)+clit(i,j)*clit(i,j))
+    205         enddo
+    206        enddo
+    207       elseif (ifd.eq.102) then
+    208        do i = 1, 144
+    209         do j = 1, 73
+    210          uerr      = uanl(i,j) - ufst(i,j)
+    211          verr      = vanl(i,j) - vfst(i,j)
+    212          fcst(i,j) = sqrt(uerr*uerr+verr*verr)
+    213          uerr      = uanl(i,j) - clim(i,j)
+    214          verr      = vanl(i,j) - clit(i,j)
+    215 c        uerr      = clim(i,j) - ufst(i,j)
+    216 c        verr      = clit(i,j) - vfst(i,j)
+    217          ctmp(i,j) = clim(i,j)
+    218          clim(i,j) = sqrt(uerr*uerr+verr*verr)
+    219          fanl(i,j) = 0.0
+    220         enddo
+    221        enddo
+    222       endif
+    223 c....
+    224       if (ic.eq.1) then      
+    225       do lat = 1, 73
+    226         call grd2wv(fcst(1,lat),af(1,lat),bf(1,lat))
+    227         call grd2wv(fanl(1,lat),ao(1,lat),bo(1,lat))
+    228         call grd2wv(clim(1,lat),ac(1,lat),bc(1,lat))
+
+Page 5           Source Listing                  VFMAIN
+2014-07-14 18:39                                 VFMAIN_0006.f
+
+    229       enddo    
+    230       do i = 1, 20
+    231        do l = 1, 73
+    232         fnum(i,l)  =(af(i,l)-ac(i,l))*(ao(i,l)-ac(i,l))+
+    233      .              (bf(i,l)-bc(i,l))*(bo(i,l)-bc(i,l))
+    234         dnm1(i,l)  =(af(i,l)-ac(i,l))**2+(bf(i,l)-bc(i,l))**2
+    235         dnm2(i,l)  =(ao(i,l)-ac(i,l))**2+(bo(i,l)-bc(i,l))**2
+    236        enddo
+    237       enddo    
+    238       do l = 1, 73
+    239         call sumwav(fnum(1,l),q1(1,l))
+    240         call sumwav(dnm1(1,l),q2(1,l))
+    241         call sumwav(dnm2(1,l),q3(1,l))
+    242       enddo    
+    243 c.....avg over lat band l1-l2, from north pole to south pole 
+    244       do j = 1, 4
+    245         do l = 1, 73
+    246           w1(l)=q1(j,l)
+    247           w2(l)=q2(j,l)
+    248           w3(l)=q3(j,l)
+    249         enddo    
+    250         call latwmn(w1,l1,l2,qx1(j))
+    251         call latwmn(w2,l1,l2,qx2(j))
+    252         call latwmn(w3,l1,l2,qx3(j))
+    253       enddo    
+    254 c.....combine terms to get anom corr for this day
+    255       do j = 1, 4
+    256         qx4(j)=qx1(j)/(sqrt(qx2(j))*sqrt(qx3(j)))
+    257       enddo    
+    258       else
+    259         call acgrid(fanl,fcst,clim,weight,la1,la2,lo1,lo2,qx4)
+    260       endif
+    261       if (ifd.eq.102) then
+    262        call acgridv(uanl,vanl,ufst,vfst,ctmp,clit,
+    263      *              weight,la1,la2,lo1,lo2,qx4)
+    264        ac1 (iday) = 0.0
+    265        ac2 (iday) = 0.0
+    266        ac3 (iday) = 0.0
+    267        ac4 (iday) = qx4(4)
+    268       else
+    269        ac1 (iday) = qx4(1)
+    270        ac2 (iday) = qx4(2)
+    271        ac3 (iday) = qx4(3)
+    272        ac4 (iday) = qx4(4)
+    273       endif
+    274       call rmsawt(rmsf,ermf,fanl,fcst,weight,la1,la2,lo1,lo2)
+    275       call rmsawt(rmsc,ermc,clim,fcst,weight,la1,la2,lo1,lo2)
+    276       rms (iday) = rmsf
+    277       erm (iday) = ermf
+    278       rmc (iday) = rmsc
+    279       erc (iday) = ermc
+    280  998  continue
+    281       enddo
+    282 c
+    283 c --- write out results
+    284 c
+    285       write (51,901) chem(ihem),cfld(ifd),lhem(ihem)
+
+Page 6           Source Listing                  VFMAIN
+2014-07-14 18:39                                 VFMAIN_0006.f
+
+    286       do i = 1, len
+    287       write (51,902) (iymdh(i,j),j=1,5),ilv,                       
+    288      &               ac1(i),ac2(i),ac3(i),ac4(i)
+    289       enddo
+    290       write (51,903) chem(ihem),cfld(ifd),lhem(ihem)
+    291       do i = 1, len
+    292       write (51,904) (iymdh(i,j),j=1,5),ilv,
+    293      &               rms(i),erm(i),rmc(i),erc(i)
+    294       enddo
+    295       goto 1000
+    296  901  format (/,a5,' AC by Waves ( ',a3,' ',a7,' )  -       1-3',
+    297      &              '     4-9    10-20    1-20 ')
+    298  902  format (2x,i3,1x,'hrs after =',i2,'Z ',3i3,i5,'mb',3x,4(f7.4,1x))
+    299 C--------+---------+---------+---------+---------+----------+---------+--
+    300  903  format (/,a5,' Differences ( ',a3,' ',a7,' )  -   (F-A)',
+    301      &              'RMS   Mean (F-C)RMS   Mean    ')
+    302  904  format (2x,i3,1x,'hrs after =',i2,'Z ',3i3,i5,'mb',3x,4(f7.2,1x))
+    303 c901  format (//,a5,' AC by Waves (  ',a1,'  ',a7,' )  -      1-3',
+    304 c    &              '     4-9    10-20    1-20 ',/)
+    305 c902  format (2x,i3,1x,'hrs after =',i2,'Z ',3i3,i5,'mb',3x,4(f7.4,1x))
+    306 c--------+---------+---------+---------+---------+----------+---------+--
+    307 c903  format (//,a5,' Differences (  ',a1,'  ',a7,' )  -      ',
+    308 c    &              '(Fcst-Anl)        (Fcst-Clim)    ',/
+    309 c    &           5x,'                              -       RMS',
+    310 c    &              '     Mean    RMS     Mean '/)
+    311 c904  format (2x,i3,1x,'hrs after =',i2,'Z ',3i3,i5,'mb',3x,4(f7.2,1x))
+    312 c
+    313  1020 continue
+    314       stop    
+    315       end
+
+Page 7           Source Listing                  VFMAIN
+2014-07-14 18:39 Entry Points                    VFMAIN_0006.f
+
+
+
+ENTRY POINTS
+
+  Name              
+                    
+ MAIN__             
+
+
+SYMBOL CROSS REFERENCE
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ 1000                       Label  76                                                             74,295                            
+ 1020                       Label  313                                                            61,77                             
+ 901                        Label  296                                                            285                               
+ 902                        Label  298                                                            287                               
+ 903                        Label  300                                                            290                               
+ 904                        Label  302                                                            292                               
+ 998                        Label  280                                                            126,127,132,142,143,148           
+ ABS                        Func   163                                  scalar                    163,191                           
+ AC                         Local  37       R(8)            8     2     1460                      228,232,234,235                   
+ AC1                        Local  43       R(8)            8     1     25                        82,264,269,288                    
+ AC2                        Local  43       R(8)            8     1     25                        83,265,270,288                    
+ AC3                        Local  43       R(8)            8     1     25                        84,266,271,288                    
+ AC4                        Local  43       R(8)            8     1     25                        85,267,272,288                    
+ ACGRID                     Subr   259                                                            259                               
+ ACGRIDV                    Subr   262                                                            262                               
+ AF                         Local  37       R(8)            8     2     1460                      226,232,234                       
+ AO                         Local  37       R(8)            8     2     1460                      227,232,235                       
+ BC                         Local  38       R(8)            8     2     1533                      228,233,234,235                   
+ BF                         Local  38       R(8)            8     2     1533                      226,233,234                       
+ BO                         Local  38       R(8)            8     2     1533                      227,233,235                       
+ CA1                        Local  49       CHAR            80          scalar                    92,97,140,141,147                 
+ CA2                        Local  49       CHAR            80          scalar                    93,140,141,147                    
+ CF1                        Local  49       CHAR            80          scalar                    94,98,101,105,124,125,131         
+ CF2                        Local  49       CHAR            80          scalar                    95,102,106,124,125,131            
+ CFILEA                     Local  49       CHAR            80    2     200                       50,92,93                          
+ CFILEF                     Local  49       CHAR            80    2     200                       50,94,95                          
+ CFLD                       Local  48       CHAR            3     1     200                       54,55,56,57,58,59,60,285,290      
+ CHEM                       Local  46       CHAR            5     1     4                         52,285,290                        
+ CLIM                       Local  31       R(8)            8     2     10512                     194,204,213,217,218,228,259,275   
+ CLIM1                      Local  35       R(8)            8     2     10512                     168,174,178,183,185,194           
+ CLIM2                      Local  35       R(8)            8     2     10512                     169,175,179,184,186,194           
+ CLIT                       Local  34       R(8)            8     2     10512                     195,204,214,262                   
+ CLIT1                      Local  36       R(8)            8     2     10512                     176,180,195                       
+ CLIT2                      Local  36       R(8)            8     2     10512                     177,181,195                       
+ CTMP                       Local  34       R(8)            8     2     10512                     217,262                           
+ DNM1                       Local  39       R(8)            8     2     1460                      234,240                           
+ DNM2                       Local  39       R(8)            8     2     1460                      235,241                           
+ ERC                        Local  44       R(8)            8     1     25                        89,279,293                        
+ ERM                        Local  44       R(8)            8     1     25                        87,277,293                        
+ ERMC                       Local  275      R(8)            8           scalar                    275,279                           
+ ERMF                       Local  274      R(8)            8           scalar                    274,277                           
+ FANL                       Local  31       R(8)            8     2     10512                     147,148,149,203,219,227,259,274   
+ FANT                       Local  34       R(8)            8     2     10512                                                       
+ FCST                       Local  31       R(8)            8     2     10512                     131,132,133,202,212,226,259,274,27
+
+Page 8           Source Listing                  VFMAIN
+2014-07-14 18:39 Symbol Table                    VFMAIN_0006.f
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+                                                                                                  5                                 
+ FILES                      Local  50                                   scalar                    74,75                             
+ FITR30                     Subr   128                                                            128,129,133,144,145,149,178,179,18
+                                                                                                  0,181,185,186                     
+ FLOAT                      Func   190                                  scalar                    190                               
+ FNUM                       Local  39       R(8)            8     2     1460                      232,239                           
+ FSTT                       Local  34       R(8)            8     2     10512                                                       
+ GET23Y                     Subr   174                                                            174,175,176,177,183,184           
+ GETANL                     Subr   124                                                            124,125,131,140,141,147           
+ GETCAC                     Subr   168                                                            168,169                           
+ GRD2WV                     Subr   226                                                            226,227,228                       
+ I                          Local  192      I(4)            4           scalar                    192,194,195,200,202,203,204,208,21
+                                                                                                  0,211,212,213,214,217,218,219,230,
+                                                                                                  232,233,234,235,286,287,288,291,29
+                                                                                                  2,293                             
+ IC                         Local  51       I(4)            4           scalar                    51,224                            
+ ICLIM                      Local  51       I(4)            4           scalar                    51,165                            
+ IDAY                       Local  91       I(4)            4           scalar                    91,92,93,94,95,114,115,116,117,118
+                                                                                                  ,264,265,266,267,269,270,271,272,2
+                                                                                                  76,277,278,279                    
+ IDMAX                      Param  30       I(4)            4           scalar                    43,44,45                          
+ IFD                        Local  51       I(4)            4           scalar                    51,123,131,133,139,147,149,165,168
+                                                                                                  ,169,173,183,184,185,186,199,207,2
+                                                                                                  61,285,290                        
+ IFH                        Local  102      I(4)            4           scalar                    102,106,118,124,125,131,174,175,17
+                                                                                                  6,177,183,184                     
+ IHEM                       Local  51       I(4)            4           scalar                    51,285,290                        
+ IHR                        Local  108      I(4)            4           scalar                    108,117,174,175,176,177,183,184   
+ ILV                        Local  51       I(4)            4           scalar                    51,124,125,131,140,141,147,168,169
+                                                                                                  ,174,175,176,177,183,184,287,292  
+ IM1                        Local  158      I(4)            4           scalar                    158,168,174,176,183               
+ IM2                        Local  159      I(4)            4           scalar                    159,160,161,162,169,175,177,184   
+ IYMDH                      Local  45       I(4)            4     2     125                       114,115,116,117,118,287,292       
+ J                          Local  66       I(4)            4           scalar                    66,67,68,193,194,195,201,202,203,2
+                                                                                                  04,209,210,211,212,213,214,217,218
+                                                                                                  ,219,244,246,247,248,250,251,252,2
+                                                                                                  55,256,287,292                    
+ JDD                        Local  113      I(4)            4           scalar                    113,116,157,159,161,190           
+ JMM                        Local  112      I(4)            4           scalar                    112,113,115,156,157,158,159,161   
+ JY2                        Local  111      I(4)            4           scalar                    111,114                           
+ JYY                        Local  110      I(4)            4           scalar                    110,111,112,113,155,156,157       
+ L                          Local  231      I(4)            4           scalar                    231,232,233,234,235,238,239,240,24
+                                                                                                  1,245,246,247,248                 
+ L1                         Local  51       I(4)            4           scalar                    51,250,251,252                    
+ L2                         Local  51       I(4)            4           scalar                    51,250,251,252                    
+ LA1                        Local  51       I(4)            4           scalar                    51,259,263,274,275                
+ LA2                        Local  51       I(4)            4           scalar                    51,259,263,274,275                
+ LAT                        Local  65       I(4)            4           scalar                    65,66,69,225,226,227,228          
+ LATWMN                     Subr   250                                                            250,251,252                       
+ LEN                        Local  80       I(4)            4           scalar                    80,91,286,291                     
+ LEN_TRIM                   Func   98                                   scalar                    98                                
+ LHEM                       Local  47       CHAR            7     1     4                         53,285,290                        
+ LO1                        Local  51       I(4)            4           scalar                    51,259,263,274,275                
+ LO2                        Local  51       I(4)            4           scalar                    51,259,263,274,275                
+ LPGB                       Local  98       I(4)            4           scalar                    98,99                             
+
+Page 9           Source Listing                  VFMAIN
+2014-07-14 18:39 Symbol Table                    VFMAIN_0006.f
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ NAMIN                      Local  51                                   scalar                    77,78                             
+ NDATE                      Local  109      I(4)            4           scalar                    109,110,112,113,154,155,156,157   
+ NDATEA                     Local  97       I(4)            4           scalar                    97,140,141,147,154                
+ NDATEF                     Local  101      I(4)            4           scalar                    101,105,108,109,124,125,131       
+ NHRS                       Local  51       I(4)            4           scalar                    51,80                             
+ PERCNT                     Local  163      R(8)            8           scalar                    163,191,194,195                   
+ Q1                         Local  40       R(8)            8     2     292                       239,246                           
+ Q2                         Local  40       R(8)            8     2     292                       240,247                           
+ Q3                         Local  40       R(8)            8     2     292                       241,248                           
+ QX1                        Local  42       R(8)            8     1     4                         250,256                           
+ QX2                        Local  42       R(8)            8     1     4                         251,256                           
+ QX3                        Local  42       R(8)            8     1     4                         252,256                           
+ QX4                        Local  42       R(8)            8     1     4                         256,259,263,267,269,270,271,272   
+ RMC                        Local  44       R(8)            8     1     25                        88,278,293                        
+ RMS                        Local  44       R(8)            8     1     25                        86,276,293                        
+ RMSAWT                     Subr   274                                                            274,275                           
+ RMSC                       Local  275      R(8)            8           scalar                    275,278                           
+ RMSF                       Local  274      R(8)            8           scalar                    274,276                           
+ SIN                        Func   68                                   scalar                    68,69                             
+ SQRT                       Func   202                                  scalar                    202,203,204,212,218,256           
+ SUMWAV                     Subr   239                                                            239,240,241                       
+ TEMP                       Local  163      R(8)            8           scalar                    163,190,191                       
+ UANL                       Local  32       R(8)            8     2     10512                     140,142,144,203,210,213,262       
+ UCLM                       Local  32       R(8)            8     2     10512                                                       
+ UERR                       Local  210      R(8)            8           scalar                    210,212,213,218                   
+ UFST                       Local  32       R(8)            8     2     10512                     124,126,128,202,210,262           
+ VANL                       Local  33       R(8)            8     2     10512                     141,143,145,203,211,214,262       
+ VCLM                       Local  33       R(8)            8     2     10512                                                       
+ VERR                       Local  211      R(8)            8           scalar                    211,212,214,218                   
+ VFMAIN                     Prog   29                                                                                               
+ VFST                       Local  33       R(8)            8     2     10512                     125,127,129,202,211,262           
+ W1                         Local  41       R(8)            8     1     73                        246,250                           
+ W2                         Local  41       R(8)            8     1     73                        247,251                           
+ W3                         Local  41       R(8)            8     1     73                        248,252                           
+ WEIGHT                     Local  42       R(8)            8     1     73                        68,69,259,263,274,275             
+ XLAT                       Local  67       R(8)            8           scalar                    67,68,69                          
+
+Page 10          Source Listing                  VFMAIN
+2014-07-14 18:39 Subprograms/Common Blocks       VFMAIN_0006.f
+
+
+
+SUBPROGRAMS/COMMON BLOCKS
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ VFMAIN                     Prog   29                                                                                               
+
+COMPILER OPTIONS BEING USED
+
+       -align nocommons                      -align nodcommons
+       -align noqcommons                     -align records
+       -align nosequence                     -align norec1byte
+       -align norec2byte                     -align norec4byte
+       -align norec8byte                     -align norec16byte
+       -altparam                             -assume accuracy_sensitive
+       -assume nobscc                        -assume nobuffered_io
+       -assume byterecl                      -assume cc_omp
+       -assume nocstring                     -assume nodummy_aliases
+       -assume nofpe_summary                 -assume noieee_fpe_flags
+       -assume nominus0                      -assume noold_boz
+       -assume old_unit_star                 -assume old_ldout_format
+       -assume noold_logical_ldio            -assume old_maxminloc
+       -assume old_xor                       -assume protect_constants
+       -assume noprotect_parens              -assume split_common
+       -assume source_include                -assume nostd_intent_in
+       -assume nostd_mod_proc_name           -assume norealloc_lhs
+       -assume underscore                    -assume no2underscores
+       -auto                            no   -auto_scalar
+  no   -bintext                              -ccdefault default
+       -check noargs                         -check noarg_temp_created
+       -check nobounds                       -check noformat
+       -check nooutput_conversion            -check nooverflow
+       -check nopointers                     -check power
+       -check noshape                        -check nounderflow
+       -check nouninitialized                -coarray-num-procs 0
+  no   -coarray-config-file                  -convert big_endian
+       -cross_reference                      -D __INTEL_COMPILER=1210
+       -D __unix__                           -D __unix
+       -D __linux__                          -D __linux
+       -D __gnu_linux__                      -D unix
+       -D linux                              -D __ELF__
+       -D __x86_64                           -D __x86_64__
+       -D _MT                                -D __INTEL_COMPILER_BUILD_DATE=20120612
+       -D _OPENMP=201107                     -D __pentium4
+       -D __pentium4__                       -D __tune_pentium4__
+       -D __SSE2__                           -D __SSE3__
+       -D __SSSE3__                          -D __SSE4_1__
+       -D __SSE4_2__                         -D __SSE__
+       -D __MMX__                            -D __AVX__
+       -double_size 64                  no   -d_lines
+  no   -Qdyncom                              -error_limit 30
+  no   -f66                             no   -f77rtl
+  no   -fast                                 -fpscomp nofilesfromcmd
+       -fpscomp nogeneral                    -fpscomp noioformat
+       -fpscomp noldio_spacing               -fpscomp nologicals
+       -fixed                           no   -fpconstant
+
+Page 11          Source Listing                  VFMAIN
+2014-07-14 18:39                                 VFMAIN_0006.f
+
+       -fpe3                                 -fprm nearest
+  no   -ftz                                  -fp_model noprecise
+       -fp_model fast                        -fp_model nostrict
+       -fp_model nosource                    -fp_model nodouble
+       -fp_model noextended                  -fp_model novery_fast
+       -fp_model noexcept                    -fp_model nono_except
+       -fp_modbits nofp_contract             -fp_modbits nono_fp_contract
+       -fp_modbits nofenv_access             -fp_modbits nono_fenv_access
+       -fp_modbits nocx_limited_range        -fp_modbits nono_cx_limited_range
+       -fp_modbits noprec_div                -fp_modbits nono_prec_div
+       -fp_modbits noprec_sqrt               -fp_modbits nono_prec_sqrt
+       -fp_modbits noftz                     -fp_modbits nono_ftz
+       -fp_modbits nointrin_limited_range       -fp_modbits nono_intrin_limited_range
+       -fp_modbits notrunc_compares          -fp_modbits nono_trunc_compares
+       -fp_modbits noieee_nan_compares       -fp_modbits nono_ieee_nan_compares
+       -fp_modbits honor_f32_conversion       -fp_modbits nono_honor_f32_conversion
+       -fp_modbits honor_f64_conversion       -fp_modbits nono_honor_f64_conversion
+       -fp_modbits nono_x87_copy             -fp_modbits nono_no_x87_copy
+       -fp_modbits noexception_semantics       -fp_modbits nono_exception_semantics
+       -fp_modbits noprecise_libm_functions       -fp_modbits nono_precise_libm_functions
+       -heap_arrays 0                   no   -threadprivate_compat
+       -g0                                   -iface nomixed_str_len_arg
+       -iface nono_mixed_str_len_arg    no   -intconstant
+       -integer_size 32                 no   -mixed_str_len_arg
+  no   -module                               -names lowercase
+  no   -noinclude                            -openmp
+       -O0                              no   -pad_source
+       -real_size 64                    no   -recursive
+       -reentrancy threaded             no   -sharable_localsaves
+       -vec=simd                             -show noinclude
+       -show map                             -show options
+  no   -syntax_only                     no   -threadcom
+  no   -U                               no   -vms
+       -w noall                              -w nonone
+       -w alignments                         -w noargument_checking
+       -w nodeclarations                     -w general
+       -w noignore_bounds                    -w noignore_loc
+       -w nointerfaces                       -w notruncated_source
+       -w uncalled                           -w uninitialized
+       -w nounused                           -w usage
+
+       -includepath : /usrx/local/intel/composerxe/tbb/include/,/usr/include/,./,/usrx/local/intel/composerxe/mkl/include/intel64/lp64/,
+           /usrx/local/intel/composerxe/mkl/include/,/usrx/local/intel/composerxe/mkl/include/,/usrx/local/intel/composerxe/tbb/include/,
+           /gpfs/tp1/usrx/local/intel/composer_xe_2011_sp1.11.339/compiler/include/intel64/,/gpfs/tp1/usrx/local/intel/composer_xe_2011_sp1.11.339/compiler/include/,
+           /usr/local/include/,/usr/lib/gcc/x86_64-redhat-linux/4.4.7/include/,/usr/include/,/usr/include/
+       -list filename : VFMAIN_0006.lst
+       -o    filename : none
+
+COMPILER: Intel(R) Fortran 12.1-2100

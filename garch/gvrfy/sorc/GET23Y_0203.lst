@@ -1,0 +1,313 @@
+Page 1           Source Listing                  GET23Y
+2014-07-14 18:39                                 GET23Y_0203.f
+
+      1       subroutine get23y(glb,ifd,ilev,imon,ihr,ifh)
+      2 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+      3 C                                                                    C
+      4 C     USAGE: READ CLIMATE PRESSURE FILE ON GRIB FORMAT               C
+      5 C            WITH GRID POINT VALUE                                   C
+      6 C     CODE : F77 on IBMSP --- Yuejian Zhu (05/10/99)                 C
+      7 C                                                                    C
+      8 C     INPUT: unblocked GRIB FORMAT PRESSURE FILE                     C
+      9 C                                                                    C
+     10 C     OUTPUT:2.5*2.5 degree grid resolution cover global ( 144*73 )  C
+     11 C                                                                    C
+     12 C     Arguments:                                                     C
+     13 C               1. glb(144,73)                                       C
+     14 C               2. ifd ( field ID input )                            C
+     15 C               3. ilev ( level input )                              C
+     16 C               4. imon ( month input )                              C
+     17 C               5. ihr  ( hour of date input )                       C
+     18 C               6. ifh  ( forecast hours at ihr )                    C
+     19 C                                                                    C
+     20 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+     21 C
+     22 c--------+----------+----------+----------+----------+----------+----------+--
+     23       parameter(mdata=20000)
+     24       dimension kpds(25),kgds(22),jpds(25),jgds(22)
+     25       dimension glb(144,73),data(mdata)               
+     26       dimension jlev(17)                 
+     27       character*2  cim(12)
+     28       character*90 cpgb,cpgi    
+     29       logical*1   lb(mdata)
+     30 c     adding more levels for climatology
+     31 c      (11/18/2002 -Yuejian Zhu)
+     32 c     data      jlev/1000, 850, 700, 500, 400, 300, 
+     33 c    .                250, 200, 150, 100,  75,  50/
+     34       data      jlev/1000, 925, 850, 700, 600, 500, 400, 300, 
+     35      .                250, 200, 150, 100,  70,  50,  30,  20,  10/
+     36       data      cim /'01','02','03','04','05','06',
+     37      .               '07','08','09','10','11','12'/
+     38       data      cpgb/'/ensemble/noscrub/emc.enspara/cdas/pgb.f00'/
+     39       data      cpgi/'/ensemble/noscrub/emc.enspara/cdas/pgb.f00'/
+     40 c
+     41       glb=-9999.99
+     42       if (imon.gt.12.or.imon.lt.1) goto 992
+     43       do j = 1, 17
+     44       if (jlev(j).eq.ilev) goto 100
+     45       enddo
+     46       goto 993
+     47   100 continue
+     48 c     cpgb(21:22)=cim(imon)
+     49 c     cpgi(21:22)=cim(imon)
+     50       cpgb(33:34)=cim(imon)
+     51       cpgi(33:34)=cim(imon)
+     52       itime=ihr+ifr
+     53       if (mod(itime,24).eq.0) then
+     54 c        cpgb(23:26)='.00Z'
+     55 c        cpgi(23:32)='.00Z.index'
+     56          cpgb(35:38)='.00Z'
+     57          cpgi(35:44)='.00Z.index'
+
+Page 2           Source Listing                  GET23Y
+2014-07-14 18:39                                 GET23Y_0203.f
+
+     58       else if (mod(itime,24).eq.12) then
+     59 c        cpgb(23:26)='.12Z'
+     60 c        cpgi(23:32)='.12Z.index'
+     61          cpgb(35:38)='.12Z'
+     62          cpgi(35:44)='.12Z.index'
+     63 c adding two more optional, Y. Zhu ( 06/06/2001 )
+     64       else if (mod(itime,24).eq.06) then
+     65 c        cpgb(23:26)='.06Z'
+     66 c        cpgi(23:32)='.06Z.index'
+     67          cpgb(35:38)='.06Z'
+     68          cpgi(35:44)='.06Z.index'
+     69       else if (mod(itime,24).eq.18) then
+     70 c        cpgb(23:26)='.18Z'
+     71 c        cpgi(23:32)='.18Z.index'
+     72          cpgb(35:38)='.18Z'
+     73          cpgi(35:44)='.18Z.index'
+     74       else
+     75          goto 994
+     76       endif
+     77 c     print *, cpgb(1:26)   
+     78 c     print *, cpgi(1:32)   
+     79 c     call baopenr(11,cpgb(1:26),iretb)
+     80 c     call baopenr(21,cpgi(1:32),ireti)
+     81       print *, cpgb(1:38)   
+     82       print *, cpgi(1:44)   
+     83       call baopenr(11,cpgb(1:45),iretb)
+     84       call baopenr(21,cpgi(1:51),ireti)
+     85       print *, '=== Read 23 years CDAS/Reanl Climatology data ==='
+     86       print *, ' Month =',imon,' fld =',ifd,' level =',ilev,
+     87      .         ' itime =',itime    
+     88       j       = -1
+     89       jpds    = -1
+     90       jgds    = -1
+     91       jpds(5) = ifd
+     92       jpds(6) = 100
+     93       jpds(7) = ilev
+     94       jpds(9) = imon
+     95       call getgb(11,21,mdata,j,jpds,jgds,
+     96      .           kf,k,kpds,kgds,lb,data,iret)
+     97       if(iret.eq.0) then
+     98         call baclose(11,iret)
+     99         call baclose(21,iret)
+    100         call grange(kf,lb,data,dmin,dmax)
+    101         write(*,886)
+    102         write(*,888) k,(kpds(i),i=5,11),kpds(14),kf,dmin,dmax
+    103         do i = 1, 144
+    104          do j = 1, 73
+    105           ij=(j-1)*144 + i
+    106           glb(i,j)=data(ij)
+    107          enddo
+    108         enddo
+    109       else
+    110         goto 991
+    111       endif
+    112       return
+    113   886 format('  Irec  pds5 pds6 pds7 pds8 pds9 pd10 pd11 pd14',
+    114      .       '  ndata  Maximun    Minimum')
+
+Page 3           Source Listing                  GET23Y
+2014-07-14 18:39                                 GET23Y_0203.f
+
+    115   888 format (i4,2x,8i5,i8,2g12.4)
+    116   991 print *, ' there is a problem to open pgb file !!! '
+    117       call baclose(11,iret)
+    118       call baclose(21,iret)
+    119       return
+    120   992 print *, ' month =',imon,' is not acceptable, please check!!!'
+    121       return
+    122   993 print *, ' level =',ilev,' is not acceptable, please check!!!'
+    123       return
+    124   994 print *, 'The ihr =',ihr,' ifh =',ifh,' for your request'        
+    125       print *, 'You must specify ihr+ifr either match 00 or 12 !!!! '
+    126       return
+    127       end
+
+
+ENTRY POINTS
+
+  Name               
+                     
+ get23y_             
+
+
+SYMBOL CROSS REFERENCE
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ 100                        Label  47                                                             44                                
+ 886                        Label  113                                                            101                               
+ 888                        Label  115                                                            102                               
+ 991                        Label  116                                                            110                               
+ 992                        Label  120                                                            42                                
+ 993                        Label  122                                                            46                                
+ 994                        Label  124                                                            75                                
+ BACLOSE                    Subr   98                                                             98,99,117,118                     
+ BAOPENR                    Subr   83                                                             83,84                             
+ CIM                        Local  27       CHAR            2     1     12                        36,50,51                          
+ CPGB                       Local  28       CHAR            90          scalar                    38,50,56,61,67,72,81,83           
+ CPGI                       Local  28       CHAR            90          scalar                    39,51,57,62,68,73,82,84           
+ DATA                       Local  25       R(8)            8     1     20000                     96,100,106                        
+ DMAX                       Local  100      R(8)            8           scalar                    100,102                           
+ DMIN                       Local  100      R(8)            8           scalar                    100,102                           
+ GET23Y                     Subr   1                                                                                                
+ GETGB                      Subr   95                                                             95                                
+ GLB                        Dummy  1        R(8)            8     2     10512    ARG,INOUT        41,106                            
+ GRANGE                     Subr   100                                                            100                               
+ I                          Local  102      I(4)            4           scalar                    102,103,105,106                   
+ IFD                        Dummy  1        I(4)            4           scalar   ARG,INOUT        86,91                             
+ IFH                        Dummy  1        I(4)            4           scalar   ARG,INOUT        124                               
+ IFR                        Local  52       I(4)            4           scalar                    52                                
+ IHR                        Dummy  1        I(4)            4           scalar   ARG,INOUT        52,124                            
+ IJ                         Local  105      I(4)            4           scalar                    105,106                           
+ ILEV                       Dummy  1        I(4)            4           scalar   ARG,INOUT        44,86,93,122                      
+ IMON                       Dummy  1        I(4)            4           scalar   ARG,INOUT        42,50,51,86,94,120                
+ IRET                       Local  96       I(4)            4           scalar                    96,97,98,99,117,118               
+ IRETB                      Local  83       I(4)            4           scalar                    83                                
+ IRETI                      Local  84       I(4)            4           scalar                    84                                
+ ITIME                      Local  52       I(4)            4           scalar                    52,53,58,64,69,87                 
+
+Page 4           Source Listing                  GET23Y
+2014-07-14 18:39 Symbol Table                    GET23Y_0203.f
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ J                          Local  43       I(4)            4           scalar                    43,44,88,95,104,105,106           
+ JGDS                       Local  24       I(4)            4     1     22                        90,95                             
+ JLEV                       Local  26       I(4)            4     1     17                        34,44                             
+ JPDS                       Local  24       I(4)            4     1     25                        89,91,92,93,94,95                 
+ K                          Local  96       I(4)            4           scalar                    96,102                            
+ KF                         Local  96       I(4)            4           scalar                    96,100,102                        
+ KGDS                       Local  24       I(4)            4     1     22                        96                                
+ KPDS                       Local  24       I(4)            4     1     25                        96,102                            
+ LB                         Local  29       L(1)            1     1     20000                     96,100                            
+ MDATA                      Param  23       I(4)            4           scalar                    25,29,95                          
+ MOD                        Func   53                                   scalar                    53,58,64,69                       
+
+Page 5           Source Listing                  GET23Y
+2014-07-14 18:39 Subprograms/Common Blocks       GET23Y_0203.f
+
+
+
+SUBPROGRAMS/COMMON BLOCKS
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ GET23Y                     Subr   1                                                                                                
+
+COMPILER OPTIONS BEING USED
+
+       -align nocommons                      -align nodcommons
+       -align noqcommons                     -align records
+       -align nosequence                     -align norec1byte
+       -align norec2byte                     -align norec4byte
+       -align norec8byte                     -align norec16byte
+       -altparam                             -assume accuracy_sensitive
+       -assume nobscc                        -assume nobuffered_io
+       -assume byterecl                      -assume cc_omp
+       -assume nocstring                     -assume nodummy_aliases
+       -assume nofpe_summary                 -assume noieee_fpe_flags
+       -assume nominus0                      -assume noold_boz
+       -assume old_unit_star                 -assume old_ldout_format
+       -assume noold_logical_ldio            -assume old_maxminloc
+       -assume old_xor                       -assume protect_constants
+       -assume noprotect_parens              -assume split_common
+       -assume source_include                -assume nostd_intent_in
+       -assume nostd_mod_proc_name           -assume norealloc_lhs
+       -assume underscore                    -assume no2underscores
+       -auto                            no   -auto_scalar
+  no   -bintext                              -ccdefault default
+       -check noargs                         -check noarg_temp_created
+       -check nobounds                       -check noformat
+       -check nooutput_conversion            -check nooverflow
+       -check nopointers                     -check power
+       -check noshape                        -check nounderflow
+       -check nouninitialized                -coarray-num-procs 0
+  no   -coarray-config-file                  -convert big_endian
+       -cross_reference                      -D __INTEL_COMPILER=1210
+       -D __unix__                           -D __unix
+       -D __linux__                          -D __linux
+       -D __gnu_linux__                      -D unix
+       -D linux                              -D __ELF__
+       -D __x86_64                           -D __x86_64__
+       -D _MT                                -D __INTEL_COMPILER_BUILD_DATE=20120612
+       -D _OPENMP=201107                     -D __pentium4
+       -D __pentium4__                       -D __tune_pentium4__
+       -D __SSE2__                           -D __SSE3__
+       -D __SSSE3__                          -D __SSE4_1__
+       -D __SSE4_2__                         -D __SSE__
+       -D __MMX__                            -D __AVX__
+       -double_size 64                  no   -d_lines
+  no   -Qdyncom                              -error_limit 30
+  no   -f66                             no   -f77rtl
+  no   -fast                                 -fpscomp nofilesfromcmd
+       -fpscomp nogeneral                    -fpscomp noioformat
+       -fpscomp noldio_spacing               -fpscomp nologicals
+       -fixed                           no   -fpconstant
+
+Page 6           Source Listing                  GET23Y
+2014-07-14 18:39                                 GET23Y_0203.f
+
+       -fpe3                                 -fprm nearest
+  no   -ftz                                  -fp_model noprecise
+       -fp_model fast                        -fp_model nostrict
+       -fp_model nosource                    -fp_model nodouble
+       -fp_model noextended                  -fp_model novery_fast
+       -fp_model noexcept                    -fp_model nono_except
+       -fp_modbits nofp_contract             -fp_modbits nono_fp_contract
+       -fp_modbits nofenv_access             -fp_modbits nono_fenv_access
+       -fp_modbits nocx_limited_range        -fp_modbits nono_cx_limited_range
+       -fp_modbits noprec_div                -fp_modbits nono_prec_div
+       -fp_modbits noprec_sqrt               -fp_modbits nono_prec_sqrt
+       -fp_modbits noftz                     -fp_modbits nono_ftz
+       -fp_modbits nointrin_limited_range       -fp_modbits nono_intrin_limited_range
+       -fp_modbits notrunc_compares          -fp_modbits nono_trunc_compares
+       -fp_modbits noieee_nan_compares       -fp_modbits nono_ieee_nan_compares
+       -fp_modbits honor_f32_conversion       -fp_modbits nono_honor_f32_conversion
+       -fp_modbits honor_f64_conversion       -fp_modbits nono_honor_f64_conversion
+       -fp_modbits nono_x87_copy             -fp_modbits nono_no_x87_copy
+       -fp_modbits noexception_semantics       -fp_modbits nono_exception_semantics
+       -fp_modbits noprecise_libm_functions       -fp_modbits nono_precise_libm_functions
+       -heap_arrays 0                   no   -threadprivate_compat
+       -g0                                   -iface nomixed_str_len_arg
+       -iface nono_mixed_str_len_arg    no   -intconstant
+       -integer_size 32                 no   -mixed_str_len_arg
+  no   -module                               -names lowercase
+  no   -noinclude                            -openmp
+       -O0                              no   -pad_source
+       -real_size 64                    no   -recursive
+       -reentrancy threaded             no   -sharable_localsaves
+       -vec=simd                             -show noinclude
+       -show map                             -show options
+  no   -syntax_only                     no   -threadcom
+  no   -U                               no   -vms
+       -w noall                              -w nonone
+       -w alignments                         -w noargument_checking
+       -w nodeclarations                     -w general
+       -w noignore_bounds                    -w noignore_loc
+       -w nointerfaces                       -w notruncated_source
+       -w uncalled                           -w uninitialized
+       -w nounused                           -w usage
+
+       -includepath : /usrx/local/intel/composerxe/tbb/include/,/usr/include/,./,/usrx/local/intel/composerxe/mkl/include/intel64/lp64/,
+           /usrx/local/intel/composerxe/mkl/include/,/usrx/local/intel/composerxe/mkl/include/,/usrx/local/intel/composerxe/tbb/include/,
+           /gpfs/tp1/usrx/local/intel/composer_xe_2011_sp1.11.339/compiler/include/intel64/,/gpfs/tp1/usrx/local/intel/composer_xe_2011_sp1.11.339/compiler/include/,
+           /usr/local/include/,/usr/lib/gcc/x86_64-redhat-linux/4.4.7/include/,/usr/include/,/usr/include/
+       -list filename : GET23Y_0203.lst
+       -o    filename : none
+
+COMPILER: Intel(R) Fortran 12.1-2100

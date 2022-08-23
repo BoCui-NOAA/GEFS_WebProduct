@@ -1,0 +1,213 @@
+DSET ^grads_EXPID.dat
+options sequential template
+undef -9.9999E+2
+TITLE NONE
+*
+XDEF 16 LINEAR  1.0 1.0
+*
+YDEF 4 LINEAR  1.0 1.0
+*
+ZDEF 1 LEVELS 500 
+*
+TDEF 365 LINEAR CYMDH 1dy
+*                          RNCEP    14m    CMC    ECMWF
+VARS 99
+ac1   01   99   NH Z AC of MRF      MRF    CTL     CTL
+ac2   01   99   NH Z AC of CTL      CTL    4pA    12Zpa   
+ac3   01   99   NH Z AC of 00Zpa    10mpa  4pB    11tsa   
+ac4   01   99   NH Z AC of AVN      14mpa  5pr    10tms   
+ac5   01   99   NH Z AC of 12Zpa    15mpa  16pa   11tms   
+ac6   01   99   NH Z AC of 23tsa    16mpa  17tsa  10Med   
+ac7   01   99   NH Z AC of 00Zap    10map  8ems   11Med   
+ac8   01   99   NH Z AC of 12Zap    14map  10ems   none   
+ac9   01   99   NH Z AC of 20ems    15map  16ems   none  
+ac10  01   99   NH Z AC of 23tms    16map  17tms   none  
+ac11  01   99   NH Z AC of 23Med    10med  Meds    none   
+ac12  01   99   NH Z AC of 00Med    14med  None    none   
+ac13  01   99   NH Z AC of 12Med    15med  None    none   
+ac14  01   99   SH Z AC of MRF                     
+ac15  01   99   SH Z AC of CTL                     
+ac16  01   99   SH Z AC of 00Zpa                   
+ac17  01   99   SH Z AC of AVN                     
+ac18  01   99   SH Z AC of 12Zpa                   
+ac19  01   99   SH Z AC of 23tsa                   
+ac20  01   99   SH Z AC of 00Zap                   
+ac21  01   99   SH Z AC of 12Zap                   
+ac22  01   99   SH Z AC of 20ems                   
+ac23  01   99   SH Z AC of 23tms                   
+ac24  01   99   SH Z AC of 23Med                   
+ac25  01   99   SH Z AC of 00Med                   
+ac26  01   99   SH Z AC of 12Med                   
+ac27  01   99   TR Z AC of MRF                     
+ac28  01   99   TR Z AC of CTL                     
+ac29  01   99   TR Z AC of 00Zpa                   
+ac30  01   99   TR Z AC of AVN                     
+ac31  01   99   TR Z AC of 12Zpa                   
+ac32  01   99   TR Z AC of 23tsa                   
+ac33  01   99   TR Z AC of 00Zap                   
+ac34  01   99   TR Z AC of 12Zap                   
+ac35  01   99   TR Z AC of 20ems                   
+ac36  01   99   TR Z AC of 23tms                   
+ac37  01   99   TR Z AC of 23Med                   
+ac38  01   99   TR Z AC of 00Med                   
+ac39  01   99   TR Z AC of 12Med                   
+rm1   01   99   NH Z RMS of MRF                     
+rm2   01   99   NH Z RMS of CTL                     
+rm3   01   99   NH Z RMS of 00Zpa                   
+rm4   01   99   NH Z RMS of AVN                     
+rm5   01   99   NH Z RMS of 12Zpa                   
+rm6   01   99   NH Z RMS of 23tsa                   
+rm7   01   99   NH Z RMS of 00Zap                   
+rm8   01   99   NH Z RMS of 12Zap                   
+rm9   01   99   NH Z RMS of 20ems                   
+rm10  01   99   NH Z RMS of 23tms                   
+rm11  01   99   NH Z RMS of 23Med                   
+rm12  01   99   NH Z RMS of 00Med                   
+rm13  01   99   NH Z RMS of 12Med                   
+rm14  01   99   SH Z RMS of MRF                     
+rm15  01   99   SH Z RMS of CTL                     
+rm16  01   99   SH Z RMS of 00Zpa                   
+rm17  01   99   SH Z RMS of AVN                     
+rm18  01   99   SH Z RMS of 12Zpa                   
+rm19  01   99   SH Z RMS of 23tsa                   
+rm20  01   99   SH Z RMS of 00Zap                   
+rm21  01   99   SH Z RMS of 12Zap                   
+rm22  01   99   SH Z RMS of 20ems                   
+rm23  01   99   SH Z RMS of 23tms                   
+rm24  01   99   SH Z RMS of 23Med                   
+rm25  01   99   SH Z RMS of 00Med                   
+rm26  01   99   SH Z RMS of 12Med                   
+rm27  01   99   TR Z RMS of MRF                     
+rm28  01   99   TR Z RMS of CTL                     
+rm29  01   99   TR Z RMS of 00Zpa                   
+rm30  01   99   TR Z RMS of AVN                     
+rm31  01   99   TR Z RMS of 12Zpa                   
+rm32  01   99   TR Z RMS of 23tsa                   
+rm33  01   99   TR Z RMS of 00Zap                   
+rm34  01   99   TR Z RMS of 12Zap                   
+rm35  01   99   TR Z RMS of 20ems                   
+rm36  01   99   TR Z RMS of 23tms                   
+rm37  01   99   TR Z RMS of 23Med                   
+rm38  01   99   TR Z RMS of 00Med                   
+rm39  01   99   TR Z RMS of 12Med                   
+sp1   01   99   NH Z Spread of 23, 1st 10(T00Z), 2nd 10 and 20  members
+sp2   01   99   SH Z Spread of 23, 1st 10(T00Z), 2nd 10 and 20  members
+sp3   01   99   TR Z Spread of 23, 1st 10(T00Z), 2nd 10 and 20  members
+tg1   01   99   NH Z Talagrand of T23m                                    
+tg2   01   99   SH Z Talagrand of T23m 
+tg3   01   99   TR Z Talagrand of T23m
+tg4   01   99   NH Z Talagrand of T23m (T-1)                                    
+tg5   01   99   SH Z Talagrand of T23m (T-1)
+tg6   01   99   TR Z Talagrand of T23m (T-1)
+tg7   01   99   NH Z Talagrand of T10m                                    
+tg8   01   99   SH Z Talagrand of T10m 
+tg9   01   99   TR Z Talagrand of T10m
+tg10  01   99   NH Z Talagrand of T10m (T-1)                                    
+tg11  01   99   SH Z Talagrand of T10m (T-1)
+tg12  01   99   TR Z Talagrand of T10m (T-1)
+tg13  01   99   NH Z Talagrand of T10m                                    
+tg14  01   99   SH Z Talagrand of T10m 
+tg15  01   99   TR Z Talagrand of T10m
+tg16  01   99   NH Z Talagrand of T10m (T-1)                                    
+tg17  01   99   SH Z Talagrand of T10m (T-1)
+tg18  01   99   TR Z Talagrand of T10m (T-1)
+ENDVARS
+5ac1   01   99   NH Z AC of MRF      MRF    CTL     CTL
+5ac2   01   99   NH Z AC of CTL      CTL    4pA    12Zpa   
+5ac3   01   99   NH Z AC of 00Zpa    10mpa  4pB    11tsa   
+5ac4   01   99   NH Z AC of AVN      14mpa  5pr    10tms   
+5ac5   01   99   NH Z AC of 12Zpa    15mpa  16pa   11tms   
+5ac6   01   99   NH Z AC of 23tsa    16mpa  17tsa  10Med   
+5ac7   01   99   NH Z AC of 00Zap    10map  8ems   11Med   
+5ac8   01   99   NH Z AC of 12Zap    14map  10ems   none   
+5ac9   01   99   NH Z AC of 20ems    15map  16ems   none  
+5ac10  01   99   NH Z AC of 23tms    16map  17tms   none  
+5ac11  01   99   NH Z AC of 23Med    10med  Meds    none   
+5ac12  01   99   NH Z AC of 00Med    14med  None    none   
+5ac13  01   99   NH Z AC of 12Med    15med  None    none   
+5ac14  01   99   SH Z AC of MRF                     
+5ac15  01   99   SH Z AC of CTL                     
+5ac16  01   99   SH Z AC of 00Zpa                   
+5ac17  01   99   SH Z AC of AVN                     
+5ac18  01   99   SH Z AC of 12Zpa                   
+5ac19  01   99   SH Z AC of 23tsa                   
+5ac20  01   99   SH Z AC of 00Zap                   
+5ac21  01   99   SH Z AC of 12Zap                   
+5ac22  01   99   SH Z AC of 20ems                   
+5ac23  01   99   SH Z AC of 23tms                   
+5ac24  01   99   SH Z AC of 23Med                   
+5ac25  01   99   SH Z AC of 00Med                   
+5ac26  01   99   SH Z AC of 12Med                   
+5ac27  01   99   TR Z AC of MRF                     
+5ac28  01   99   TR Z AC of CTL                     
+5ac29  01   99   TR Z AC of 00Zpa                   
+5ac30  01   99   TR Z AC of AVN                     
+5ac31  01   99   TR Z AC of 12Zpa                   
+5ac32  01   99   TR Z AC of 23tsa                   
+5ac33  01   99   TR Z AC of 00Zap                   
+5ac34  01   99   TR Z AC of 12Zap                   
+5ac35  01   99   TR Z AC of 20ems                   
+5ac36  01   99   TR Z AC of 23tms                   
+5ac37  01   99   TR Z AC of 23Med                   
+5ac38  01   99   TR Z AC of 00Med                   
+5ac39  01   99   TR Z AC of 12Med                   
+5rm1   01   99   NH Z RMS of MRF                     
+5rm2   01   99   NH Z RMS of CTL                     
+5rm3   01   99   NH Z RMS of 00Zpa                   
+5rm4   01   99   NH Z RMS of AVN                     
+5rm5   01   99   NH Z RMS of 12Zpa                   
+5rm6   01   99   NH Z RMS of 23tsa                   
+5rm7   01   99   NH Z RMS of 00Zap                   
+5rm8   01   99   NH Z RMS of 12Zap                   
+5rm9   01   99   NH Z RMS of 20ems                   
+5rm10  01   99   NH Z RMS of 23tms                   
+5rm11  01   99   NH Z RMS of 23Med                   
+5rm12  01   99   NH Z RMS of 00Med                   
+5rm13  01   99   NH Z RMS of 12Med                   
+5rm14  01   99   SH Z RMS of MRF                     
+5rm15  01   99   SH Z RMS of CTL                     
+5rm16  01   99   SH Z RMS of 00Zpa                   
+5rm17  01   99   SH Z RMS of AVN                     
+5rm18  01   99   SH Z RMS of 12Zpa                   
+5rm19  01   99   SH Z RMS of 23tsa                   
+5rm20  01   99   SH Z RMS of 00Zap                   
+5rm21  01   99   SH Z RMS of 12Zap                   
+5rm22  01   99   SH Z RMS of 20ems                   
+5rm23  01   99   SH Z RMS of 23tms                   
+5rm24  01   99   SH Z RMS of 23Med                   
+5rm25  01   99   SH Z RMS of 00Med                   
+5rm26  01   99   SH Z RMS of 12Med                   
+5rm27  01   99   TR Z RMS of MRF                     
+5rm28  01   99   TR Z RMS of CTL                     
+5rm29  01   99   TR Z RMS of 00Zpa                   
+5rm30  01   99   TR Z RMS of AVN                     
+5rm31  01   99   TR Z RMS of 12Zpa                   
+5rm32  01   99   TR Z RMS of 23tsa                   
+5rm33  01   99   TR Z RMS of 00Zap                   
+5rm34  01   99   TR Z RMS of 12Zap                   
+5rm35  01   99   TR Z RMS of 20ems                   
+5rm36  01   99   TR Z RMS of 23tms                   
+5rm37  01   99   TR Z RMS of 23Med                   
+5rm38  01   99   TR Z RMS of 00Med                   
+5rm39  01   99   TR Z RMS of 12Med                   
+5sp1   01   99   NH Z Spread of 23, 1st 10(T00Z), 2nd 10 and 20  members
+5sp2   01   99   SH Z Spread of 23, 1st 10(T00Z), 2nd 10 and 20  members
+5sp3   01   99   TR Z Spread of 23, 1st 10(T00Z), 2nd 10 and 20  members
+5tg1   01   99   NH Z Talagrand of T23m                                    
+5tg2   01   99   SH Z Talagrand of T23m 
+5tg3   01   99   TR Z Talagrand of T23m
+5tg4   01   99   NH Z Talagrand of T23m (T-1)                               
+5tg5   01   99   SH Z Talagrand of T23m (T-1)
+5tg6   01   99   TR Z Talagrand of T23m (T-1)
+5tg7   01   99   NH Z Talagrand of T10m                                    
+5tg8   01   99   SH Z Talagrand of T10m 
+5tg9   01   99   TR Z Talagrand of T10m
+5tg10  01   99   NH Z Talagrand of T10m (T-1)                              
+5tg11  01   99   SH Z Talagrand of T10m (T-1)
+5tg12  01   99   TR Z Talagrand of T10m (T-1)
+5tg13  01   99   NH Z Talagrand of T10m                                    
+5tg14  01   99   SH Z Talagrand of T10m 
+5tg15  01   99   TR Z Talagrand of T10m
+5tg16  01   99   NH Z Talagrand of T10m (T-1)                                 
+5tg17  01   99   SH Z Talagrand of T10m (T-1)
+5tg18  01   99   TR Z Talagrand of T10m (T-1)

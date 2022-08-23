@@ -1,0 +1,1 @@
+llq -f %jn %id %o %st %dd %nh | grep "  R  "

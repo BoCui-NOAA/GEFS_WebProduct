@@ -1,0 +1,9 @@
+
+if [ $# -lt 6 ]; then
+   echo "Usage:$0 need 6 arguments"
+   echo "fnl-name, output-name, ymdh, fhr, kpds5 and kpds7"
+   exit 8
+fi
+
+ymdh=`echo $3 | cut -c3-10`
+wgrib $GLOBAL/ens/$1 | grep "$ymdh" | wgrib -i $GLOBAL/ens/$1 -grib -o $2

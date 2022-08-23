@@ -1,0 +1,6 @@
+if [ $# -lt 1 ]; then
+    echo "$0 need experiment ID"
+    exit 8
+fi
+
+ls -l /ptmp/wx20rw/o/com/gens/ge*$1/*

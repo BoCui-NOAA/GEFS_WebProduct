@@ -1,0 +1,63 @@
+### example 1
+#!/bin/sh
+#@ wall_clock_limit=29:00:00
+#@ requirements = Feature == "beta"
+#@ job_type = parallel
+#@ output = /ptmp/wx20yz/garch.o$(jobid)
+#@ error = /ptmp/wx20yz/garch.e$(jobid)
+#@ total_tasks = 30
+#@ node = 30
+#@ node_usage = shared
+#@ network.MPI=switch,not_shared,us
+#@ class = dev
+#@ account_no = GEN-MTN
+#
+#@ queue
+#
+
+#set -x
+
+cd $SHOME/$LOGNAME/gvrfy/scripts;pwd
+
+if [ "$CDATE" -eq "" ]; then
+   echo "No data for CDATE, please check"
+   exit 8
+fi
+
+YMD=`echo $CDATE | cut -c1-8`
+YMDM1=`$nhours -24 $CDATE | cut -c1-8`
+YMDM2=`$nhours -48 $CDATE | cut -c1-8`
+YMDM3=`$nhours -72 $CDATE | cut -c1-8`
+   
+cd $SHOME/$LOGNAME/gvrfy/scripts;pwd
+export VFSDAY=$YMD\00
+export VFEDAY=$YMD\00
+VRFY_PUB_ST.sh vrfy_table_STs
+
+vrfyex_16_ecm_ens.sh $YMD e 12
+vrfyex_16_ncep_ens.sh $YMD c 00
+
+### RUN multi-center analysis comparison and consistency
+cd $SHOME/$LOGNAME/gvrfy/scripts;pwd
+vrfyex_16_cons.sh $YMD   s 00 24
+vrfyex_16_cons.sh $YMD   m 00 24
+vrfyex_16_cons.sh $YMD   n 00 24
+vrfyex_16_cons.sh $YMDM1 e 12 24
+
+echo "++++++ Submite the VRFY04 job ++++++"
+export CDATE=$CDATE
+out=$GTMP/$LOGNAME/VRFY_04.$CDATE
+job=$SHOME/$LOGNAME/gvrfy/scripts/VRFY_04
+sub -e CDATE -j VRFY04 -o $out  $job
+
+### RUN ecm(ini)-gfs(fcst) and gfs(ini)-ecm(fcst) verification
+
+cd $SHOME/$LOGNAME/gvrfy/scripts;pwd
+export NCDATE=$YMDM1\12
+VRFY_PUB_gfs_ecm.sh vrfy_table_gfs_ecm
+VRFY_PUB_gfs_ecm_canl.sh vrfy_table_gfs_ecm_canl
+ 
+export NCDATE=$YMDM2\12
+VRFY_PUB_ecm_gfs.sh vrfy_table_ecm_gfs
+VRFY_PUB_ecm_gfs_canl.sh vrfy_table_ecm_gfs_canl
+

@@ -1,0 +1,24 @@
+SHELL=  /bin/sh
+CMD=	/gpfs/dell2/emc/verification/noscrub/Yan.Luo/save/evrfy/exec/VRFY_14m_f20060530
+FC=     ifort
+FOPTS= -r8 -convert big_endian
+#FFLAGS= -mkl -openmp -p -r8 -O0 -i4 -traceback -assume byterecl -list
+#FFLAGS= -O2 -convert big_endian -traceback -mkl -openmp -assume byterecl -list
+FFLAGS=  -qopenmp -mkl
+LOPTS=
+INCS=
+SRCS=   VRFY_14m_f20060530.f GETANL_new.f GET23Y.f GRANGE.f ACGRID.f GRD2WV.f LATWMN.f \
+        SUMWAV.f RMSAWT.f GETCAC.f GETGRB_14m.f FGROUP.f TALAGR_14m.f PUTGRB.f \
+        FPTALA_14m.f STATES.f SORTMM.f SPREAD_14m.f OUTLIE.f SORT.f 
+#LIBS=   /nwprod/lib/libbacio_v2.0.1_8.a \
+#        /nwprod/lib/libw3nco_v2.0.6_d.a \
+#        /nwprod/lib/libip_v2.0.0_d.a \
+#        /nwprod/lib/libsp_v2.0.1_d.a
+LIBS=   /gpfs/dell1/nco/ops/nwprod/lib/bacio/v2.0.2/ips/18.0.1/libbacio_v2.0.2_4.a \
+        /gpfs/dell1/nco/ops/nwprod/lib/w3nco/v2.0.6/ips/18.0.1/libw3nco_v2.0.6_d.a \
+        /gpfs/dell1/nco/ops/nwprod/lib/ip/v3.0.1/ips/18.0.1/libip_v3.0.1_d.a \
+        /gpfs/dell1/nco/ops/nwprod/lib/sp/v2.0.2/ips/18.0.1/libsp_v2.0.2_d.a
+$(CMD): $(SRCS)
+	$(FC) $(FOPTS) $(FFLAGS) $(SRCS) $(LIBS) -o $(CMD)
+vrfy0:	$(SRCS)
+	$(FC) $(FOPTS) $(FFLAGS) $(SRCS) /nwprod/w3lib90/iplib_4_604 $(LIBS) -o vrfy0

@@ -1,0 +1,6 @@
+&namin 
+cfile(1)='/ptmp/wx20is/scoresd3/SCORESd13.99011300',
+ifile(1)=0,
+ofile='AVGd13.dat',
+idays=1
+/

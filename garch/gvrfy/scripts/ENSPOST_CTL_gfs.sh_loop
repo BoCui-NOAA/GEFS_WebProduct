@@ -1,0 +1,110 @@
+
+#set -xS
+
+## This scripts to convert Dick's experiment data to ours
+##  --- Yuejian Zhu (12/06/2004)
+NDATE=/nwprod/util/exec/ndate
+stdate=2016081600
+eddate=2016083100
+
+while [ $stdate -le $eddate ]; do
+
+export CDATE=$stdate
+export yyyymm=`echo $CDATE | cut -c1-6`
+export dd=`echo $CDATE | cut -c7-8`
+export hh=`echo $CDATE | cut -c9-10`
+
+TMPDIR=$PTMP/Yan.Luo/ENS_gfs$hh
+
+if [ ! -s $TMPDIR ]; then
+mkdir -p $TMPDIR
+fi
+cd $TMPDIR;pwd;rm $TMPDIR/*
+
+ndir=/ensemble/noscrub/Yan.Luo/ENS_GFSx
+#export DFROM=/com2/gens/prod                
+export DFROM=/gpfs/gp2/ptmp/emc.enspara/xz/ugcs/post/gsm
+export CNVGRIB=/nwprod/util/exec/cnvgrib21_gfs
+set -x
+
+for dd in $dd                                     
+do
+
+for hh in $hh   
+do
+
+>$ndir/z500.$yyyymm$dd$hh
+>$ndir/z1000.$yyyymm$dd$hh
+>$ndir/t850.$yyyymm$dd$hh
+>$ndir/t2m.$yyyymm$dd$hh
+>$ndir/u10m.$yyyymm$dd$hh
+>$ndir/v10m.$yyyymm$dd$hh
+>$ndir/u200.$yyyymm$dd$hh
+>$ndir/v200.$yyyymm$dd$hh
+>$ndir/u850.$yyyymm$dd$hh
+>$ndir/v850.$yyyymm$dd$hh
+
+ num=c00  
+
+>ge$num.z500
+>ge$num.z1000
+>ge$num.t850
+>ge$num.t2m 
+>ge$num.u10m
+>ge$num.v10m
+>ge$num.u200
+>ge$num.v200
+>ge$num.u850
+>ge$num.v850
+
+#for fhr in 00 12 24 36 48 60 72 84 96 108 120 132 144 156 168 180 192 204 216 228 240 252 264 276 288 300 312 324 336 348 360 372 384 
+for fhr in `seq 00 12 720`
+do
+
+ case $fhr in
+ 0) fhr=00;;
+ esac
+
+ file0=$DFROM/gefs.$yyyymm$dd/$hh/master/ge$num.t${hh}z.master.grb2f$fhr 
+#file0=$DFROM/gfs.r80567.$yyyymm$dd/gfs.t${hh}z.master.grbf$fhr
+ file0=$DFROM/r80567.$yyyymm$dd.gfs/gfs.t${hh}z.master.grbf$fhr
+ file=ge$num.t${hh}z.pgrbaf$fhr 
+# $CNVGRIB -g21 $file0  $file
+ $COPYGB -xg2 $file0 xge$num.t${hh}z.pgrbf$fhr
+
+wgrib xge$num.t${hh}z.pgrbf$fhr | grep ":HGT:" | grep "500 mb" | wgrib -i xge$num.t${hh}z.pgrbf$fhr -grib -append -o ge$num.z500 
+wgrib xge$num.t${hh}z.pgrbf$fhr | grep ":HGT:" | grep "1000 mb" | wgrib -i xge$num.t${hh}z.pgrbf$fhr -grib -append -o ge$num.z1000
+wgrib xge$num.t${hh}z.pgrbf$fhr | grep ":UGRD:" | grep "850 mb" | wgrib -i xge$num.t${hh}z.pgrbf$fhr -grib -append -o ge$num.u850 
+wgrib xge$num.t${hh}z.pgrbf$fhr | grep ":VGRD:" | grep "850 mb" | wgrib -i xge$num.t${hh}z.pgrbf$fhr -grib -append -o ge$num.v850 
+wgrib xge$num.t${hh}z.pgrbf$fhr | grep ":UGRD:" | grep "200 mb" | wgrib -i xge$num.t${hh}z.pgrbf$fhr -grib -append -o ge$num.u200 
+wgrib xge$num.t${hh}z.pgrbf$fhr | grep ":VGRD:" | grep "200 mb" | wgrib -i xge$num.t${hh}z.pgrbf$fhr -grib -append -o ge$num.v200 
+wgrib xge$num.t${hh}z.pgrbf$fhr | grep ":TMP:" | grep "850 mb" | wgrib -i xge$num.t${hh}z.pgrbf$fhr -grib -append -o ge$num.t850 
+wgrib xge$num.t${hh}z.pgrbf$fhr | grep ":TMP:" | grep ":2 m " | wgrib -i xge$num.t${hh}z.pgrbf$fhr -grib -append -o ge$num.t2m  
+wgrib xge$num.t${hh}z.pgrbf$fhr | grep ":UGRD:" | grep ":10 m " | wgrib -i xge$num.t${hh}z.pgrbf$fhr -grib -append -o ge$num.u10m 
+wgrib xge$num.t${hh}z.pgrbf$fhr | grep ":VGRD:" | grep ":10 m " | wgrib -i xge$num.t${hh}z.pgrbf$fhr -grib -append -o ge$num.v10m  
+
+rm xge*f$fhr
+
+done   #for fhr
+
+cat ge$num.z500 >>$ndir/z500.$yyyymm$dd$hh
+cat ge$num.z1000 >>$ndir/z1000.$yyyymm$dd$hh
+cat ge$num.u850 >>$ndir/u850.$yyyymm$dd$hh
+cat ge$num.v850 >>$ndir/v850.$yyyymm$dd$hh
+cat ge$num.u200 >>$ndir/u200.$yyyymm$dd$hh
+cat ge$num.v200 >>$ndir/v200.$yyyymm$dd$hh
+cat ge$num.t850 >>$ndir/t850.$yyyymm$dd$hh
+cat ge$num.t2m >>$ndir/t2m.$yyyymm$dd$hh
+cat ge$num.u10m >>$ndir/u10m.$yyyymm$dd$hh
+cat ge$num.v10m >>$ndir/v10m.$yyyymm$dd$hh
+
+rm ge*.z500* ge*.z1000* ge*.t850* ge*.u200 ge*.v200 ge*.u850 ge*.v850 ge*.t2m* ge*.u10m* ge*.v10m*
+
+done   #for hh
+
+done   #for dd
+
+  stdate=`$NDATE +24 $stdate`
+
+done
+

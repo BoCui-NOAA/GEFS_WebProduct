@@ -1,0 +1,213 @@
+Page 1           Source Listing                  GRD2WV
+2014-07-14 18:39                                 GRD2WV.f
+
+      1       subroutine grd2wv(f,a,b)
+      2 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+      3 C                                                                    C
+      4 C     USAGE: TRANSFER GRID TO WAVE COEFF.                            C
+      5 C            HERE TRUNCATE TO FIRST 20 WAVES                         C
+      6 C     CODE : F77 on IBMSP --- Yuejian Zhu (05/10/99)                 C
+      7 C                                                                    C
+      8 C     INPUT: f(144)                                                  C
+      9 C                                                                    C
+     10 C     OUTPUT: a(20) real part                                        C
+     11 C             b(21) image part                                       C
+     12 C                                                                    C
+     13 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+     14       dimension f(144),a(20),b(21),w(200)
+     15       complex   w,c
+     16       nn  = 145
+     17       n2  = 20
+     18       an  = nn/2
+     19       nn2 = nn-1
+     20       pi  = 3.14159265897932
+     21       cnst= 1./an
+     22       ang = cnst * pi
+     23       ca  = cos(ang)
+     24       sa  = sin(ang)
+     25       c   = cmplx(ca,sa)
+     26       w(1)= (1.0,0.0)
+     27       do j = 2,nn
+     28          w(j) = c*w(j-1)
+     29       enddo     
+     30       do k = 1,n2
+     31          a(k) = 0.0
+     32          b(k) = 0.0
+     33          do j = 1,nn2
+     34             i  = mod(k*(j-1),nn2) + 1
+     35             ca = real(w(i))
+     36             sa = aimag(w(i))
+     37             a(k) = f(j)*sa + a(k)
+     38             b(k) = f(j)*ca + b(k)
+     39          enddo   
+     40          a(k) = a(k)/an
+     41          b(k) = b(k)/an
+     42       enddo    
+     43       xbar=0.0
+     44       do i=1,nn2
+     45          xbar=xbar+f(i)/nn2
+     46       enddo    
+     47       b(n2+1)=xbar
+     48       return
+     49       end
+
+Page 2           Source Listing                  GRD2WV
+2014-07-14 18:39 Entry Points                    GRD2WV.f
+
+
+
+ENTRY POINTS
+
+  Name               
+                     
+ grd2wv_             
+
+
+SYMBOL CROSS REFERENCE
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ A                          Dummy  1        R(8)            8     1     20       ARG,INOUT        31,37,40                          
+ AIMAG                      Func   36                                   scalar                    36                                
+ AN                         Local  18       R(8)            8           scalar                    18,21,40,41                       
+ ANG                        Local  22       R(8)            8           scalar                    22,23,24                          
+ B                          Dummy  1        R(8)            8     1     21       ARG,INOUT        32,38,41,47                       
+ C                          Local  15       C(16)           16          scalar                    25,28                             
+ CA                         Local  23       R(8)            8           scalar                    23,25,35,38                       
+ CMPLX                      Func   25                                   scalar                    25                                
+ CNST                       Local  21       R(8)            8           scalar                    21,22                             
+ COS                        Func   23                                   scalar                    23                                
+ F                          Dummy  1        R(8)            8     1     144      ARG,INOUT        37,38,45                          
+ GRD2WV                     Subr   1                                                                                                
+ I                          Local  34       I(4)            4           scalar                    34,35,36,44,45                    
+ J                          Local  27       I(4)            4           scalar                    27,28,33,34,37,38                 
+ K                          Local  30       I(4)            4           scalar                    30,31,32,34,37,38,40,41           
+ MOD                        Func   34                                   scalar                    34                                
+ N2                         Local  17       I(4)            4           scalar                    17,30,47                          
+ NN                         Local  16       I(4)            4           scalar                    16,18,19,27                       
+ NN2                        Local  19       I(4)            4           scalar                    19,33,34,44,45                    
+ PI                         Local  20       R(8)            8           scalar                    20,22                             
+ REAL                       Func   35                                   scalar                    35                                
+ SA                         Local  24       R(8)            8           scalar                    24,25,36,37                       
+ SIN                        Func   24                                   scalar                    24                                
+ W                          Local  14       C(16)           16    1     200                       26,28,35,36                       
+ XBAR                       Local  43       R(8)            8           scalar                    43,45,47                          
+
+Page 3           Source Listing                  GRD2WV
+2014-07-14 18:39                                 GRD2WV.f
+
+     50 
+
+Page 4           Source Listing                  GRD2WV
+2014-07-14 18:39 Subprograms/Common Blocks       GRD2WV.f
+
+
+
+SUBPROGRAMS/COMMON BLOCKS
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ GRD2WV                     Subr   1                                                                                                
+
+COMPILER OPTIONS BEING USED
+
+       -align nocommons                      -align nodcommons
+       -align noqcommons                     -align records
+       -align nosequence                     -align norec1byte
+       -align norec2byte                     -align norec4byte
+       -align norec8byte                     -align norec16byte
+       -altparam                             -assume accuracy_sensitive
+       -assume nobscc                        -assume nobuffered_io
+       -assume byterecl                      -assume cc_omp
+       -assume nocstring                     -assume nodummy_aliases
+       -assume nofpe_summary                 -assume noieee_fpe_flags
+       -assume nominus0                      -assume noold_boz
+       -assume old_unit_star                 -assume old_ldout_format
+       -assume noold_logical_ldio            -assume old_maxminloc
+       -assume old_xor                       -assume protect_constants
+       -assume noprotect_parens              -assume split_common
+       -assume source_include                -assume nostd_intent_in
+       -assume nostd_mod_proc_name           -assume norealloc_lhs
+       -assume underscore                    -assume no2underscores
+       -auto                            no   -auto_scalar
+  no   -bintext                              -ccdefault default
+       -check noargs                         -check noarg_temp_created
+       -check nobounds                       -check noformat
+       -check nooutput_conversion            -check nooverflow
+       -check nopointers                     -check power
+       -check noshape                        -check nounderflow
+       -check nouninitialized                -coarray-num-procs 0
+  no   -coarray-config-file                  -convert big_endian
+       -cross_reference                      -D __INTEL_COMPILER=1210
+       -D __unix__                           -D __unix
+       -D __linux__                          -D __linux
+       -D __gnu_linux__                      -D unix
+       -D linux                              -D __ELF__
+       -D __x86_64                           -D __x86_64__
+       -D _MT                                -D __INTEL_COMPILER_BUILD_DATE=20120612
+       -D _OPENMP=201107                     -D __pentium4
+       -D __pentium4__                       -D __tune_pentium4__
+       -D __SSE2__                           -D __SSE3__
+       -D __SSSE3__                          -D __SSE4_1__
+       -D __SSE4_2__                         -D __SSE__
+       -D __MMX__                            -D __AVX__
+       -double_size 64                  no   -d_lines
+  no   -Qdyncom                              -error_limit 30
+  no   -f66                             no   -f77rtl
+  no   -fast                                 -fpscomp nofilesfromcmd
+       -fpscomp nogeneral                    -fpscomp noioformat
+       -fpscomp noldio_spacing               -fpscomp nologicals
+       -fixed                           no   -fpconstant
+
+Page 5           Source Listing                  GRD2WV
+2014-07-14 18:39                                 GRD2WV.f
+
+       -fpe3                                 -fprm nearest
+  no   -ftz                                  -fp_model noprecise
+       -fp_model fast                        -fp_model nostrict
+       -fp_model nosource                    -fp_model nodouble
+       -fp_model noextended                  -fp_model novery_fast
+       -fp_model noexcept                    -fp_model nono_except
+       -fp_modbits nofp_contract             -fp_modbits nono_fp_contract
+       -fp_modbits nofenv_access             -fp_modbits nono_fenv_access
+       -fp_modbits nocx_limited_range        -fp_modbits nono_cx_limited_range
+       -fp_modbits noprec_div                -fp_modbits nono_prec_div
+       -fp_modbits noprec_sqrt               -fp_modbits nono_prec_sqrt
+       -fp_modbits noftz                     -fp_modbits nono_ftz
+       -fp_modbits nointrin_limited_range       -fp_modbits nono_intrin_limited_range
+       -fp_modbits notrunc_compares          -fp_modbits nono_trunc_compares
+       -fp_modbits noieee_nan_compares       -fp_modbits nono_ieee_nan_compares
+       -fp_modbits honor_f32_conversion       -fp_modbits nono_honor_f32_conversion
+       -fp_modbits honor_f64_conversion       -fp_modbits nono_honor_f64_conversion
+       -fp_modbits nono_x87_copy             -fp_modbits nono_no_x87_copy
+       -fp_modbits noexception_semantics       -fp_modbits nono_exception_semantics
+       -fp_modbits noprecise_libm_functions       -fp_modbits nono_precise_libm_functions
+       -heap_arrays 0                   no   -threadprivate_compat
+       -g0                                   -iface nomixed_str_len_arg
+       -iface nono_mixed_str_len_arg    no   -intconstant
+       -integer_size 32                 no   -mixed_str_len_arg
+  no   -module                               -names lowercase
+  no   -noinclude                            -openmp
+       -O0                              no   -pad_source
+       -real_size 64                    no   -recursive
+       -reentrancy threaded             no   -sharable_localsaves
+       -vec=simd                             -show noinclude
+       -show map                             -show options
+  no   -syntax_only                     no   -threadcom
+  no   -U                               no   -vms
+       -w noall                              -w nonone
+       -w alignments                         -w noargument_checking
+       -w nodeclarations                     -w general
+       -w noignore_bounds                    -w noignore_loc
+       -w nointerfaces                       -w notruncated_source
+       -w uncalled                           -w uninitialized
+       -w nounused                           -w usage
+
+       -includepath : /usrx/local/intel/composerxe/tbb/include/,/usr/include/,./,/usrx/local/intel/composerxe/mkl/include/intel64/lp64/,
+           /usrx/local/intel/composerxe/mkl/include/,/usrx/local/intel/composerxe/mkl/include/,/usrx/local/intel/composerxe/tbb/include/,
+           /gpfs/tp1/usrx/local/intel/composer_xe_2011_sp1.11.339/compiler/include/intel64/,/gpfs/tp1/usrx/local/intel/composer_xe_2011_sp1.11.339/compiler/include/,
+           /usr/local/include/,/usr/lib/gcc/x86_64-redhat-linux/4.4.7/include/,/usr/include/,/usr/include/
+       -list filename : GRD2WV.lst
+       -o    filename : none
+
+COMPILER: Intel(R) Fortran 12.1-2100

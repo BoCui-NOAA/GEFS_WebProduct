@@ -1,0 +1,14 @@
+
+========= Useful Imformation for IBM SP user ============
+
+Command: ndate    ---> /nwprod/util/exec/ndate
+         nhour    ---> /nwprod/util/exec/nhour
+         grbindex ---> /nwprod/util/exec/grbindex
+         copygb   ---> /nwprod/util/exec/copygb
+         wgrib    ---> /nwprod/util/exec/wgrib
+ 
+         valid    ---> /user/g01/wx20yz/bin/valid_date.sh
+         cos2native -> /user/g01/wx20yz/bin/cos2native 
+
+Documentation: inf---> /user/g01/wx20yz/sbin/inf.doc
+          

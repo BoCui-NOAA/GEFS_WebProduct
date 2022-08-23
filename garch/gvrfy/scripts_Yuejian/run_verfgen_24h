@@ -1,0 +1,464 @@
+#!/bin/sh
+set -x
+WRKDIR=/gpfstmp/wx22yl/verif/scores
+export WRKDIR
+#
+# The following line is to appease dumpjb:
+export TMPDIR=/gpfstmp/wx22yl
+
+if ! [[ -d $WRKDIR/vsdb ]]; then
+mkdir -p $WRKDIR/vsdb
+fi
+cd $WRKDIR
+
+ARCHIVE=/ptmp/wx22yl/verif/archive/
+export ARCHIVE
+
+# note that unlike most verif and stage4 scripts, this one uses local time.
+# optional input parameter (for retro runs): yyyymmdd
+
+# Also, this is NOT under C-shell!  :-(
+#
+if [ $# -eq 0 ]; then
+  day=`date +%Y%m%d`
+else
+  day=$1
+  echo 'Have you removed the old tar_vsdb file?'
+fi
+
+FYR=`echo $day | cut -c1-4`
+YR=`echo $day | cut -c3-4`
+MN=`echo $day | cut -c5-6`
+DA=`echo $day | cut -c7-8`
+
+echo ${FYR}${MN}${DA} > inback
+
+#
+#  backdate to day=-1,-2,...
+#
+/nfsuser/g01/wx20mb/verif/exec/backdate.x < inback
+
+cp /nfsuser/g01/wx20mb/verif/fix/regmask_211 .
+cp /nfsuser/g01/wx20mb/verif/fix/regmask_212 .
+
+#
+#  maintain a precip data archive
+#
+ORAFILE=usa-dlyprcp-`cut -c 1-8 outdate.dm00`
+PCPANA=/ptmp/wx22yl/verif/archive/pcpana/`cut -c 1-8 outdate.dm00`12.g211
+PCP212=/ptmp/wx22yl/verif/archive/pcpana/`cut -c 1-8 outdate.dm00`12.g212
+DATE=`cut -c 1-8 outdate.dm00`12
+DATEYMD=`cut -c 1-8 outdate.dm00`
+DATESAV=`cut -c 1-8 outdate.dm00`
+DATEYM=`cut -c 1-6 outdate.dm00`
+
+
+rm 000.ibm
+
+sh /nwprod/ush/dumpjb ${DATE} 2 000 011
+
+if ! [[ -e 000.ibm ]]
+then
+ftp -n ftp << EOF
+user anonymous wx22yl@
+cd /pub/gcp/precip/katz
+get $ORAFILE
+bye
+EOF
+fi
+
+if [[ -e 000.ibm ]]
+then
+cat > input_get <<EOF7
+$ORAFILE
+EOF7
+
+ln -s -f 000.ibm fort.20
+/nfsuser/g01/wx20mb/verif/exec/getppt24h.x < input_get
+
+fi
+
+#
+#  analyze precip data
+#
+cat > input_ana <<EOF
+$ORAFILE
+$PCPANA
+EOF
+
+/nfsuser/g01/wx20mb/verif/exec/pcpana_211.x < input_ana
+
+cat > input_ana <<EOF
+$ORAFILE
+$PCP212
+EOF
+
+/nfsuser/g01/wx20mb/verif/exec/pcpana_212.x < input_ana
+
+
+cat > input_gen <<EOF
+model_info_file
+$PCPANA
+$ORAFILE
+EOF
+
+cat > model_info_file <<EOF1
+avn
+-1
+4
+0
+6
+12
+18
+6
+6
+84
+bmj32
+-1
+1
+0
+3
+3
+36
+cmc
+-1
+2
+0
+12
+24
+24
+48
+cmcglb
+-1
+2
+0
+12
+24
+24
+84
+dwd
+-1
+2
+0
+12
+24
+24
+48
+ecmwf
+-1
+1
+12
+24
+72
+72
+edas
+-1
+1
+12
+3
+3
+24
+edasl
+-1
+1
+12
+3
+3
+24
+edasv
+-1
+1
+12
+3
+3
+24
+edasx
+-1
+1
+12
+3
+3
+24
+edasx12
+-1
+1
+12
+3
+3
+24
+edasy
+-1
+1
+12
+3
+3
+24
+eta
+-1
+2
+0
+12
+12
+12
+84
+etal
+-1
+2
+0
+12
+12
+12
+60
+etasmal
+-1
+2
+0
+12
+12
+12
+36
+etav
+-1
+2
+0
+12
+12
+12
+60
+etax
+-1
+2
+0
+12
+12
+12
+84
+etax12
+-1
+2
+0
+12
+12
+12
+84
+etay
+-1
+2
+0
+12
+12
+12
+60
+kfsmal
+-1
+2
+0
+12
+3
+3
+36
+kftest
+-1
+2
+0
+12
+3
+3
+48
+mm5kf
+-1
+1
+0
+24
+24
+36
+mrf
+-1
+1
+0
+12
+12
+84
+mrfx
+-1
+1
+0
+12
+12
+84
+mrfy
+-1
+1
+0
+12
+12
+84
+ngm
+104
+2
+0
+12
+12
+12
+48
+ukmo
+-1
+2
+0
+12
+12
+12
+72
+eta10e
+-1
+2
+0
+12
+12
+12
+48
+eta10w
+-1
+2
+0
+12
+12
+12
+48
+EOF1
+
+
+##/nfsuser/g01/wx22yl/verif/exec/verfgen.x < input_gen
+/nfsuser/g01/wx20mb/verif/exec/verfgen.x < input_gen
+
+
+compress $ORAFILE
+cp ${ORAFILE}.Z ${ARCHIVE}/precip/
+
+cat > input_gen <<EOF
+model_info_file
+$PCP212
+none
+EOF
+
+##/nfsuser/g01/wx22yl/verif/exec/verfgen.x < input_gen
+/nfsuser/g01/wx20mb/verif/exec/verfgen.x < input_gen
+
+cp $PCPANA .
+cp $PCP212 .
+
+cd vsdb
+tar -cvf /gpfstmp/wx22yl/verif/tar_vsdb.${DATEYMD} *
+
+if [[ -e ${ARCHIVE}tar_${DATEYMD}.vsdb ]]
+then
+tar -rvf ${ARCHIVE}tar_${DATEYMD}.vsdb *
+fi
+
+if ! [[ -e ${ARCHIVE}tar_${DATEYMD}.vsdb ]]
+then
+tar -cvf ${ARCHIVE}tar_${DATEYMD}.vsdb *
+fi
+
+cd ..
+rm *wgts
+rm -rf vsdb
+mkdir vsdb
+
+ORAFILE=usa-dlyprcp-`cut -c 1-8 outdate.dm03`
+PCPANA=/ptmp/wx22yl/verif/archive/pcpana/`cut -c 1-8 outdate.dm03`12.g211
+PCP212=/ptmp/wx22yl/verif/archive/pcpana/`cut -c 1-8 outdate.dm03`12.g212
+DATE=`cut -c 1-8 outdate.dm03`12
+DATEYMD=`cut -c 1-8 outdate.dm03`
+DATEYM=`cut -c 1-6 outdate.dm03`
+
+rm 000.ibm
+
+sh /nwprod/ush/dumpjb ${DATE} 2 000 011
+
+if ! [[ -e 000.ibm ]]
+then
+ftp -n ftp << EOF
+user anonymous wx22yl@
+cd /pub/gcp/precip/katz
+get $ORAFILE
+bye
+EOF
+fi
+
+if [[ -e 000.ibm ]]
+then
+cat > input_get <<EOF7
+$ORAFILE
+EOF7
+
+ln -s -f 000.ibm fort.20
+/nfsuser/g01/wx20mb/verif/exec/getppt24h.x < input_get
+
+fi
+
+#
+#  analyze precip data
+#
+cat > input_ana <<EOF
+$ORAFILE
+$PCPANA
+EOF
+
+/nfsuser/g01/wx20mb/verif/exec/pcpana_211.x < input_ana
+
+cat > input_ana <<EOF
+$ORAFILE
+$PCP212
+EOF
+
+/nfsuser/g01/wx20mb/verif/exec/pcpana_212.x < input_ana
+
+
+cat > input_gen <<EOF
+model_info_file
+$PCPANA
+$ORAFILE
+EOF
+
+##/nfsuser/g01/wx22yl/verif/exec/verfgen.x < input_gen
+/nfsuser/g01/wx20mb/verif/exec/verfgen.x < input_gen
+
+
+compress $ORAFILE
+cp ${ORAFILE}.Z ${ARCHIVE}precip/
+
+cat > input_gen <<EOF
+model_info_file
+$PCP212
+none
+EOF
+
+##/nfsuser/g01/wx22yl/verif/exec/verfgen.x < input_gen
+/nfsuser/g01/wx20mb/verif/exec/verfgen.x < input_gen
+
+cp $PCPANA .
+cp $PCP212 .
+
+#
+# put grib files into archive
+#
+
+if [[ -e ${ARCHIVE}tar_${DATESAV}.grib ]]
+then
+tar -rvf ${ARCHIVE}tar_${DATESAV}.grib *g211* *g212*
+fi
+
+if ! [[ -e ${ARCHIVE}tar_${DATESAV}.grib ]]
+then
+tar -cvf ${ARCHIVE}tar_${DATESAV}.grib *g211* *g212*
+fi
+
+
+cd vsdb
+tar -cvf /gpfstmp/wx22yl/verif/tar_vsdb.${DATEYMD} *
+
+cd ..
+rm *wgts
+rm -rf vsdb
+exit

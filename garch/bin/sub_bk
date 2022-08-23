@@ -1,0 +1,125 @@
+#!/bin/sh
+usage="\
+Usage:  $0 [options] executable [args]\n\
+      where the options are:
+      -e envars         copy comma-separated environment variables\n\
+      -i                append standard input to command file\n\
+      -j jobname        specify jobname (default: executable basename)\n\
+      -n                write command file to stdout rather than submitting it\n\
+      -o output         specify output file (default: jobname.out)\n\
+      -p procs[/nodes]  number of MPI tasks and nodes (defaults: serial and procs)\n\
+      -q queue          queue name (default: 1)\n\
+      -u userid         userid to run under (default: self)\n\
+      -w when           when to run, either in yyyymmddhh[mm] or +hh[mm] format (default: now)\n\
+Function:  This command submits a job to the batch queue."
+subcmd="$*"
+stdin=NO
+nosub=NO
+envars=""
+jobname=""
+output=""
+procs=0
+queue=1
+userid=""
+when=""
+while getopts e:ij:no:p:q:u:w: opt;do
+  case $opt in
+    e) envars="$OPTARG";;
+    i) stdin=YES;;
+    j) jobname=$OPTARG;;
+    n) nosub=YES;;
+    o) output=$OPTARG;;
+    p) procs=$(echo $OPTARG/|cut -d/ -f1);nodes=$(echo $OPTARG/|cut -d/ -f2);;
+    q) queue=$OPTARG;;
+    u) userid=$OPTARG;;
+    w) when=$OPTARG;;
+    \?) echo $0: invalid option >&2;echo "$usage" >&2;exit 1;;
+  esac
+done
+shift $(($OPTIND-1))
+if [[ $# -eq 0 ]];then
+  echo $0: missing executable name >&2;echo "$usage" >&2;exit 1
+fi
+exec=$1
+shift
+args="$*"
+bn=$(basename $exec)
+jobname=${jobname:-$bn}
+output=${output:-$jobname.out}
+whoami=$(whoami)
+DTMP=/nfstmp/$whoami
+. /u/wx20mi/bin/mkdata
+cfile=$DATA/sub$$
+> $cfile
+echo "#@ job_name = $jobname" >>$cfile
+if [[ $procs -gt 0 ]];then
+  [[ -n $nodes ]] || nodes=$procs
+  echo "#@ job_type = parallel"
+  echo "#@ total_tasks = $procs"
+  echo "#@ node = $nodes"
+  echo "#@ network.MPI = switch,shared,us"
+fi >>$cfile
+echo "#@ class = $queue" >>$cfile
+if [[ $queue = dev || $queue = prod ]];then
+  echo "#@ preferences = Feature == \"$queue\""
+fi >>$cfile
+if [[ -n $when ]];then
+  whena=$when
+  if [[ $(echo $when|cut -c1) = + ]];then
+    hr=$(echo $when|cut -c2-3)
+    mn=$(echo $when|cut -c4-5)
+    [[ -n $mn ]] || mn=00
+    now=$(date -u +"%Y%m%d%H%M")
+    ((mn+=$(echo $now|cut -c11-12)))
+    [[ $mn -gt 60 ]] && ((hr+=1)) && ((mn-=60))
+    [[ $mn -lt 10 ]] && mn=0$mn
+    whena=$(ndate +$hr $(echo $now|cut -c1-10))$mn
+  fi
+  yr=$(echo $whena|cut -c3-4)
+  mo=$(echo $whena|cut -c5-6)
+  dy=$(echo $whena|cut -c7-8)
+  hr=$(echo $whena|cut -c9-10)
+  mn=$(echo $whena|cut -c11-12)
+  [[ -n $mn ]] || mn=00
+  echo "#@ startdate = $mo/$dy/$yr $hr:$mn"
+  export TZ=GMT
+fi >>$cfile
+if [[ -n $envars ]];then
+  echo "#@ environment = $(echo $envars|sed 's/^/$/;s/ /,/g;s/,/;$/g')"
+fi >>$cfile
+echo "#@ executable = $exec" >>$cfile
+if [[ -n $args ]];then
+  echo "#@ arguments = $args"
+fi >>$cfile
+echo "#@ output = $output" >>$cfile
+echo "#@ error = $output" >>$cfile
+echo "#@ notification = never" >>$cfile
+if [[ $stdin = YES ]];then
+  cat
+fi >>$cfile
+echo "#@ queue" >>$cfile
+if [[ $nosub = YES ]];then
+  cat $cfile
+  exit
+fi
+ofile=$DATA/subout$$
+>$ofile
+chmod 777 $ofile
+if [[ $userid = "" && $(hostname|cut -c1-5) = nco[12]n ]];then
+  llsubmit $cfile >$ofile
+  rc=$?
+else
+  envs=""
+  if [[ -n $envars ]];then
+    for v in $(echo $envars|tr , ' ');do eval envs=\"$envs $v=\$$v\";done
+  fi
+  #rc=$(rsh asp -l ${userid:-$whoami} "cd $(pwd);$envs llsubmit $cfile >$ofile;echo \$?")
+fi
+cat $ofile
+if [[ -w $SUBLOG ]];then
+  jobn=$(head -n1 $ofile|cut -d\" -f2)
+  date -u +"%Y%m%d%H%M%S : $subcmd : $jobn" >>$SUBLOG
+fi
+rm $cfile $ofile
+[[ $MKDATA = YES ]] && rmdir $DATA
+exit $rc

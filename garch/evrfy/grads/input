@@ -1,0 +1,7 @@
+&namin 
+cfile(1)='/global/evfscores/SCORESs.2002050100',
+ifile(1)=1,
+ofile='grads_s.dat',
+idays=1
+ifdays=6
+/

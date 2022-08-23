@@ -1,0 +1,12 @@
+SHELL=  /bin/sh
+CMD=	readinq_16d
+FC=     xlf_r
+FOPTS=  -qsmp=noauto
+LOPTS=
+INCS=
+SRCS=	READINQ_16d.f 
+LIBS=	-l essl
+$(CMD): $(SRCS)
+	$(FC) $(FOPTS) $(SRCS) $(LIBS) -o $(CMD)
+readin:	$(SRCS)
+	$(FC) $(FOPTS) $(SRCS) /nwprod/w3lib90/iplib_4_604 $(LIBS) -o readin

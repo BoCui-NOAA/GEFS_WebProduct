@@ -1,0 +1,58 @@
+
+### example to submit gridtobs job
+#!/bin/sh
+#@ wall_clock_limit=00:40:00
+#@ requirements = Feature == "beta"
+#@ job_type = parallel
+#@ output = /tmp/wx20yz/fits.o$(jobid)
+#@ error = /tmp/wx20yz/fits.e$(jobid)
+#@ total_tasks = 30
+#@ node = 30
+#@ node_usage = shared
+#@ network.MPI=switch,not_shared,us
+#@ class = dev
+#
+#@ queue
+#
+
+set -x
+YYYY=1998
+YY=`echo $YYYY | cut -c3-4`
+
+mkdir /ptmp/wx20yz/cray3
+
+cd /ptmp/wx20yz/cray3
+
+STYMD=$YY\0501
+EDYMD=$YY\0531
+
+while [ $STYMD -le $EDYMD ]; do
+
+filename=tar$STYMD\00
+
+ftp -vi 192.58.232.23 <<EOF
+bin
+cd /dmf_archive/cray3/dm/wd20yz/ENSB
+get $filename
+EOF
+
+ftphsmuser put nmcens /ptmp/wx20yz/cray3 $filename
+
+rm /ptmp/wx20yz/cray3/$filename
+
+filename=tar$STYMD\12
+
+ftp -vi 192.58.232.23 <<EOF
+bin
+cd /dmf_archive/cray3/dm/wd20yz/ENSB
+get $filename
+EOF
+
+ftphsmuser put nmcens /ptmp/wx20yz/cray3 $filename
+
+rm /ptmp/wx20yz/cray3/$filename
+
+STYMD=`ndate +24 19$STYMD\00 | cut -c3-8`
+
+done
+

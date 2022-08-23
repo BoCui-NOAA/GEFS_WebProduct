@@ -1,0 +1,47 @@
+
+### example to submit gridtobs job
+#!/bin/sh
+#@ wall_clock_limit=03:40:00
+#@ requirements = Feature == "beta"
+#@ group = devonprod
+#@ job_type = parallel
+#@ output = /tmp/Yan.Luo/fits.o$(jobid)
+#@ error = /tmp/Yan.Luo/fits.e$(jobid)
+#@ total_tasks = 30
+#@ node = 30
+#@ node_usage = shared
+#@ network.MPI=switch,not_shared,us
+#@ class = dev
+#@ account_no = GEN-MTN
+#
+#@ queue
+#
+
+
+### to verify one forecast (back to 16 days ago)
+
+export SHOME=/lfs/h2/emc/vpppg/save
+export nhours=/apps/ops/prod/nco/core/prod_util.v2.0.5/exec/ndate
+
+CDATE=$CDATE
+STYMD=`$nhours -384 $CDATE | cut -c1-8`
+STYMDP=`$nhours -240 $CDATE | cut -c1-8`
+EDYMDP=`$nhours -48 $CDATE | cut -c1-8`
+YMDHP00=$CDATE
+
+cd $SHOME/Yan.Luo/evrfy/scripts
+
+### using new replaceed scripts since 08/05/2002
+### adding 40 ensemble mean contours in the maps.
+#OUTLIER.sh $STYMDP $EDYMDP 
+### stopped by 07/20/2006
+### RESTARTED by 12/11/2007
+OUTLIER_new.sh $STYMDP $EDYMDP 
+
+### adding CMC ensemble verification since 02/01/2002
+#VRFY_CMC_16m_f20060530.sh $STYMD $STYMD
+VRFYEX_ECM.sh $STYMD $STYMD
+
+### updated since 05/30/2006 for 14 members (new ensemble message)
+VRFY_NCEP_14m_f20060530.sh $STYMD $STYMD
+VRFY_NCEP_20m_f20070530.sh $STYMD $STYMD

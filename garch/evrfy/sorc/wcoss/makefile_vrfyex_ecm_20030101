@@ -1,0 +1,25 @@
+SHELL=  /bin/sh
+CMD=	../exec/vrfy_ecm_20030101
+FC=     ifort
+FOPTS= -r8 -convert big_endian
+#FFLAGS= -mkl -openmp -p -r8 -O0 -i4 -traceback -assume byterecl -list
+#FFLAGS= -O2 -convert big_endian -traceback -mkl -openmp -assume byterecl -list
+FFLAGS=  -openmp -mkl
+LOPTS=
+INCS=
+SRCS=   VRFYEN_ECM_20030101.f GETANL_ecm.f GET23Y.f GRANGE.f ACGRID.f \
+        GRD2WV.f LATWMN.f \
+        SUMWAV.f RMSAWT.f GETCAC.f GETGRB_ecm.f FGROUP.f TALAGR_ecm.f \
+        FPTALA_ecm.f STATES.f SORTMM.f SPREAD_ecm.f
+#LIBS=   /nwprod/lib/libbacio_v2.0.1_8.a \
+#        /nwprod/lib/libw3nco_v2.0.6_d.a \
+#        /nwprod/lib/libip_v2.0.0_d.a \
+#        /nwprod/lib/libsp_v2.0.1_d.a
+LIBS=   /nwprod/lib/libbacio_4.a \
+        /nwprod/lib/libw3nco_d.a \
+        /nwprod/lib/libip_d.a \
+        /nwprod/lib/libsp_d.a
+$(CMD): $(SRCS)
+	$(FC) $(FOPTS) $(FFLAGS) $(SRCS) $(LIBS) -o $(CMD)
+vrfy0:	$(SRCS)
+	$(FC) $(FOPTS) $(FFLAGS) $(SRCS) /nwprod/w3lib90/iplib_4_604 $(LIBS) -o vrfy0

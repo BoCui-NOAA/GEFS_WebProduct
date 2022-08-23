@@ -1,0 +1,176 @@
+Page 1           Source Listing                  GRANGE
+2014-07-14 18:39                                 GRANGE.f
+
+      1       subroutine grange(n,ld,d,dmin,dmax)
+      2 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+      3 C                                                                    C
+      4 C     USAGE: DETERMINE THE MAXIMUM AND MINIMUM VALUES OF ARRAY       C
+      5 C     CODE : F77 on IBMSP --- Yuejian Zhu (05/10/99)                 C
+      6 C                                                                    C
+      7 C     INPUT: one dimension array d and ld                            C
+      8 C                                                                    C
+      9 C     OUTPUT:maximum and minimum values                              C
+     10 C                                                                    C
+     11 C     Arguments:                                                     C
+     12 C               1. n ( int number of dimension of d and ld )         C
+     13 C               2. ld ( logical array of dimension n )               C
+     14 C               3. d  ( real array of dimension n )                  C
+     15 C                                                                    C
+     16 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+     17       logical*1   ld
+     18       dimension ld(n),d(n)
+     19       dmin=  1.e40
+     20       dmax= -1.e40
+     21       do i=1,n
+     22         if(ld(i)) then
+     23           dmin=min(dmin,d(i))
+     24           dmax=max(dmax,d(i))
+     25         endif
+     26       enddo
+     27       return
+     28       end
+
+Page 2           Source Listing                  GRANGE
+2014-07-14 18:39 Entry Points                    GRANGE.f
+
+
+
+ENTRY POINTS
+
+  Name               
+                     
+ grange_             
+
+
+SYMBOL CROSS REFERENCE
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ D                          Dummy  1        R(8)            8     1     0        ARG,INOUT        23,24                             
+ DMAX                       Dummy  1        R(8)            8           scalar   ARG,INOUT        20,24                             
+ DMIN                       Dummy  1        R(8)            8           scalar   ARG,INOUT        19,23                             
+ GRANGE                     Subr   1                                                                                                
+ I                          Local  21       I(4)            4           scalar                    21,22,23,24                       
+ LD                         Dummy  1        L(1)            1     1     0        ARG,INOUT        22                                
+ MAX                        Func   24                                   scalar                    24                                
+ MIN                        Func   23                                   scalar                    23                                
+ N                          Dummy  1        I(4)            4           scalar   ARG,INOUT        18,21                             
+
+Page 3           Source Listing                  GRANGE
+2014-07-14 18:39                                 GRANGE.f
+
+     29 
+
+Page 4           Source Listing                  GRANGE
+2014-07-14 18:39 Subprograms/Common Blocks       GRANGE.f
+
+
+
+SUBPROGRAMS/COMMON BLOCKS
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ GRANGE                     Subr   1                                                                                                
+
+COMPILER OPTIONS BEING USED
+
+       -align nocommons                      -align nodcommons
+       -align noqcommons                     -align records
+       -align nosequence                     -align norec1byte
+       -align norec2byte                     -align norec4byte
+       -align norec8byte                     -align norec16byte
+       -altparam                             -assume accuracy_sensitive
+       -assume nobscc                        -assume nobuffered_io
+       -assume byterecl                      -assume cc_omp
+       -assume nocstring                     -assume nodummy_aliases
+       -assume nofpe_summary                 -assume noieee_fpe_flags
+       -assume nominus0                      -assume noold_boz
+       -assume old_unit_star                 -assume old_ldout_format
+       -assume noold_logical_ldio            -assume old_maxminloc
+       -assume old_xor                       -assume protect_constants
+       -assume noprotect_parens              -assume split_common
+       -assume source_include                -assume nostd_intent_in
+       -assume nostd_mod_proc_name           -assume norealloc_lhs
+       -assume underscore                    -assume no2underscores
+       -auto                            no   -auto_scalar
+  no   -bintext                              -ccdefault default
+       -check noargs                         -check noarg_temp_created
+       -check nobounds                       -check noformat
+       -check nooutput_conversion            -check nooverflow
+       -check nopointers                     -check power
+       -check noshape                        -check nounderflow
+       -check nouninitialized                -coarray-num-procs 0
+  no   -coarray-config-file                  -convert big_endian
+       -cross_reference                      -D __INTEL_COMPILER=1210
+       -D __unix__                           -D __unix
+       -D __linux__                          -D __linux
+       -D __gnu_linux__                      -D unix
+       -D linux                              -D __ELF__
+       -D __x86_64                           -D __x86_64__
+       -D _MT                                -D __INTEL_COMPILER_BUILD_DATE=20120612
+       -D _OPENMP=201107                     -D __pentium4
+       -D __pentium4__                       -D __tune_pentium4__
+       -D __SSE2__                           -D __SSE3__
+       -D __SSSE3__                          -D __SSE4_1__
+       -D __SSE4_2__                         -D __SSE__
+       -D __MMX__                            -D __AVX__
+       -double_size 64                  no   -d_lines
+  no   -Qdyncom                              -error_limit 30
+  no   -f66                             no   -f77rtl
+  no   -fast                                 -fpscomp nofilesfromcmd
+       -fpscomp nogeneral                    -fpscomp noioformat
+       -fpscomp noldio_spacing               -fpscomp nologicals
+       -fixed                           no   -fpconstant
+
+Page 5           Source Listing                  GRANGE
+2014-07-14 18:39                                 GRANGE.f
+
+       -fpe3                                 -fprm nearest
+  no   -ftz                                  -fp_model noprecise
+       -fp_model fast                        -fp_model nostrict
+       -fp_model nosource                    -fp_model nodouble
+       -fp_model noextended                  -fp_model novery_fast
+       -fp_model noexcept                    -fp_model nono_except
+       -fp_modbits nofp_contract             -fp_modbits nono_fp_contract
+       -fp_modbits nofenv_access             -fp_modbits nono_fenv_access
+       -fp_modbits nocx_limited_range        -fp_modbits nono_cx_limited_range
+       -fp_modbits noprec_div                -fp_modbits nono_prec_div
+       -fp_modbits noprec_sqrt               -fp_modbits nono_prec_sqrt
+       -fp_modbits noftz                     -fp_modbits nono_ftz
+       -fp_modbits nointrin_limited_range       -fp_modbits nono_intrin_limited_range
+       -fp_modbits notrunc_compares          -fp_modbits nono_trunc_compares
+       -fp_modbits noieee_nan_compares       -fp_modbits nono_ieee_nan_compares
+       -fp_modbits honor_f32_conversion       -fp_modbits nono_honor_f32_conversion
+       -fp_modbits honor_f64_conversion       -fp_modbits nono_honor_f64_conversion
+       -fp_modbits nono_x87_copy             -fp_modbits nono_no_x87_copy
+       -fp_modbits noexception_semantics       -fp_modbits nono_exception_semantics
+       -fp_modbits noprecise_libm_functions       -fp_modbits nono_precise_libm_functions
+       -heap_arrays 0                   no   -threadprivate_compat
+       -g0                                   -iface nomixed_str_len_arg
+       -iface nono_mixed_str_len_arg    no   -intconstant
+       -integer_size 32                 no   -mixed_str_len_arg
+  no   -module                               -names lowercase
+  no   -noinclude                            -openmp
+       -O0                              no   -pad_source
+       -real_size 64                    no   -recursive
+       -reentrancy threaded             no   -sharable_localsaves
+       -vec=simd                             -show noinclude
+       -show map                             -show options
+  no   -syntax_only                     no   -threadcom
+  no   -U                               no   -vms
+       -w noall                              -w nonone
+       -w alignments                         -w noargument_checking
+       -w nodeclarations                     -w general
+       -w noignore_bounds                    -w noignore_loc
+       -w nointerfaces                       -w notruncated_source
+       -w uncalled                           -w uninitialized
+       -w nounused                           -w usage
+
+       -includepath : /usrx/local/intel/composerxe/tbb/include/,/usr/include/,./,/usrx/local/intel/composerxe/mkl/include/intel64/lp64/,
+           /usrx/local/intel/composerxe/mkl/include/,/usrx/local/intel/composerxe/mkl/include/,/usrx/local/intel/composerxe/tbb/include/,
+           /gpfs/tp1/usrx/local/intel/composer_xe_2011_sp1.11.339/compiler/include/intel64/,/gpfs/tp1/usrx/local/intel/composer_xe_2011_sp1.11.339/compiler/include/,
+           /usr/local/include/,/usr/lib/gcc/x86_64-redhat-linux/4.4.7/include/,/usr/include/,/usr/include/
+       -list filename : GRANGE.lst
+       -o    filename : none
+
+COMPILER: Intel(R) Fortran 12.1-2100

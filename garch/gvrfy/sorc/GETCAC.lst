@@ -1,0 +1,205 @@
+Page 1           Source Listing                  GETCAC
+2014-07-14 18:39                                 GETCAC.f
+
+      1       subroutine getcac(glb,ifld,ilev,imon)
+      2 ccc
+      3 ccc   get climatology:
+      4 ccc       input: unit 41 --- nmc30y.ibmsp ( for north hemsphere )
+      5 ccc              unit 42 --- cac8ys.ibmsp ( for south hemsphere )
+      6 ccc              nmc30y From equator ---> pole
+      7 ccc              cac8ys From pole    ---> equator
+      8 ccc
+      9       dimension cnh(145,37),csh(145,37),glb(144,73)
+     10 c
+     11 c--------+---------+---------+---------+---------+----------+---------+--
+     12       open (unit=41,
+     13      *      file='/ensemble/save/emc.enspara/gvrfy/data/nmc30y.ibmsp',
+     14      *      status='old',form='unformatted')
+     15       open (unit=42,
+     16      *      file='/ensemble/save/emc.enspara/gvrfy/data/cac8ys.ibmsp',
+     17      *      status='old',form='unformatted')
+     18       if (ilev.eq.1000) then
+     19           jlev = 1
+     20       elseif (ilev.eq.500) then
+     21           jlev = 2
+     22       else
+     23           print *, " It is not accepted by CPC climatology "
+     24           return 
+     25       endif
+     26 c
+     27       icnt = imon  + (jlev - 1)*12
+     28       if (icnt.eq.1) goto 101
+     29       do i = 1, icnt - 1
+     30          read (41)              
+     31          read (42)                
+     32       enddo
+     33  101  continue
+     34       read (41) imn,iln,cnh
+     35       read (42) ims,ils,csh
+     36       print *, '=== nmc30y ( nh ) and cac8y ( sh ) ==='
+     37       write (6,991) imon,ilev,imn,iln
+     38  991  format ('*** ask month=',i2,' level=',i4,' read month=',i2,
+     39      *        ' level=',i4,' ***')
+     40       do i = 1, 37
+     41        do j = 1, 144
+     42           glb(j,74-i) = csh(j,i)
+     43           glb(j,38-i) = cnh(j,i)
+     44        enddo   
+     45       enddo
+     46       close(41)    
+     47       close(42)    
+     48       return
+     49       end
+
+Page 2           Source Listing                  GETCAC
+2014-07-14 18:39 Entry Points                    GETCAC.f
+
+
+
+ENTRY POINTS
+
+  Name               
+                     
+ getcac_             
+
+
+SYMBOL CROSS REFERENCE
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ 101                        Label  33                                                             28                                
+ 991                        Label  38                                                             37                                
+ CNH                        Local  9        R(8)            8     2     5365                      34,43                             
+ CSH                        Local  9        R(8)            8     2     5365                      35,42                             
+ GETCAC                     Subr   1                                                                                                
+ GLB                        Dummy  1        R(8)            8     2     10512    ARG,INOUT        42,43                             
+ I                          Local  29       I(4)            4           scalar                    29,40,42,43                       
+ ICNT                       Local  27       I(4)            4           scalar                    27,28,29                          
+ IFLD                       Dummy  1        I(4)            4           scalar   ARG,INOUT                                          
+ ILEV                       Dummy  1        I(4)            4           scalar   ARG,INOUT        18,20,37                          
+ ILN                        Local  34       I(4)            4           scalar                    34,37                             
+ ILS                        Local  35       I(4)            4           scalar                    35                                
+ IMN                        Local  34       I(4)            4           scalar                    34,37                             
+ IMON                       Dummy  1        I(4)            4           scalar   ARG,INOUT        27,37                             
+ IMS                        Local  35       I(4)            4           scalar                    35                                
+ J                          Local  41       I(4)            4           scalar                    41,42,43                          
+ JLEV                       Local  19       I(4)            4           scalar                    19,21,27                          
+
+Page 3           Source Listing                  GETCAC
+2014-07-14 18:39                                 GETCAC.f
+
+     50 
+
+Page 4           Source Listing                  GETCAC
+2014-07-14 18:39 Subprograms/Common Blocks       GETCAC.f
+
+
+
+SUBPROGRAMS/COMMON BLOCKS
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ GETCAC                     Subr   1                                                                                                
+
+COMPILER OPTIONS BEING USED
+
+       -align nocommons                      -align nodcommons
+       -align noqcommons                     -align records
+       -align nosequence                     -align norec1byte
+       -align norec2byte                     -align norec4byte
+       -align norec8byte                     -align norec16byte
+       -altparam                             -assume accuracy_sensitive
+       -assume nobscc                        -assume nobuffered_io
+       -assume byterecl                      -assume cc_omp
+       -assume nocstring                     -assume nodummy_aliases
+       -assume nofpe_summary                 -assume noieee_fpe_flags
+       -assume nominus0                      -assume noold_boz
+       -assume old_unit_star                 -assume old_ldout_format
+       -assume noold_logical_ldio            -assume old_maxminloc
+       -assume old_xor                       -assume protect_constants
+       -assume noprotect_parens              -assume split_common
+       -assume source_include                -assume nostd_intent_in
+       -assume nostd_mod_proc_name           -assume norealloc_lhs
+       -assume underscore                    -assume no2underscores
+       -auto                            no   -auto_scalar
+  no   -bintext                              -ccdefault default
+       -check noargs                         -check noarg_temp_created
+       -check nobounds                       -check noformat
+       -check nooutput_conversion            -check nooverflow
+       -check nopointers                     -check power
+       -check noshape                        -check nounderflow
+       -check nouninitialized                -coarray-num-procs 0
+  no   -coarray-config-file                  -convert big_endian
+       -cross_reference                      -D __INTEL_COMPILER=1210
+       -D __unix__                           -D __unix
+       -D __linux__                          -D __linux
+       -D __gnu_linux__                      -D unix
+       -D linux                              -D __ELF__
+       -D __x86_64                           -D __x86_64__
+       -D _MT                                -D __INTEL_COMPILER_BUILD_DATE=20120612
+       -D _OPENMP=201107                     -D __pentium4
+       -D __pentium4__                       -D __tune_pentium4__
+       -D __SSE2__                           -D __SSE3__
+       -D __SSSE3__                          -D __SSE4_1__
+       -D __SSE4_2__                         -D __SSE__
+       -D __MMX__                            -D __AVX__
+       -double_size 64                  no   -d_lines
+  no   -Qdyncom                              -error_limit 30
+  no   -f66                             no   -f77rtl
+  no   -fast                                 -fpscomp nofilesfromcmd
+       -fpscomp nogeneral                    -fpscomp noioformat
+       -fpscomp noldio_spacing               -fpscomp nologicals
+       -fixed                           no   -fpconstant
+
+Page 5           Source Listing                  GETCAC
+2014-07-14 18:39                                 GETCAC.f
+
+       -fpe3                                 -fprm nearest
+  no   -ftz                                  -fp_model noprecise
+       -fp_model fast                        -fp_model nostrict
+       -fp_model nosource                    -fp_model nodouble
+       -fp_model noextended                  -fp_model novery_fast
+       -fp_model noexcept                    -fp_model nono_except
+       -fp_modbits nofp_contract             -fp_modbits nono_fp_contract
+       -fp_modbits nofenv_access             -fp_modbits nono_fenv_access
+       -fp_modbits nocx_limited_range        -fp_modbits nono_cx_limited_range
+       -fp_modbits noprec_div                -fp_modbits nono_prec_div
+       -fp_modbits noprec_sqrt               -fp_modbits nono_prec_sqrt
+       -fp_modbits noftz                     -fp_modbits nono_ftz
+       -fp_modbits nointrin_limited_range       -fp_modbits nono_intrin_limited_range
+       -fp_modbits notrunc_compares          -fp_modbits nono_trunc_compares
+       -fp_modbits noieee_nan_compares       -fp_modbits nono_ieee_nan_compares
+       -fp_modbits honor_f32_conversion       -fp_modbits nono_honor_f32_conversion
+       -fp_modbits honor_f64_conversion       -fp_modbits nono_honor_f64_conversion
+       -fp_modbits nono_x87_copy             -fp_modbits nono_no_x87_copy
+       -fp_modbits noexception_semantics       -fp_modbits nono_exception_semantics
+       -fp_modbits noprecise_libm_functions       -fp_modbits nono_precise_libm_functions
+       -heap_arrays 0                   no   -threadprivate_compat
+       -g0                                   -iface nomixed_str_len_arg
+       -iface nono_mixed_str_len_arg    no   -intconstant
+       -integer_size 32                 no   -mixed_str_len_arg
+  no   -module                               -names lowercase
+  no   -noinclude                            -openmp
+       -O0                              no   -pad_source
+       -real_size 64                    no   -recursive
+       -reentrancy threaded             no   -sharable_localsaves
+       -vec=simd                             -show noinclude
+       -show map                             -show options
+  no   -syntax_only                     no   -threadcom
+  no   -U                               no   -vms
+       -w noall                              -w nonone
+       -w alignments                         -w noargument_checking
+       -w nodeclarations                     -w general
+       -w noignore_bounds                    -w noignore_loc
+       -w nointerfaces                       -w notruncated_source
+       -w uncalled                           -w uninitialized
+       -w nounused                           -w usage
+
+       -includepath : /usrx/local/intel/composerxe/tbb/include/,/usr/include/,./,/usrx/local/intel/composerxe/mkl/include/intel64/lp64/,
+           /usrx/local/intel/composerxe/mkl/include/,/usrx/local/intel/composerxe/mkl/include/,/usrx/local/intel/composerxe/tbb/include/,
+           /gpfs/tp1/usrx/local/intel/composer_xe_2011_sp1.11.339/compiler/include/intel64/,/gpfs/tp1/usrx/local/intel/composer_xe_2011_sp1.11.339/compiler/include/,
+           /usr/local/include/,/usr/lib/gcc/x86_64-redhat-linux/4.4.7/include/,/usr/include/,/usr/include/
+       -list filename : GETCAC.lst
+       -o    filename : none
+
+COMPILER: Intel(R) Fortran 12.1-2100

@@ -1,0 +1,58 @@
+#!/usr/bin/ksh
+##  1/24/2003 - Diane Stokes 
+##    Calls gxpng with -gif option
+##    Replaces gxgif binary due to patent restraints on Unisys LZW compression used in orig gxgif
+
+USAGE="\n
+This is a shell script running gxpng with the -gif option\n
+\n
+Usage: gxgif [-rv -x <pixels> -y <pixels> -i <in_file>[.gm] -o <out_file>] [<in_file>[.gm]].\n
+Options:\n
+     -i   <in_file>[.gm].\n
+     -o   <out_file> (default: basename(in_file).gif, '-' = stdout).\n
+     -r   Black background.\n
+     -v   Verbose.\n
+     -x <pixels>  # pixels horizontally.\n
+     -y <pixels>  # pixels vertically.\n
+"
+#Usage: gxgif [-hrv -x <pixels> -y <pixels> -i <in_file>[.gm] -o <out_file>] [<in_file>[.gm]].\n
+#     -h   Fill polygons horizontally.\n
+
+if [ $# -eq 0 ]; then
+
+  echo $USAGE 1>&2
+   
+
+else
+
+
+OPTIONS=""
+out=0
+while true
+do
+        case "$1" in
+        -*i*) OPTIONS="$OPTIONS $1 $2" ; infile=$2; shift;;
+        -*o*) OPTIONS="$OPTIONS $1 $2" ; out=1; shift;;
+        -*x*[0-9]) OPTIONS="$OPTIONS $1" ;;
+        -*x*) OPTIONS="$OPTIONS $1 $2" ; shift;;
+        -*y*[0-9]) OPTIONS="$OPTIONS $1" ;;
+        -*y*) OPTIONS="$OPTIONS $1 $2" ; shift;;
+        -*) OPTIONS="$OPTIONS $1 " ;;
+        *)  infile=$1 ;;
+        esac
+        shift
+        [ $# -lt 1 ] && break
+done
+
+  if [ -z "$infile" ]; then
+     echo $USAGE
+     exit
+  else 
+    if [ $out -eq 0 ] ; then
+      outfile=${infile%%".gm"}.gif
+      OPTIONS="$OPTIONS -o $outfile"
+    fi
+  fi
+
+ exec /usrx/local/grads/bin/1.8sl11/gxpng -gif $OPTIONS $infile
+fi

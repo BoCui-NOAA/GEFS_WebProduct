@@ -1,0 +1,40 @@
+#---------------- start cut here ----------------------------------------------
+###############################################################################
+############ GrADS PLOTTING SET UP TABLES FOR GLOBAL MODEL VERIFICATION #######
+###############################################################################
+
+###
+### Modify this table according to your experiments
+###
+
+### 1. experiment period ( verified time, 100 days maxmum )
+export VHOUR=                             ### default is 00 ( T00Z )  
+
+### 2. experiment scores directory ( 6 experiments maximum )
+###    leave blank for less than 6 experiments
+export SDIR_1=/global/vrfy         ### 1st experiment scores directory
+export SDIR_2=/global/vrfy         ### 2nd experiment scores directory
+export SDIR_3=/global/exp/pry      ### 3rd experiment scores directory
+export SDIR_4=/global/exp/pry             ### 4th experiment scores directory
+export SDIR_5=/global/exp/pry             ### 5th experiment scores directory
+export SDIR_6=                            ### 6th experiment scores directory
+
+### 3. files ( scores ) name ( default=SCORES, leave blank if you use default )
+export SNAME=
+
+### 4. experiment ID (better use one character only, e.g. a/b/c )
+###                  ( up to 6 experiments maximum )
+export exp_id_1=s                         ### 1st experiment ID
+export exp_id_2=z                         ### 2nd experiment ID
+export exp_id_3=                          ### 3rd experiment ID
+export exp_id_4=                          ### 4th experiment ID
+export exp_id_5=                          ### 5th experiment ID
+export exp_id_6=                          ### 6th experiment ID
+
+### 5. the length ( forecasting days default PFDAYS=5 ) for die-off diagram
+###    PFDAYS= (5/6/7/8/10/12/15) only
+export PFDAYS=7
+
+############## GLOBAL MODEL PLOTTING SET UP TABLES #############################
+#-------------- end cut here ---------------------------------------------------
+

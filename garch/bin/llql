@@ -1,0 +1,6 @@
+#llq -f %jn %id %o %st %c %dd %nh %h | grep wx22lu
+llq -f %jn %id %o %st %dd %nh | grep wx22lu
+llq -f %jn %id %o %st %dd %nh | grep globstat
+llq -f %jn %id %o %st %dd %nh | grep glopara 
+llq -f %jn %id %o %st %dd %nh | grep wx22yz  
+llq -f %jn %id %o %st %dd %nh | grep wx20cb  

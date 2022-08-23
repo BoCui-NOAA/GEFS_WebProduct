@@ -1,0 +1,115 @@
+### example 1
+#!/bin/sh
+#@ wall_clock_limit=00:10:00
+#@ requirements = Feature == "beta"
+#@ job_type = parallel
+#@ output = /ptmp/wx20yz/garch.o$(jobid)
+#@ error = /ptmp/wx20yz/garch.e$(jobid)
+#@ total_tasks = 30
+#@ node = 30
+#@ node_usage = shared
+#@ network.MPI=switch,not_shared,us
+#@ class = dev
+#@ account_no = GEN-MTN
+#
+#@ queue
+#
+
+#set -x
+
+cd /nfsuser/g01/wx20yz/gvrfy/scripts
+pwd
+
+nhours=/nwprod/util/exec/ndate
+
+if [ "$CDATE" -eq "" ]; then
+   echo "No data for CDATE, please check"
+   exit 8
+fi
+
+YMD=`echo $CDATE | cut -c1-8`
+YMDM1=`$nhours -24 $CDATE | cut -c1-8`
+YMDM2=`$nhours -48 $CDATE | cut -c1-8`
+YMDM3=`$nhours -72 $CDATE | cut -c1-8`
+   
+vrfyex_16.sh_qnew $YMDM3 sq 00
+vrfyex_16.sh_qnew $YMDM3 kq 00
+
+cd /nfsuser/g01/wx20yz/gvrfy/scripts
+pwd
+export VFSDAY=$YMDM1\06
+export VFEDAY=$YMDM1\06
+VRFY_PUB.sh vrfy_table
+
+cd /nfsuser/g01/wx20yz/gvrfy/scripts
+pwd
+export VFSDAY=$YMDM1\18
+export VFEDAY=$YMDM1\18
+VRFY_PUB.sh vrfy_table
+
+cd /nfsuser/g01/wx20yz/gvrfy/scripts
+pwd
+export VFSDAY=$YMD\00
+export VFEDAY=$YMD\00
+VRFY_PUB_ST.sh vrfy_table_STs
+
+vrfyex_16_ecm_ens.sh $YMD e 12
+vrfyex_16_ncep_ens.sh $YMD c 00
+
+### against canl (starting from 03/01/2006)
+cd /nfsuser/g01/wx20yz/gvrfy/scripts
+pwd
+VRFY_PUB_canl.sh $CDATE s
+VRFY_PUB_canl.sh $CDATE e
+vrfyex_16_ukm_canl.sh $YMD k 00
+
+####
+####  GrADs plotting job.
+####
+####   Updated daily ( started from Dec. 13th 2004 )
+
+cd /nfsuser/g01/wx20yz/gvrfy/grads
+#CDATE=$YMDM1\00
+CDATE=$CDATE    
+export EDYMD=`echo $CDATE | cut -c1-8`
+export STYMD=`$nhours -744 $CDATE | cut -c1-8`
+$HOME/gvrfy/grads/RUN_VRFY01_GRADS.sh $STYMD $EDYMD grads_table_VRFY01
+
+cd /nfsuser/g01/wx20yz/gvrfy/grads
+CDATE=$CDATE    
+export EDYMD=`echo $CDATE | cut -c1-8`
+export STYMD=`$nhours -744 $CDATE | cut -c1-8`
+$HOME/gvrfy/grads/RUN_VRFY02_GRADS.sh $STYMD $EDYMD grads_table_VRFY02
+
+cd /nfsuser/g01/wx20yz/gvrfy/grads
+CDATE=$CDATE    
+export EDYMD=`echo $CDATE | cut -c1-8`
+export STYMD=`$nhours -744 $CDATE | cut -c1-8`
+
+cd /nfsuser/g01/wx20yz/gvrfy/grads
+CDATE=$CDATE    
+export EDYMD=`echo $CDATE | cut -c1-8`
+export STYMD=`$nhours -744 $CDATE | cut -c1-8`
+export STYMD=20060227
+$HOME/gvrfy/grads/RUN_VRFY04_GRADS.sh $STYMD $EDYMD grads_table_VRFY04
+
+#cd /nfsuser/g01/wx20yz/gvrfy/grads
+#CDATE=$CDATE    
+#export EDYMD=`echo $CDATE | cut -c1-8`
+#export STYMD=20051106                              
+#$HOME/gvrfy/grads/RUN_PRZ_GRADS.sh $STYMD $EDYMD grads_table_PRZ
+
+export EDYMD=`$nhours -72 $CDATE | cut -c1-8`
+export STYMD=`$nhours -816 $CDATE | cut -c1-8`
+$HOME/gvrfy/grads/RUNQ_16d_GRADS.sh
+
+export EDYMD=`$nhours -72 $CDATE | cut -c1-8`
+export STYMD=`$nhours -816 $CDATE | cut -c1-8`
+$HOME/gvrfy/grads/RUNQ_3dk_GRADS.sh
+
+### RUN multi-center analysis comparison and consistency
+cd /nfsuser/g01/wx20yz/gvrfy/scripts
+vrfyex_16_cons.sh $YMD   s 00 24
+vrfyex_16_cons.sh $YMD   m 00 24
+vrfyex_16_cons.sh $YMD   n 00 24
+vrfyex_16_cons.sh $YMDM1 e 12 24

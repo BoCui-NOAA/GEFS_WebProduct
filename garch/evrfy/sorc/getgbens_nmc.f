@@ -1,0 +1,955 @@
+C-----------------------------------------------------------------------
+      SUBROUTINE GETGBENS(LUGB,LUGI,JF,J,JPDS,JGDS,JENS,
+     &                              KF,K,KPDS,KGDS,KENS,LB,F,IRET)
+C$$$  SUBPROGRAM DOCUMENTATION BLOCK
+C
+C SUBPROGRAM: GETGBENS       FINDS AND UNPACKS A GRIB MESSAGE
+C   PRGMMR: IREDELL          ORG: W/NMC23     DATE: 94-04-01
+C
+C ABSTRACT: FIND AND UNPACK A GRIB MESSAGE.
+C   READ AN ASSOCIATED GRIB INDEX FILE (UNLESS IT ALREADY WAS READ).
+C   FIND IN THE INDEX FILE A REFERENCE TO THE GRIB MESSAGE REQUESTED.
+C   THE GRIB MESSAGE REQUEST SPECIFIES THE NUMBER OF MESSAGES TO SKIP
+C   AND THE UNPACKED PDS AND GDS PARAMETERS.  (A REQUESTED PARAMETER
+C   OF -1 MEANS TO ALLOW ANY VALUE OF THIS PARAMETER TO BE FOUND.)
+C   IF THE REQUESTED GRIB MESSAGE IS FOUND, THEN IT IS READ FROM THE
+C   GRIB FILE AND UNPACKED.  ITS MESSAGE NUMBER IS RETURNED ALONG WITH
+C   THE UNPACKED PDS AND GDS PARAMETERS, THE UNPACKED BITMAP (IF ANY),
+C   AND THE UNPACKED DATA.  IF THE GRIB MESSAGE IS NOT FOUND, THEN THE
+C   RETURN CODE WILL BE NONZERO.
+C
+C PROGRAM HISTORY LOG:
+C   94-04-01  IREDELL
+C
+C USAGE:    CALL GETGBENS(LUGB,LUGI,JF,J,JPDS,JGDS,JENS,
+C    &                              KF,K,KPDS,KGDS,KENS,LB,F,IRET)
+C   INPUT ARGUMENTS:
+C     LUGB         LOGICAL UNIT OF THE UNBLOCKED GRIB DATA FILE
+C     LUGI         LOGICAL UNIT OF THE UNBLOCKED GRIB INDEX FILE
+C     JF           INTEGER MAXIMUM NUMBER OF DATA POINTS TO UNPACK
+C     J            INTEGER NUMBER OF MESSAGES TO SKIP
+C                  (=0 TO SEARCH FROM BEGINNING)
+C                  (<0 TO REOPEN INDEX FILE AND SEARCH FROM BEGINNING)
+C     JPDS         INTEGER (25) PDS PARAMETERS FOR WHICH TO SEARCH
+C                  (=-1 FOR WILDCARD)
+C     JGDS         INTEGER (22) GDS PARAMETERS FOR WHICH TO SEARCH
+C                  (ONLY SEARCHED IF JPDS(3)=255)
+C                  (=-1 FOR WILDCARD)
+C     JENS         INTEGER (5) ENSEMBLE PDS PARMS FOR WHICH TO SEARCH
+C                  (ONLY SEARCHED IF JPDS(23)=2)
+C                  (=-1 FOR WILDCARD)
+C   OUTPUT ARGUMENTS:
+C     KF           INTEGER NUMBER OF DATA POINTS UNPACKED
+C     K            INTEGER MESSAGE NUMBER UNPACKED
+C                  (CAN BE SAME AS J IN CALLING PROGRAM
+C                  IN ORDER TO FACILITATE MULTIPLE SEARCHES)
+C     KPDS         INTEGER (25) UNPACKED PDS PARAMETERS
+C     KGDS         INTEGER (22) UNPACKED GDS PARAMETERS
+C     KENS         INTEGER (5) UNPACKED ENSEMBLE PDS PARMS
+C     LB           LOGICAL (KF) UNPACKED BITMAP IF PRESENT
+C     F            REAL (KF) UNPACKED DATA
+C     IRET         INTEGER RETURN CODE
+C                    0      ALL OK
+C                    96     ERROR READING INDEX FILE
+C                    97     ERROR READING GRIB FILE
+C                    98     NUMBER OF DATA POINTS GREATER THAN JF
+C                    99     REQUEST NOT FOUND
+C                    OTHER  W3FI63 GRIB UNPACKER RETURN CODE
+C
+C SUBPROGRAMS CALLED:
+C   BAREAD         BYTE-ADDRESSABLE READ
+C   GBYTE          UNPACK BYTES
+C   FI632          UNPACK PDS
+C   FI633          UNPACK GDS
+C   PDSEUP         UNPACK PDS EXTENSION
+C   W3FI63         UNPACK GRIB
+C
+C ATTRIBUTES:
+C   LANGUAGE: CRAY FORTRAN
+C
+C$$$
+      INTEGER JPDS(25),JGDS(22),KPDS(25),KGDS(22)
+      PARAMETER(LPDS=23,LGDS=22)
+      INTEGER JENS(5),KENS(5)
+      LOGICAL LB(JF)
+      REAL F(JF)
+      PARAMETER(MBUF=8192*128)
+      CHARACTER CBUF(MBUF)
+      SAVE LUX,NSKP,NLEN,NNUM,CBUF
+      DATA LUX/0/
+      CHARACTER CHEAD(2)*81
+      CHARACTER CPDS(80)*1,CGDS(42)*1
+      INTEGER KPTR(16)
+      INTEGER IPDSP(LPDS),JPDSP(LPDS),IGDSP(LGDS),JGDSP(LGDS)
+      INTEGER IENSP(5),JENSP(5)
+      CHARACTER GRIB(200+17*JF/8)*1
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+C  READ INDEX FILE
+      IF(J.LT.0.OR.LUGI.NE.LUX) THEN
+        REWIND LUGI
+        READ(LUGI,IOSTAT=IOS) CHEAD
+        IF(IOS.EQ.0.AND.CHEAD(1)(42:47).EQ.'GB1IX1') THEN
+          LUX=0
+          READ(CHEAD(2),'(8X,3I10,2X,A40)',IOSTAT=IOS) NSKP,NLEN,NNUM
+          IF(IOS.EQ.0) THEN
+            NBUF=NNUM*NLEN
+            IF(NBUF.GT.MBUF) THEN
+              PRINT *,'GETGB: INCREASE BUFFER FROM ',MBUF,' TO ',NBUF
+              NNUM=MBUF/NLEN
+              NBUF=NNUM*NLEN
+            ENDIF
+            CALL BAREAD(LUGI,NSKP,NBUF,LBUF,CBUF)
+            IF(LBUF.EQ.NBUF) THEN
+              LUX=LUGI
+              J=MAX(J,0)
+            ENDIF
+          ENDIF
+        ENDIF
+      ENDIF
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+C  SEARCH FOR REQUEST
+      KENS=0
+      LGRIB=0
+      KJ=J
+      K=J
+      KF=0
+      IF(J.GE.0.AND.LUGI.EQ.LUX) THEN
+        LPDSP=0
+        DO I=1,LPDS
+          IF(JPDS(I).NE.-1) THEN
+            LPDSP=LPDSP+1
+            IPDSP(LPDSP)=I
+            JPDSP(LPDSP)=JPDS(I)
+          ENDIF
+        ENDDO
+        LGDSP=0
+        IF(JPDS(3).EQ.255) THEN
+          DO I=1,LGDS
+            IF(JGDS(I).NE.-1) THEN
+              LGDSP=LGDSP+1
+              IGDSP(LGDSP)=I
+              JGDSP(LGDSP)=JGDS(I)
+            ENDIF
+          ENDDO
+        ENDIF
+        LENSP=0
+        IF(JPDS(23).EQ.2) THEN
+          DO I=1,5
+            IF(JENS(I).NE.-1) THEN
+              LENSP=LENSP+1
+              IENSP(LENSP)=I
+              JENSP(LENSP)=JENS(I)
+            ENDIF
+          ENDDO
+        ENDIF
+        IRET=99
+        DOWHILE(LGRIB.EQ.0.AND.KJ.LT.NNUM)
+          KJ=KJ+1
+          LT=0
+          IF(LPDSP.GT.0) THEN
+            CPDS=CBUF((KJ-1)*NLEN+26:(KJ-1)*NLEN+53)
+            KPTR=0
+            CALL GBYTE(CBUF,KPTR(3),(KJ-1)*NLEN*8+25*8,3*8)
+            CALL FI632(CPDS,KPTR,KPDS,IRET)
+c           print *, 'after fi632, iret=',iret
+            DO I=1,LPDSP
+              IP=IPDSP(I)
+              LT=LT+ABS(JPDS(IP)-KPDS(IP))
+            ENDDO
+          ENDIF
+          IF(LT.EQ.0.AND.LGDSP.GT.0) THEN
+            CGDS=CBUF((KJ-1)*NLEN+54:(KJ-1)*NLEN+95)
+            KPTR=0
+            CALL FI633(CGDS,KPTR,KGDS,IRET)
+c           print *, 'after fi633, iret=',iret
+            DO I=1,LGDSP
+              IP=IGDSP(I)
+              LT=LT+ABS(JGDS(IP)-KGDS(IP))
+            ENDDO
+          ENDIF
+          IF(LT.EQ.0.AND.LENSP.GT.0) THEN
+            CPDS(41:80)=CBUF((KJ-1)*NLEN+113:(KJ-1)*NLEN+152)
+	    CALL PDSEUP(KENS,KPROB,XPROB,KCLUST,KMEMBR,45,CPDS)
+            DO I=1,LENSP
+              IP=IENSP(I)
+              LT=LT+ABS(JENS(IP)-KENS(IP))
+            ENDDO
+          ENDIF
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+C  READ AND UNPACK GRIB DATA
+          IF(LT.EQ.0) THEN
+            CALL GBYTE(CBUF,LSKIP,(KJ-1)*NLEN*8,4*8)
+            CALL GBYTE(CBUF,LGRIB,(KJ-1)*NLEN*8+20*8,4*8)
+            CGDS=CBUF((KJ-1)*NLEN+54:(KJ-1)*NLEN+95)
+            KPTR=0
+            CALL FI633(CGDS,KPTR,KGDS,IRET)
+c           print *, 'after FI633, iret=',iret
+            IF(KPDS(23).EQ.2) THEN
+              CPDS(41:80)=CBUF((KJ-1)*NLEN+113:(KJ-1)*NLEN+152)
+              CALL PDSEUP(KENS,KPROB,XPROB,KCLUST,KMEMBR,45,CPDS)
+            ENDIF
+            IF(LGRIB.LE.200+17*JF/8.AND.KGDS(2)*KGDS(3).LE.JF) THEN
+              CALL BAREAD(LUGB,LSKIP,LGRIB,LREAD,GRIB)
+              IF(LREAD.EQ.LGRIB) THEN
+                CALL W3FI63(GRIB,KPDS,KGDS,LB,F,KPTR,IRET)
+c               print *, 'after W3FI63, iret=',iret
+                IF(IRET.EQ.0) THEN
+                  K=KJ
+                  KF=KPTR(10)
+                ENDIF
+              ELSE
+                IRET=97
+              ENDIF
+            ELSE
+              IRET=98
+            ENDIF
+          ENDIF
+        ENDDO
+      ELSE
+        IRET=96
+      ENDIF
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      RETURN
+      END
+C-----------------------------------------------------------------------
+      SUBROUTINE PUTGB(LUGB,KF,KPDS,KGDS,LB,F,IRET)
+C$$$  SUBPROGRAM DOCUMENTATION BLOCK
+C
+C SUBPROGRAM: PUTGB          PACKS AND WRITES A GRIB MESSAGE
+C   PRGMMR: IREDELL          ORG: W/NMC23     DATE: 94-04-01
+C
+C ABSTRACT: PACK AND WRITE A GRIB MESSAGE.
+C   THIS SUBPROGRAM IS NEARLY THE INVERSE OF GETGB.
+C
+C PROGRAM HISTORY LOG:
+C   94-04-01  IREDELL
+C
+C USAGE:    CALL PUTGB(LUGB,KF,KPDS,KGDS,LB,F,IRET)
+C   INPUT ARGUMENTS:
+C     LUGB         INTEGER UNIT OF THE UNBLOCKED GRIB DATA FILE
+C     KF           INTEGER NUMBER OF DATA POINTS
+C     KPDS         INTEGER (25) PDS PARAMETERS
+C     KGDS         INTEGER (22) GDS PARAMETERS
+C     LB           LOGICAL (KF) BITMAP IF PRESENT
+C     F            REAL (KF) DATA
+C   OUTPUT ARGUMENTS:
+C     IRET         INTEGER RETURN CODE
+C                    0      ALL OK
+C                    OTHER  W3FI72 GRIB PACKER RETURN CODE
+C
+C SUBPROGRAMS CALLED:
+C   R63W72         MAP W3FI63 PARAMETERS ONTO W3FI72 PARAMETERS
+C   GTBITS         GET NUMBER OF BITS AND ROUND DATA
+C   W3FI72         PACK GRIB
+C   WRYTE          WRITE DATA
+C
+C ATTRIBUTES:
+C   LANGUAGE: CRAY FORTRAN
+C
+C$$$
+      INTEGER KPDS(25),KGDS(22)
+      LOGICAL LB(KF)
+      REAL F(KF)
+      INTEGER IBM(KF),IPDS(25),IGDS(18),IBDS(9)
+      REAL FR(KF)
+      CHARACTER PDS(28),GRIB(200+17*KF/8)
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+C  GET W3FI72 PARAMETERS
+      CALL R63W72(KPDS,KGDS,IPDS,IGDS)
+      IBDS=0
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+C  COUNT VALID DATA
+      KBM=KF
+      IF(IPDS(7).NE.0) THEN
+        KBM=0
+        DO I=1,KF
+          IF(LB(I)) THEN
+            IBM(I)=1
+            KBM=KBM+1
+          ELSE
+            IBM(I)=0
+          ENDIF
+        ENDDO
+        IF(KBM.EQ.KF) IPDS(7)=0
+      ENDIF
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+C  GET NUMBER OF BITS AND ROUND DATA
+      IF(KBM.EQ.0) THEN
+        DO I=1,KF
+          FR(I)=0.
+        ENDDO
+        NBIT=0
+      ELSE
+        CALL GTBITS(IPDS(7),IPDS(25),KF,IBM,F,FR,FMIN,FMAX,NBIT)
+C       WRITE(0,'("GTBITS:",5I4,4X,2I4,4X,2G16.6)')
+C    &   (IPDS(K),K=7,11),IPDS(25),NBIT,FMIN,FMAX
+        NBIT=MIN(NBIT,16)
+      ENDIF
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+C  PACK AND WRITE GRIB DATA
+      CALL W3FI72(0,FR,0,NBIT,0,IPDS,PDS,
+     &            1,255,IGDS,0,0,IBM,KF,IBDS,
+     &            KFO,GRIB,LGRIB,IRET)
+      IF(IRET.EQ.0) CALL WRYTE(LUGB,LGRIB,GRIB)
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      RETURN
+      END
+C-----------------------------------------------------------------------
+      SUBROUTINE R63W72(KPDS,KGDS,IPDS,IGDS)
+C$$$  SUBPROGRAM DOCUMENTATION BLOCK
+C
+C SUBPROGRAM:    R63W72      CONVERT W3FI63 PARMS TO W3FI72 PARMS
+C   PRGMMR: IREDELL          ORG: W/NMC23     DATE: 92-10-31
+C
+C ABSTRACT: DETERMINES THE INTEGER PDS AND GDS PARAMETERS
+C           FOR THE GRIB1 PACKING ROUTINE W3FI72 GIVEN THE PARAMETERS
+C           RETURNED FROM THE GRIB1 UNPACKING ROUTINE W3FI63.
+C
+C PROGRAM HISTORY LOG:
+C   91-10-31  MARK IREDELL
+C
+C USAGE:    CALL R63W72(KPDS,KGDS,IPDS,IGDS)
+C
+C   INPUT ARGUMENT LIST:
+C     KPDS     - INTEGER (25) PDS PARAMETERS FROM W3FI63
+C     KGDS     - INTEGER (22) GDS PARAMETERS FROM W3FI63
+C
+C   OUTPUT ARGUMENT LIST:
+C     IPDS     - INTEGER (25) PDS PARAMETERS FOR W3FI72
+C     IGDS     - INTEGER (18) GDS PARAMETERS FOR W3FI72
+C
+C ATTRIBUTES:
+C   LANGUAGE: CRAY FORTRAN
+C
+C$$$
+      DIMENSION KPDS(25),KGDS(22),IPDS(25),IGDS(18)
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+C  DETERMINE PRODUCT DEFINITION SECTION (PDS) PARAMETERS
+      IPDS(1)=28			! LENGTH OF PDS
+      IPDS(2)=KPDS(19)			! PARAMETER TABLE VERSION
+      IPDS(3)=KPDS(1)			! ORIGINATING CENTER
+      IPDS(4)=KPDS(2)			! GENERATING MODEL
+      IPDS(5)=KPDS(3)			! GRID DEFINITION
+      IPDS(6)=MOD(KPDS(4)/128,2)	! GDS FLAG
+      IPDS(7)=MOD(KPDS(4)/64,2)		! BMS FLAG
+      IPDS(8)=KPDS(5)			! PARAMETER INDICATOR
+      IPDS(9)=KPDS(6)			! LEVEL TYPE
+      IF(IPDS(9).EQ.101.OR.IPDS(9).EQ.104.OR.IPDS(9).EQ.106.OR.
+     &   IPDS(9).EQ.108.OR.IPDS(9).EQ.110.OR.IPDS(9).EQ.112.OR.
+     &   IPDS(9).EQ.114.OR.IPDS(9).EQ.121.OR.IPDS(9).EQ.128.OR.
+     &   IPDS(9).EQ.141)  THEN
+        IPDS(10)=MOD(KPDS(7)/256,256)	! LEVEL VALUE 1
+        IPDS(11)=MOD(KPDS(7),256)	! LEVEL VALUE 2
+      ELSE
+        IPDS(10)=0			! LEVEL VALUE 1
+        IPDS(11)=KPDS(7)		! LEVEL VALUE 2
+      ENDIF
+      IPDS(12)=MOD(KPDS(8),100)		! YEAR OF CENTURY
+      IPDS(13)=KPDS(9)			! MONTH
+      IPDS(14)=KPDS(10)			! DAY
+      IPDS(15)=KPDS(11)			! HOUR
+      IPDS(16)=KPDS(12)			! MINUTE
+      IPDS(17)=KPDS(13)			! FORECAST TIME UNIT
+      IPDS(18)=KPDS(14)			! TIME RANGE 1
+      IPDS(19)=KPDS(15)			! TIME RANGE 2
+      IPDS(20)=KPDS(16)			! TIME RANGE INDICATOR
+      IPDS(21)=KPDS(17)			! NUMBER IN AVERAGE
+      IPDS(22)=KPDS(20)			! NUMBER MISSING IN AVERAGE
+      IPDS(23)=KPDS(21)			! CENTURY
+      IPDS(24)=KPDS(23)			! SUBCENTER
+      IPDS(25)=KPDS(22)			! DECIMAL SCALING
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+C  DETERMINE GRID DEFINITION SECTION (GDS) PARAMETERS
+      IGDS(1)=KGDS(19)			! NUMBER OF VERTICAL COORDINATES
+      IGDS(2)=KGDS(20)			! VERTICAL COORDINATES
+      IGDS(3)=KGDS(1)			! DATA REPRESENTATION
+      IGDS(4)=KGDS(2)			! (UNIQUE TO REPRESENTATION)
+      IGDS(5)=KGDS(3)			! (UNIQUE TO REPRESENTATION)
+      IGDS(6)=KGDS(4)			! (UNIQUE TO REPRESENTATION)
+      IGDS(7)=KGDS(5)			! (UNIQUE TO REPRESENTATION)
+      IGDS(8)=KGDS(6)			! (UNIQUE TO REPRESENTATION)
+      IGDS(9)=KGDS(7)			! (UNIQUE TO REPRESENTATION)
+      IGDS(10)=KGDS(8)			! (UNIQUE TO REPRESENTATION)
+      IGDS(11)=KGDS(10)			! (UNIQUE TO REPRESENTATION)
+      IGDS(12)=KGDS(9)			! (UNIQUE TO REPRESENTATION)
+      IGDS(13)=KGDS(11)			! (UNIQUE TO REPRESENTATION)
+      IGDS(14)=KGDS(12)			! (UNIQUE TO REPRESENTATION)
+      IGDS(15)=KGDS(13)			! (UNIQUE TO REPRESENTATION)
+      IGDS(16)=KGDS(14)			! (UNIQUE TO REPRESENTATION)
+      IGDS(17)=KGDS(15)			! (UNIQUE TO REPRESENTATION)
+      IGDS(18)=KGDS(16)			! (UNIQUE TO REPRESENTATION)
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      RETURN
+      END
+C-----------------------------------------------------------------------
+CFPP$ NOCONCUR R
+      SUBROUTINE GTBITS(IBM,IDS,LEN,MG,G,GROUND,GMIN,GMAX,NBIT)
+C$$$  SUBPROGRAM DOCUMENTATION BLOCK
+C
+C SUBPROGRAM:    GTBITS      COMPUTE NUMBER OF BITS AND ROUND FIELD.
+C   PRGMMR: IREDELL          ORG: W/NMC23    DATE: 92-10-31
+C
+C ABSTRACT: THE NUMBER OF BITS REQUIRED TO PACK A GIVEN FIELD
+C   AT A PARTICULAR DECIMAL SCALING IS COMPUTED USING THE FIELD RANGE.
+C   THE FIELD IS ROUNDED OFF TO THE DECIMAL SCALING FOR PACKING.
+C   THE MINIMUM AND MAXIMUM ROUNDED FIELD VALUES ARE ALSO RETURNED.
+C   GRIB BITMAP MASKING FOR VALID DATA IS OPTIONALLY USED.
+C
+C PROGRAM HISTORY LOG:
+C   92-10-31  IREDELL
+C
+C USAGE:    CALL GTBITS(IBM,IDS,LEN,MG,G,GMIN,GMAX,NBIT)
+C   INPUT ARGUMENT LIST:
+C     IBM      - INTEGER BITMAP FLAG (=0 FOR NO BITMAP)
+C     IDS      - INTEGER DECIMAL SCALING
+C                (E.G. IDS=3 TO ROUND FIELD TO NEAREST MILLI-VALUE)
+C     LEN      - INTEGER LENGTH OF THE FIELD AND BITMAP
+C     MG       - INTEGER (LEN) BITMAP IF IBM=1 (0 TO SKIP, 1 TO KEEP)
+C     G        - REAL (LEN) FIELD
+C
+C   OUTPUT ARGUMENT LIST:
+C     GROUND   - REAL (LEN) FIELD ROUNDED TO DECIMAL SCALING
+C                (SET TO ZERO WHERE BITMAP IS 0 IF IBM=1)
+C     GMIN     - REAL MINIMUM VALID ROUNDED FIELD VALUE
+C     GMAX     - REAL MAXIMUM VALID ROUNDED FIELD VALUE
+C     NBIT     - INTEGER NUMBER OF BITS TO PACK
+C
+C SUBPROGRAMS CALLED:
+C   ISRCHNE  - FIND FIRST VALUE IN AN ARRAY NOT EQUAL TO TARGET VALUE
+C
+C ATTRIBUTES:
+C   LANGUAGE: CRAY FORTRAN
+C
+C$$$
+      DIMENSION MG(LEN),G(LEN),GROUND(LEN)
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+C  ROUND FIELD AND DETERMINE EXTREMES WHERE BITMAP IS ON
+      DS=10.**IDS
+      IF(IBM.EQ.0) THEN
+        GROUND(1)=NINT(G(1)*DS)/DS
+        GMAX=GROUND(1)
+        GMIN=GROUND(1)
+        DO I=2,LEN
+          GROUND(I)=NINT(G(I)*DS)/DS
+          GMAX=MAX(GMAX,GROUND(I))
+          GMIN=MIN(GMIN,GROUND(I))
+        ENDDO
+      ELSE
+        I1=ISRCHNE(LEN,MG,1,0)
+        IF(I1.GT.0.AND.I1.LE.LEN) THEN
+          DO I=1,I1-1
+            GROUND(I)=0.
+          ENDDO
+          GROUND(I1)=NINT(G(I1)*DS)/DS
+          GMAX=GROUND(I1)
+          GMIN=GROUND(I1)
+          DO I=I1+1,LEN
+            IF(MG(I).NE.0) THEN
+              GROUND(I)=NINT(G(I)*DS)/DS
+              GMAX=MAX(GMAX,GROUND(I))
+              GMIN=MIN(GMIN,GROUND(I))
+            ELSE
+              GROUND(I)=0.
+            ENDIF
+          ENDDO
+        ELSE
+          DO I=1,LEN
+            GROUND(I)=0.
+          ENDDO
+          GMAX=0.
+          GMIN=0.
+        ENDIF
+      ENDIF
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+C  COMPUTE NUMBER OF BITS
+      NBIT=LOG((GMAX-GMIN)*DS+0.9)/LOG(2.)+1.
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      RETURN
+      END
+C-----------------------------------------------------------------------
+      SUBROUTINE BAREAD(LU,IB,NB,KA,A)
+C$$$  SUBPROGRAM DOCUMENTATION BLOCK
+C
+C SUBPROGRAM: BAREAD         BYTE-ADDRESSABLE READ
+C   PRGMMR: IREDELL          ORG: W/NMC23     DATE: 94-04-01
+C
+C ABSTRACT: READ A GIVEN NUMBER OF BYTES FROM AN UNBLOCKED FILE,
+C   SKIPPING A GIVEN NUMBER OF BYTES.
+C
+C PROGRAM HISTORY LOG:
+C   94-04-01  IREDELL
+C   95-04-05  IREDELL  PREVENT ATTEMPTS TO READ ZERO BYTES
+C
+C USAGE:    CALL BAREAD(LU,IB,NB,KA,A)
+C   INPUT ARGUMENTS:
+C     LU           INTEGER UNIT TO READ
+C     IB           INTEGER NUMBER OF BYTES TO SKIP
+C     NB           INTEGER NUMBER OF BYTES TO READ
+C   OUTPUT ARGUMENTS:
+C     KA           INTEGER NUMBER OF BYTES ACTUALLY READ
+C     A            CHARACTER*1 (KA) DATA READ
+C
+C SUBPROGRAMS CALLED:
+C   SETPOS       SET FILE POSITION
+C   BUFFERIN     READ FILE
+C   LENGTH       GET LENGTH IN WORDS OF BUFFER
+C   STRMOV       COPY DATA
+C
+C ATTRIBUTES:
+C   LANGUAGE: CRAY FORTRAN (SHOULD BE REWRITTEN IN C)
+C
+C$$$
+      CHARACTER A(NB)
+      PARAMETER(NWK=512,NBW=8,NBK=NWK*NBW)
+      DIMENSION B(NWK)
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      IW=IB/NBW
+      CALL SETPOS(LU,3,IW)
+      KA=0
+      KB=IB-IW*NBW
+      NW=(IB+NB-1)/NBW+1-IW
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      DOWHILE(NW.GT.0)
+        KW=MIN(NW,NWK)
+        BUFFERIN(LU,0) (B(1),B(KW))
+        LW=LENGTH(LU)
+        IF(LW.GT.0) THEN
+          KN=MIN(NB-KA,LW*NBW-KB)
+          CALL STRMOV(B,KB+1,KN,A,KA+1)
+          KA=KA+KN
+          KB=0
+          NW=NW-LW
+        ENDIF
+        IF(LW.LT.KW) NW=0
+      ENDDO
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      RETURN
+      END
+C-----------------------------------------------------------------------
+      SUBROUTINE WRYTE(LU,LC,C)
+C$$$  SUBPROGRAM DOCUMENTATION BLOCK
+C
+C SUBPROGRAM:    WRYTE       WRITE DATA OUT BY BYTES
+C   PRGMMR: IREDELL          ORG: W/NMC23     DATE: 92-10-31
+C
+C ABSTRACT: EFFICIENTLY WRITE UNFORMATTED A CHARACETER ARRAY.
+C
+C PROGRAM HISTORY LOG:
+C   91-10-31  MARK IREDELL
+C
+C USAGE:    CALL WRYTE(LU,LC,C)
+C
+C   INPUT ARGUMENT LIST:
+C     LU       - INTEGER UNIT TO WHICH TO WRITE
+C     LC       - INTEGER NUMBER OF CHARACTERS OR BYTES TO WRITE
+C     C        - CHARACETER (LC) DATA TO WRITE
+C
+C ATTRIBUTES:
+C   LANGUAGE: CRAY FORTRAN
+C
+C$$$
+      CHARACTER C(LC)
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      WRITE(LU) C
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      RETURN
+      END
+C-----------------------------------------------------------------------
+      SUBROUTINE IDSDEF(IPTV,IDS)
+C$$$  SUBPROGRAM DOCUMENTATION BLOCK
+C
+C SUBPROGRAM: IDSDEF         SETS DEFAULT DECIMAL SCALINGS
+C   PRGMMR: IREDELL          ORG: W/NMC23     DATE: 92-10-31
+C
+C ABSTRACT: SETS DECIMAL SCALINGS DEFAULTS FOR VARIOUS PARAMETERS.
+C   A DECIMAL SCALING OF -3 MEANS DATA IS PACKED IN KILO-SI UNITS.
+C
+C PROGRAM HISTORY LOG:
+C   92-10-31  IREDELL
+C
+C USAGE:    CALL IDSDEF(IPTV,IDS)
+C   INPUT ARGUMENTS:
+C     IPTV         PARAMTER TABLE VERSION (ONLY 1 OR 2 IS RECOGNIZED)
+C   OUTPUT ARGUMENTS:
+C     IDS          INTEGER (255) DECIMAL SCALINGS
+C                  (UNKNOWN DECIMAL SCALINGS WILL NOT BE SET)
+C
+C ATTRIBUTES:
+C   LANGUAGE: CRAY FORTRAN
+C
+C$$$
+      DIMENSION IDS(255)
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      IF(IPTV.EQ.1.OR.IPTV.EQ.2) THEN
+        IDS(001)=-1     ! PRESSURE (PA)
+        IDS(002)=-1     ! SEA-LEVEL PRESSURE (PA)
+        IDS(003)=3      ! PRESSURE TENDENCY (PA/S)
+                        !
+                        !
+        IDS(006)=-1     ! GEOPOTENTIAL (M2/S2)
+        IDS(007)=0      ! GEOPOTENTIAL HEIGHT (M)
+        IDS(008)=0      ! GEOMETRIC HEIGHT (M)
+        IDS(009)=0      ! STANDARD DEVIATION OF HEIGHT (M)
+                        !
+        IDS(011)=1      ! TEMPERATURE (K)
+        IDS(012)=1      ! VIRTUAL TEMPERATURE (K)
+        IDS(013)=1      ! POTENTIAL TEMPERATURE (K)
+        IDS(014)=1      ! PSEUDO-ADIABATIC POTENTIAL TEMPERATURE (K)
+        IDS(015)=1      ! MAXIMUM TEMPERATURE (K)
+        IDS(016)=1      ! MINIMUM TEMPERATURE (K)
+        IDS(017)=1      ! DEWPOINT TEMPERATURE (K)
+        IDS(018)=1      ! DEWPOINT DEPRESSION (K)
+        IDS(019)=4      ! TEMPERATURE LAPSE RATE (K/M)
+        IDS(020)=0      ! VISIBILITY (M)
+                        ! RADAR SPECTRA 1 ()
+                        ! RADAR SPECTRA 2 ()
+                        ! RADAR SPECTRA 3 ()
+                        !
+        IDS(025)=1      ! TEMPERATURE ANOMALY (K)
+        IDS(026)=-1     ! PRESSURE ANOMALY (PA)
+        IDS(027)=0      ! GEOPOTENTIAL HEIGHT ANOMALY (M)
+                        ! WAVE SPECTRA 1 ()
+                        ! WAVE SPECTRA 2 ()
+                        ! WAVE SPECTRA 3 ()
+        IDS(031)=0      ! WIND DIRECTION (DEGREES)
+        IDS(032)=1      ! WIND SPEED (M/S)
+        IDS(033)=1      ! ZONAL WIND (M/S)
+        IDS(034)=1      ! MERIDIONAL WIND (M/S)
+        IDS(035)=-4     ! STREAMFUNCTION (M2/S)
+        IDS(036)=-4     ! VELOCITY POTENTIAL (M2/S)
+        IDS(037)=-1     ! MONTGOMERY STREAM FUNCTION (M2/S2)
+        IDS(038)=8      ! SIGMA VERTICAL VELOCITY (1/S)
+        IDS(039)=3      ! PRESSURE VERTICAL VELOCITY (PA/S)
+        IDS(040)=4      ! GEOMETRIC VERTICAL VELOCITY (M/S)
+        IDS(041)=6      ! ABSOLUTE VORTICITY (1/S)
+        IDS(042)=6      ! ABSOLUTE DIVERGENCE (1/S)
+        IDS(043)=6      ! RELATIVE VORTICITY (1/S)
+        IDS(044)=6      ! RELATIVE DIVERGENCE (1/S)
+        IDS(045)=4      ! VERTICAL U SHEAR (1/S)
+        IDS(046)=4      ! VERTICAL V SHEAR (1/S)
+        IDS(047)=0      ! DIRECTION OF CURRENT (DEGREES)
+                        ! SPEED OF CURRENT (M/S)
+                        ! U OF CURRENT (M/S)
+                        ! V OF CURRENT (M/S)
+        IDS(051)=4      ! SPECIFIC HUMIDITY (KG/KG)
+        IDS(052)=0      ! RELATIVE HUMIDITY (PERCENT)
+        IDS(053)=4      ! HUMIDITY MIXING RATIO (KG/KG)
+        IDS(054)=1      ! PRECIPITABLE WATER (KG/M2)
+        IDS(055)=-1     ! VAPOR PRESSURE (PA)
+        IDS(056)=-1     ! SATURATION DEFICIT (PA)
+        IDS(057)=1      ! EVAPORATION (KG/M2)
+        IDS(058)=1      ! CLOUD ICE (KG/M2)
+        IDS(059)=6      ! PRECIPITATION RATE (KG/M2/S)
+        IDS(060)=0      ! THUNDERSTORM PROBABILITY (PERCENT)
+        IDS(061)=1      ! TOTAL PRECIPITATION (KG/M2)
+        IDS(062)=1      ! LARGE-SCALE PRECIPITATION (KG/M2)
+        IDS(063)=1      ! CONVECTIVE PRECIPITATION (KG/M2)
+        IDS(064)=6      ! WATER EQUIVALENT SNOWFALL RATE (KG/M2/S)
+        IDS(065)=0      ! WATER EQUIVALENT OF SNOW DEPTH (KG/M2)
+        IDS(066)=2      ! SNOW DEPTH (M)
+                        ! MIXED-LAYER DEPTH (M)
+                        ! TRANSIENT THERMOCLINE DEPTH (M)
+                        ! MAIN THERMOCLINE DEPTH (M)
+                        ! MAIN THERMOCLINE ANOMALY (M)
+        IDS(071)=0      ! TOTAL CLOUD COVER (PERCENT)
+        IDS(072)=0      ! CONVECTIVE CLOUD COVER (PERCENT)
+        IDS(073)=0      ! LOW CLOUD COVER (PERCENT)
+        IDS(074)=0      ! MIDDLE CLOUD COVER (PERCENT)
+        IDS(075)=0      ! HIGH CLOUD COVER (PERCENT)
+        IDS(076)=1      ! CLOUD WATER (KG/M2)
+                        !
+        IDS(078)=1      ! CONVECTIVE SNOW (KG/M2)
+        IDS(079)=1      ! LARGE SCALE SNOW (KG/M2)
+        IDS(080)=1      ! WATER TEMPERATURE (K)
+        IDS(081)=0      ! SEA-LAND MASK ()
+                        ! DEVIATION OF SEA LEVEL FROM MEAN (M)
+        IDS(083)=5      ! ROUGHNESS (M)
+        IDS(084)=1      ! ALBEDO (PERCENT)
+        IDS(085)=1      ! SOIL TEMPERATURE (K)
+        IDS(086)=0      ! SOIL WETNESS (KG/M2)
+        IDS(087)=0      ! VEGETATION (PERCENT)
+                        ! SALINITY (KG/KG)
+        IDS(089)=4      ! DENSITY (KG/M3)
+        IDS(090)=1      ! RUNOFF (KG/M2)
+        IDS(091)=0      ! ICE CONCENTRATION ()
+                        ! ICE THICKNESS (M)
+        IDS(093)=0      ! DIRECTION OF ICE DRIFT (DEGREES)
+                        ! SPEED OF ICE DRIFT (M/S)
+                        ! U OF ICE DRIFT (M/S)
+                        ! V OF ICE DRIFT (M/S)
+                        ! ICE GROWTH (M)
+                        ! ICE DIVERGENCE (1/S)
+        IDS(099)=1      ! SNOW MELT (KG/M2)
+                        ! SIG HEIGHT OF WAVES AND SWELL (M)
+        IDS(101)=0      ! DIRECTION OF WIND WAVES (DEGREES)
+                        ! SIG HEIGHT OF WIND WAVES (M)
+                        ! MEAN PERIOD OF WIND WAVES (S)
+        IDS(104)=0      ! DIRECTION OF SWELL WAVES (DEGREES)
+                        ! SIG HEIGHT OF SWELL WAVES (M)
+                        ! MEAN PERIOD OF SWELL WAVES (S)
+        IDS(107)=0      ! PRIMARY WAVE DIRECTION (DEGREES)
+                        ! PRIMARY WAVE MEAN PERIOD (S)
+        IDS(109)=0      ! SECONDARY WAVE DIRECTION (DEGREES)
+                        ! SECONDARY WAVE MEAN PERIOD (S)
+        IDS(111)=0      ! NET SOLAR RADIATIVE FLUX AT SURFACE (W/M2)
+        IDS(112)=0      ! NET LONGWAVE RADIATIVE FLUX AT SURFACE (W/M2)
+        IDS(113)=0      ! NET SOLAR RADIATIVE FLUX AT TOP (W/M2)
+        IDS(114)=0      ! NET LONGWAVE RADIATIVE FLUX AT TOP (W/M2)
+        IDS(115)=0      ! NET LONGWAVE RADIATIVE FLUX (W/M2)
+        IDS(116)=0      ! NET SOLAR RADIATIVE FLUX (W/M2)
+        IDS(117)=0      ! TOTAL RADIATIVE FLUX (W/M2)
+                        !
+                        !
+                        !
+        IDS(121)=0      ! LATENT HEAT FLUX (W/M2)
+        IDS(122)=0      ! SENSIBLE HEAT FLUX (W/M2)
+        IDS(123)=0      ! BOUNDARY LAYER DISSIPATION (W/M2)
+        IDS(124)=3      ! U WIND STRESS (N/M2)
+        IDS(125)=3      ! V WIND STRESS (N/M2)
+                        ! WIND MIXING ENERGY (J)
+                        ! IMAGE DATA ()
+        IDS(128)=-1     ! MEAN SEA-LEVEL PRESSURE (STDATM) (PA)
+        IDS(129)=-1     ! MEAN SEA-LEVEL PRESSURE (MAPS) (PA)
+        IDS(130)=-1     ! MEAN SEA-LEVEL PRESSURE (ETA) (PA)
+        IDS(131)=1      ! SURFACE LIFTED INDEX (K)
+        IDS(132)=1      ! BEST LIFTED INDEX (K)
+        IDS(133)=1      ! K INDEX (K)
+        IDS(134)=1      ! SWEAT INDEX (K)
+        IDS(135)=10     ! HORIZONTAL MOISTURE DIVERGENCE (KG/KG/S)
+        IDS(136)=4      ! SPEED SHEAR (1/S)
+        IDS(137)=3      ! 3-HR PRESSURE TENDENCY (PA/S)
+        IDS(138)=6      ! BRUNT-VAISALA FREQUENCY SQUARED (1/S2)
+        IDS(139)=11     ! POTENTIAL VORTICITY (MASS-WEIGHTED) (1/S/M)
+        IDS(140)=0      ! RAIN MASK ()
+        IDS(141)=0      ! FREEZING RAIN MASK ()
+        IDS(142)=0      ! ICE PELLETS MASK ()
+        IDS(143)=0      ! SNOW MASK ()
+        IDS(144)=3      ! VOLUMETRIC SOIL MOISTURE CONTENT (FRACTION)
+        IDS(145)=0      ! POTENTIAL EVAPORATION RATE (W/M2)
+        IDS(146)=0      ! CLOUD WORKFUNCTION (J/KG)
+        IDS(147)=3      ! U GRAVITY WAVE STRESS (N/M2)
+        IDS(148)=3      ! V GRAVITY WAVE STRESS (N/M2)
+        IDS(149)=10     ! POTENTIAL VORTICITY (M2/S/KG)
+                        ! COVARIANCE BETWEEN V AND U (M2/S2)
+                        ! COVARIANCE BETWEEN U AND T (K*M/S)
+                        ! COVARIANCE BETWEEN V AND T (K*M/S)
+                        !
+                        !
+        IDS(155)=0      ! GROUND HEAT FLUX (W/M2)
+        IDS(156)=0      ! CONVECTIVE INHIBITION (W/M2)
+        IDS(157)=0      ! CONVECTIVE APE (J/KG)
+        IDS(158)=0      ! TURBULENT KE (J/KG)
+        IDS(159)=-1     ! CONDENSATION PRESSURE OF LIFTED PARCEL (PA)
+        IDS(160)=0      ! CLEAR SKY UPWARD SOLAR FLUX (W/M2)
+        IDS(161)=0      ! CLEAR SKY DOWNWARD SOLAR FLUX (W/M2)
+        IDS(162)=0      ! CLEAR SKY UPWARD LONGWAVE FLUX (W/M2)
+        IDS(163)=0      ! CLEAR SKY DOWNWARD LONGWAVE FLUX (W/M2)
+        IDS(164)=0      ! CLOUD FORCING NET SOLAR FLUX (W/M2)
+        IDS(165)=0      ! CLOUD FORCING NET LONGWAVE FLUX (W/M2)
+        IDS(166)=0      ! VISIBLE BEAM DOWNWARD SOLAR FLUX (W/M2)
+        IDS(167)=0      ! VISIBLE DIFFUSE DOWNWARD SOLAR FLUX (W/M2)
+        IDS(168)=0      ! NEAR IR BEAM DOWNWARD SOLAR FLUX (W/M2)
+        IDS(169)=0      ! NEAR IR DIFFUSE DOWNWARD SOLAR FLUX (W/M2)
+                        !
+                        !
+        IDS(172)=3      ! MOMENTUM FLUX (N/M2)
+        IDS(173)=0      ! MASS POINT MODEL SURFACE ()
+        IDS(174)=0      ! VELOCITY POINT MODEL SURFACE ()
+        IDS(175)=0      ! SIGMA LAYER NUMBER ()
+        IDS(176)=2      ! LATITUDE (DEGREES)
+        IDS(177)=2      ! EAST LONGITUDE (DEGREES)
+                        !
+                        !
+                        !
+        IDS(181)=9      ! X-GRADIENT LOG PRESSURE (1/M)
+        IDS(182)=9      ! Y-GRADIENT LOG PRESSURE (1/M)
+        IDS(183)=5      ! X-GRADIENT HEIGHT (M/M)
+        IDS(184)=5      ! Y-GRADIENT HEIGHT (M/M)
+                        !
+                        !
+                        !
+                        !
+                        !
+                        !
+                        !
+                        !
+                        !
+                        !
+                        !
+                        !
+                        !
+                        !
+                        !
+                        !
+        IDS(201)=0      ! ICE-FREE WATER SURCACE (PERCENT)
+                        !
+                        !
+        IDS(204)=0      ! DOWNWARD SOLAR RADIATIVE FLUX (W/M2)
+        IDS(205)=0      ! DOWNWARD LONGWAVE RADIATIVE FLUX (W/M2)
+                        !
+        IDS(207)=0      ! MOISTURE AVAILABILITY (PERCENT)
+                        ! EXCHANGE COEFFICIENT (KG/M2/S)
+        IDS(209)=0      ! NUMBER OF MIXED LAYER NEXT TO SFC ()
+                        !
+        IDS(211)=0      ! UPWARD SOLAR RADIATIVE FLUX (W/M2)
+        IDS(212)=0      ! UPWARD LONGWAVE RADIATIVE FLUX (W/M2)
+        IDS(213)=0      ! NON-CONVECTIVE CLOUD COVER (PERCENT)
+        IDS(214)=6      ! CONVECTIVE PRECIPITATION RATE (KG/M2/S)
+        IDS(215)=7      ! TOTAL DIABATIC HEATING RATE (K/S)
+        IDS(216)=7      ! TOTAL RADIATIVE HEATING RATE (K/S)
+        IDS(217)=7      ! TOTAL DIABATIC NONRADIATIVE HEATING RATE (K/S)
+        IDS(218)=2      ! PRECIPITATION INDEX (FRACTION)
+        IDS(219)=1      ! STD DEV OF IR T OVER 1X1 DEG AREA (K)
+        IDS(220)=4      ! NATURAL LOG OF SURFACE PRESSURE OVER 1 KPA ()
+                        !
+        IDS(222)=0      ! 5-WAVE GEOPOTENTIAL HEIGHT (M)
+        IDS(223)=1      ! PLANT CANOPY SURFACE WATER (KG/M2)
+                        !
+                        !
+                        ! BLACKADARS MIXING LENGTH (M)
+                        ! ASYMPTOTIC MIXING LENGTH (M)
+        IDS(228)=1      ! POTENTIAL EVAPORATION (KG/M2)
+        IDS(229)=0      ! SNOW PHASE-CHANGE HEAT FLUX (W/M2)
+                        !
+        IDS(231)=3      ! CONVECTIVE CLOUD MASS FLUX (PA/S)
+        IDS(232)=0      ! DOWNWARD TOTAL RADIATION FLUX (W/M2)
+        IDS(233)=0      ! UPWARD TOTAL RADIATION FLUX (W/M2)
+        IDS(224)=1      ! BASEFLOW-GROUNDWATER RUNOFF (KG/M2)
+        IDS(225)=1      ! STORM SURFACE RUNOFF (KG/M2)
+                        !
+                        !
+        IDS(238)=0      ! SNOW COVER (PERCENT)
+        IDS(239)=1      ! SNOW TEMPERATURE (K)
+                        !
+        IDS(241)=7      ! LARGE SCALE CONDENSATION HEATING RATE (K/S)
+        IDS(242)=7      ! DEEP CONVECTIVE HEATING RATE (K/S)
+        IDS(243)=10     ! DEEP CONVECTIVE MOISTENING RATE (KG/KG/S)
+        IDS(244)=7      ! SHALLOW CONVECTIVE HEATING RATE (K/S)
+        IDS(245)=10     ! SHALLOW CONVECTIVE MOISTENING RATE (KG/KG/S)
+        IDS(246)=7      ! VERTICAL DIFFUSION HEATING RATE (KG/KG/S)
+        IDS(247)=7      ! VERTICAL DIFFUSION ZONAL ACCELERATION (M/S/S)
+        IDS(248)=7      ! VERTICAL DIFFUSION MERID ACCELERATION (M/S/S)
+        IDS(249)=10     ! VERTICAL DIFFUSION MOISTENING RATE (KG/KG/S)
+        IDS(250)=7      ! SOLAR RADIATIVE HEATING RATE (K/S)
+        IDS(251)=7      ! LONGWAVE RADIATIVE HEATING RATE (K/S)
+                        ! DRAG COEFFICIENT ()
+                        ! FRICTION VELOCITY (M/S)
+                        ! RICHARDSON NUMBER ()
+                        !
+      ENDIF
+C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      RETURN
+      END
+C$$$  SUBPROGRAM DOCUMENTATION BLOCK
+C                .      .    .                                       .
+C SUBPROGRAM:    PDSEUP.F    UNPACKS GRIB PDS EXTENSION 41- FOR ENSEMBLE
+C   PRGMMR: ZOLTAN TOTH      ORG: W/NMC20    DATE: 95-03-14
+C
+C ABSTRACT: UNPACKS GRIB PDS EXTENSION STARTING ON BYTE 41 FOR ENSEMBLE
+C	FORECAST PRODUCTS. FOR FORMAT OF PDS EXTENSION, SEE NMC OFFICE NOTE 38
+C
+C PROGRAM HISTORY LOG:
+C   95-03-14  ZOLTAN TOTH AND MARK IREDELL
+C
+C USAGE:    CALL PDSENS.F(KENS,KPROB,XPROB,KCLUST,KMEMBR,ILAST,MSGA)
+C   INPUT ARGUMENT LIST:
+C     ILAST    - LAST BYTE TO BE UNPACKED (IF GREATER/EQUAL TO FIRST BYT
+C                IN ANY OF FOUR SECTIONS BELOW, WHOLE SECTION IS PACKED.
+C     MSGA     - FULL PDS SECTION, INCLUDING NEW ENSEMBLE EXTENSION
+C
+C   OUTPUT ARGUMENT LIST:      (INCLUDING WORK ARRAYS)
+C     KENS(5)  - BYTES 41-45 (GENERAL SECTION, ALWAYS PRESENT.)
+C     KPROB(2) - BYTES 46-47 (PROBABILITY SECTION, PRESENT ONLY IF NEEDE
+C     XPROB(2) - BYTES 48-51&52-55 (PROBABILITY SECTION, IF NEEDED.)
+C     KCLUST(16)-BYTES 61-76 (CLUSTERING SECTION, IF NEEDED.)
+C     KMEMBR(80)-BYTES 77-86 (CLUSTER MEMBERSHIP SECTION, IF NEEDED.)
+C
+C REMARKS: USE PDSENS.F FOR PACKING PDS ENSEMBLE EXTENSION.
+C
+C ATTRIBUTES:
+C   LANGUAGE: CF77 FORTRAN
+C   MACHINE:  CRAY, WORKSTATIONS
+C
+C$$$
+C
+	  SUBROUTINE PDSEUP(KENS,KPROB,XPROB,KCLUST,KMEMBR,ILAST,MSGA)
+	  INTEGER KENS(5),KPROB(2),KCLUST(16),KMEMBR(80)
+	  DIMENSION XPROB(2)
+	  INTEGER KREF
+	  CHARACTER*1 MSGA(100)
+	  REAL REFNCE
+	  CHARACTER*1 CKREF(8)
+	  EQUIVALENCE   (CKREF(1),KREF,REFNCE)
+C	CHECKING TOTAL NUMBER OF BYTES IN PDS (IBYTES)
+	  CALL GBYTE(MSGA, IBYTES, 0,24)
+C	  PRINT *,'IBYTES=',IBYTES
+	  IF(ILAST.GT.IBYTES) THEN
+C	  ILAST=IBYTES
+	  PRINT *,'ERROR - THERE ARE ONLY ',IBYTES, ' BYTES IN THE PDS.'
+	  GO TO 333
+	  ENDIF
+	  IF(ILAST.LT.41) THEN
+	  PRINT *,'WARNING - SUBROUTINE IS FOR UNPACKING BYTES 41 AND ABOVE'
+	  GO TO 333
+	  ENDIF
+C	UNPACKING FIRST SECTION (GENERAL INFORMATION)
+      CALL GBYTES(MSGA,KENS,40*8,8,0,5)
+C	UNPACKING 2ND SECTION (PROBABILITY SECTION)
+      IF(ILAST.GE.46) THEN
+      CALL GBYTES(MSGA,KPROB,45*8,8,0,2)
+C
+C
+      CALL GBYTE (MSGA,KREF,47*8,32)
+      CALL W3FI01(LW)
+      IF (LW.EQ.4) THEN
+        CALL GBYTE (CKREF,JSGN,0,1)
+        CALL GBYTE (CKREF,JEXP,1,7)
+        CALL GBYTE (CKREF,IFR,8,24)
+      ELSE
+        CALL GBYTE (CKREF,JSGN,32,1)
+        CALL GBYTE (CKREF,JEXP,33,7)
+        CALL GBYTE (CKREF,IFR,40,24)
+      ENDIF
+C     PRINT *,109,JSGN,JEXP,IFR
+  109 FORMAT (' JSGN,JEXP,IFR = ',3(1X,Z8))
+      IF (IFR.EQ.0) THEN
+          REFNCE  = 0.0
+      ELSE IF (JEXP.EQ.0.AND.IFR.EQ.0) THEN
+          REFNCE  = 0.0
+      ELSE
+          REFNCE  = FLOAT(IFR) * 16.0 ** (JEXP - 64 - 6)
+          IF (JSGN.NE.0) REFNCE = - REFNCE
+      END IF
+	  XPROB(1)=REFNCE
+C
+      CALL GBYTE (MSGA,KREF,51*8,32)
+      CALL W3FI01(LW)
+      IF (LW.EQ.4) THEN
+        CALL GBYTE (CKREF,JSGN,0,1)
+        CALL GBYTE (CKREF,JEXP,1,7)
+        CALL GBYTE (CKREF,IFR,8,24)
+      ELSE
+        CALL GBYTE (CKREF,JSGN,32,1)
+        CALL GBYTE (CKREF,JEXP,33,7)
+        CALL GBYTE (CKREF,IFR,40,24)
+      ENDIF
+C     PRINT *,109,JSGN,JEXP,IFR
+      IF (IFR.EQ.0) THEN
+          REFNCE  = 0.0
+      ELSE IF (JEXP.EQ.0.AND.IFR.EQ.0) THEN
+          REFNCE  = 0.0
+      ELSE
+          REFNCE  = FLOAT(IFR) * 16.0 ** (JEXP - 64 - 6)
+          IF (JSGN.NE.0) REFNCE = - REFNCE
+      END IF
+	  XPROB(2)=REFNCE
+	  ENDIF
+C
+C	UNPACKING 3RD SECTION (CLUSTERING INFORMATION)
+      IF(ILAST.GE.61) CALL GBYTES(MSGA,KCLUST,60*8,8,0,16)
+C	UNPACKING 4TH SECTION (CLUSTERMEMBERSHIP INFORMATION)
+      IF(ILAST.GE.77) CALL GBYTES(MSGA,KMEMBR,76*8,1,0,10)
+C
+ 333  CONTINUE
+	  RETURN
+	  END

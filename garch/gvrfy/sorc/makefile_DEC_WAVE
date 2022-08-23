@@ -1,0 +1,17 @@
+SHELL=  /bin/sh
+CMD=	DEC_WAVE       
+FC=     xlf_r
+FOPTS=  -qsmp=noauto
+LOPTS=
+INCS=
+SRCS=	DEC_WAVE.f FITWAV_2Da.f FITWAV_1D.f GETANL_2006.f  
+LIBS=	/nwprod/lib/libbacio_4.a \
+	/nwprod/lib/libw3_4.a \
+	/nwprod/lib/libbufr_4_32.a \
+        /nwprod/lib/libip_4.a \
+        /nwprod/lib/libsp_4.a \
+	-l essl
+$(CMD): $(SRCS)
+	$(FC) $(FOPTS) $(SRCS) $(LIBS) -o $(CMD)
+dec_wave:	$(SRCS)
+	$(FC) $(FOPTS) $(SRCS) /nwprod/w3lib90/iplib_4_604 $(LIBS) -o vrfy0

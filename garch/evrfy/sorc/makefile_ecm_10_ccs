@@ -1,0 +1,19 @@
+SHELL=  /bin/sh
+CMD=	/global/save/wx20yz/evrfy/exec/vrfy_ecm_10        
+FC=     xlf_r
+FOPTS=  -qsmp=noauto
+LOPTS=
+INCS=
+SRCS=	VRFYEN_ecm_10.f GETANL_ecm.f GET23Y.f GRANGE.f ACGRID.f GRD2WV.f LATWMN.f \
+	SUMWAV.f RMSAWT.f GETCAC.f GETGRB_ecm.f FGROUP.f TALAGR_ecm.f \
+	FPTALA_ecm.f STATES.f SORTMM.f SPREAD_ecm.f
+LIBS=	/nwprod/lib/libbacio_4.a \
+	/nwprod/lib/libw3_4.a \
+	/nwprod/lib/libbufr_4_32.a \
+        /nwprod/lib/libip_4.a \
+        /nwprod/lib/libsp_4.a \
+	-l essl
+$(CMD): $(SRCS)
+	$(FC) $(FOPTS) $(SRCS) $(LIBS) -o $(CMD)
+vrfy0:	$(SRCS)
+	$(FC) $(FOPTS) $(SRCS) /nwprod/w3lib90/iplib_4_604 $(LIBS) -o vrfy0

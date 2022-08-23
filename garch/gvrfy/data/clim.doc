@@ -1,0 +1,22 @@
+   The climatology that is being used in the anomaly correlations that
+Yuejian Zhu calculates and Pete Caplan tabulates for the Northern
+Hemisphere is an old 15-year data set from about 1951-1965, consisting
+only of 1000-mb and 500-mb heights The data used in the Southern
+Hemisphere are more recent (1980's, we think) but consist only of an
+8-year record.  For the tropics, the data set used comes from a 23-year
+reanalysis. 
+   Since the choice of climatology has a noticeable effect on anomaly
+correlations, an effect that varies from day to day, it is important for
+the evaluation of test runs to make sure that you use the same climatology
+for experiment and control and not to attempt to compare your scores to
+those calculated elsewhere.
+   Another issue is smoothness and the length of record.  It is desirable
+that a good climatology smooth out the natural short-term fluctuations in
+atmospheric circulation.  This is not guaranteed if the period of
+averaging is not too short. A climatology of roughly 30 years seems to be
+the traditional choice. 
+   Therefore we recommend that, for evaluating your experiments with Mr.
+Zhu's package, you select a recent reanalysis climatolgy.  As for the
+"official" historical statistics, they will still be calculated with the
+same climatology to guarantee consistency.
+

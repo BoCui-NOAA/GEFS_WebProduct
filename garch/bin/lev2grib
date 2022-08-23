@@ -1,0 +1,132 @@
+#!/bin/ksh
+#
+###############################################################
+#
+# run the program lev2grib 
+#     to convert a grib file
+#     from using levels are used to identify the member number 
+#     to true grib
+#
+###############################################################
+rundir=/nfsuser/g01/wx20rw/ecarch3/lev2grib
+
+dtgl=`date +%Y%m%d.%H%M%S`
+tmpjobdir=/gpfstmp/wx20yz/ecm.lev2grib.$dtgl
+
+pwd
+pwdsave=`pwd`
+
+cd $rundir
+date;pwd
+make
+
+cd $pwdsave 
+pwd
+
+wgrib="/nwprod/util/exec/wgrib -ncep_opn"
+getvhour=/nwprod/util/exec/nhour
+ndate=/nwprod/util/exec/ndate
+
+if [ ! -d $tmpjobdir ]; then mkdir -p $tmpjobdir; fi
+
+#########################################################
+# !!! DEFINE MAXIMUM NUMBER OF PERTURBATION RECORDS
+# (This number does NOT include the LRC or HRC)
+#########################################################
+
+maxmem=50
+
+if [ $# -ne 4 ]; then
+  echo $0 needs 4 arguments: filein fileout levtype level
+  exit
+else
+  filein=$1
+  fileout=$2
+  levtype=$3
+  level=$4
+fi
+
+#####################################################################
+#
+#   Now copy all the records into the forecast output files.
+#
+#####################################################################
+
+echo " "
+echo "*----------------------------------------------------------*"
+echo "       processing from level-labels to GRIB                 " 
+echo "*----------------------------------------------------------*"
+echo "The time just before processing begins is: `date`"     
+
+echo filein=$filein
+echo fileout=$fileout
+echo levtype=$levtype
+echo level=$level
+
+cp $filein $tmpjobdir/filein
+rc=$?
+if (( rc != 0 )); then
+  echo cp $filein $tmpjobdir failed $rc
+  exit
+fi
+
+cd $tmpjobdir
+pwd
+ls -ablp
+
+ls -ablp filein
+rc=$?
+if (( rc != 0 )); then
+  echo $rc ls -ablp filein failed $rc
+  exit
+fi
+
+ls -al
+touch fileout
+
+ln -f -s filein				fort.11
+  /nwprod/util/exec/grbindex fort.11 fileini
+ln -f -s fileini			fort.21
+ln -f -s fileout			fort.51
+
+pwd
+ls -al
+
+  echo " &namin"                                      >lev2grib.input
+  echo "    lgribtyp=$levtype,lgriblev=$level,"      >>lev2grib.input
+  echo "    kmaxmem=${maxmem},"                      >>lev2grib.input
+  echo "    lugb=11,lugi=21,lugout=51"               >>lev2grib.input
+  echo " /"                                          >>lev2grib.input
+
+$rundir/lev2grib.x <lev2grib.input >lev2grib.output 2>&1
+rc=$?
+if (( rc != 0 )); then
+  echo lev2grib failed rc=$rc
+  echo `date` =================================== lev2grib output begin
+  cat lev2grib.output
+  echo `date` ===================================== lev2grib output end
+else
+  echo lev2grib succeeded rc=$rc
+  echo `date` =================================== lev2grib output begin
+  cat lev2grib.output
+  echo `date` ===================================== lev2grib output end
+  ls -ablp fileout
+  rc=$?
+  if (( rc != 0 )); then
+    echo $rc ls -ablp fileout failed $rc
+  else
+    cd $pwdsave
+    cp $tmpjobdir/fileout $fileout
+    rc=$?
+    if (( rc != 0 )); then
+      echo $rc cp $tmpjobdir/fileout $fileout failed $rc
+    fi
+  fi
+fi
+ 
+echo " "
+echo "*----------------------------------------------------------*"
+echo "        END OF lev2grib processing...."
+echo "*----------------------------------------------------------*"
+echo "The time at the end of the job is: `date`"     
+

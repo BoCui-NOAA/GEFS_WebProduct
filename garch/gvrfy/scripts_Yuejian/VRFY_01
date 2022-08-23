@@ -1,0 +1,70 @@
+### example 1
+#!/bin/sh
+#@ wall_clock_limit=29:00:00
+#@ requirements = Feature == "beta"
+#@ job_type = parallel
+#@ output = /ptmp/wx20yz/garch.o$(jobid)
+#@ error = /ptmp/wx20yz/garch.e$(jobid)
+#@ total_tasks = 30
+#@ node = 30
+#@ node_usage = shared
+#@ network.MPI=switch,not_shared,us
+#@ class = dev
+#@ account_no = GEN-MTN
+#
+#@ queue
+#
+
+#set -x
+
+cd $SHOME/$LOGNAME/gvrfy/scripts
+pwd
+
+if [ "$CDATE" -eq "" ]; then
+   echo "No data for CDATE, please check"
+   exit 8
+fi
+
+YMD=`echo $CDATE | cut -c1-8`
+YMDM1=`$nhours -24 $CDATE | cut -c1-8`
+YMDM2=`$nhours -48 $CDATE | cut -c1-8`
+YMDM3=`$nhours -72 $CDATE | cut -c1-8`
+YMDHM12=`$nhours -12 $CDATE `
+
+#### 1): GFS .vs final analysis
+   
+vrfyex_16.sh_new $YMDM1 s 18
+vrfyex_16.sh_new $YMDM1 s 12
+vrfyex_16.sh_new $YMDM1 s 06
+vrfyex_16.sh_new $YMD   s 00
+vrfyex_16.sh_new $YMDM2 c 00
+
+#### 2): GFS .vs GFS analysis
+
+export VFSDAY=$YMDM1\18;export VFEDAY=$YMDM1\18;VRFY_PUB.sh vrfy_table
+vrfyex_16.sh_new $YMDM1 a 12
+export VFSDAY=$YMDM1\06;export VFEDAY=$YMDM1\06;VRFY_PUB.sh vrfy_table
+vrfyex_16.sh_new $YMD   a 00
+
+#### 3): ecmwf verification
+VRFY_PUB_ECM12Z.sh $YMDHM12
+VRFY_PUB_ECM12Z.sh $YMD\00  
+
+#### 4): ukmet verification
+vrfyex_16_ecm_ukm_fno.sh_new $YMDM1 k 12
+vrfyex_16_ecm_ukm_fno.sh_new $YMD   k 00
+
+#### 5): cmc verification
+vrfyex_16_cmc.sh $YMD   m 00
+vrfyex_16_cmc.sh $YMDM1 m 12
+
+#### 6): nogap verifcation
+vrfyex_16_ecm_ukm_fno.sh_new $YMDM1 n 12
+vrfyex_16_ecm_ukm_fno.sh_new $YMD   n 00
+
+echo "++++++ Submite the VRFY02 job ++++++"
+export CDATE=$CDATE
+out=$GTMP/$LOGNAME/VRFY_02.$CDATE
+job=$SHOME/$LOGNAME/gvrfy/scripts/VRFY_02
+sub -e CDATE -j VRFY02 -o $out $job
+

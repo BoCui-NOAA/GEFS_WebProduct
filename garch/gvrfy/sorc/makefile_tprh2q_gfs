@@ -1,0 +1,8 @@
+INCS	=-I/nwprod/lib/incmod/sigio_4
+LIBS	=-L/nwprod/lib -lbacio_4 -lw3_d -lip_d -lsp_d -lsigio_4 -lessl
+tprh2q_gfs:	tprh2q_gfs.f funcphys.o physcons.o 
+	xlf_r -qlist -qsource -bnoquiet -qsmp=noauto -qrealsize=8 tprh2q_gfs.f funcphys.o physcons.o $(INCS) $(LIBS) -o tprh2q_gfs.x
+funcphys.o:	/nwprod/sorc/global_fcst.fd_old/funcphys.f physcons.o
+	xlf90 -O2 -qrealsize=8 -c /nwprod/sorc/global_fcst.fd_old/funcphys.f
+physcons.o:	/nwprod/sorc/global_fcst.fd_old/physcons.f 
+	xlf90 -O2 -qrealsize=8 -c /nwprod/sorc/global_fcst.fd_old/physcons.f

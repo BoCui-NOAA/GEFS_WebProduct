@@ -1,0 +1,67 @@
+
+### Notes: 01/15/2003
+
+exec: vrfy_0301 --> makefile_0301
+      new for multi-time interval from 6hrs to 24hrs.
+          for any level, either.
+-----------
+ &namin
+ ihem=1,la1=6,la2=29,lo1=1,lo2=144,l1=5,l2=28,nhrs=$nh,nvhrs=$nvh,
+ ifd=7,ilv=1000,iclim=$iclime,ic=1
+ /
+-----------
+
+
+### Notes: 11/18/2002
+
+exec: vrfy_0203 --> makefile_0203
+      new for many levels selection.
+-----------
+ &namin
+ ihem=1,la1=6,la2=29,lo1=1,lo2=144,l1=5,l2=28,nhrs=$nh,
+ ifd=7,ilv=1000,iclim=$iclime,ic=1
+ /
+-----------
+
+### Notes: 09/20/2001
+
+exec: vrfy_0109 --> makefile_0109
+      new for multi-time intervals 06/12/24
+-----------
+ &namin
+ ihem=1,la1=6,la2=29,lo1=1,lo2=144,l1=5,l2=28,nhrs=$nh,nvhrs=$nvh,
+ ifd=7,ilv=1000,iclim=$iclime,ic=1
+ /
+-----------
+
+
+Yuejian -
+   This can be sent out to users of your verification package.  Do you
+have any suggestions for changes?
+
+   The climatology that is being used in the anomaly correlations that
+Yuejian Zhu calculates and Pete Caplan tabulates for the Northern
+Hemisphere is an old 15-year data set from about 1951-1965, consisting
+only of 1000-mb and 500-mb heights The data used in the Southern
+Hemisphere are more recent (1980's, we think) but consist only of an
+8-year record.  For the tropics, the data set used comes from a 23-year
+reanalysis. 
+   Since the choice of climatology has a noticeable effect on anomaly
+correlations, an effect that varies from day to day, it is important for
+the evaluation of test runs to make sure that you use the same climatology
+for experiment and control and not to attempt to compare your scores to
+those calculated elsewhere.
+   Another issue is smoothness and the length of record.  It is desirable
+that a good climatology smooth out the natural short-term fluctuations in
+atmospheric circulation.  This is not guaranteed if the period of
+averaging is not too short. A climatology of roughly 30 years seems to be
+the traditional choice. 
+   Therefore we recommend that, for evaluating your experiments with Mr.
+Zhu's package, you select a recent reanalysis climatolgy.  As for the
+"official" historical statistics, they will still be calculated with the
+same climatology to guarantee consistency.
+
+     
+                         Pete
+
+     

@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title> NCEP Global Ensemble, NOAA/NWS/NCEP/EMC </title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../js/style.css"></link>
+<script language="JavaScript" src="../js/rmop.js"> </script>
+<script language="JavaScript">
+<!--
+                                                                                                                                  
+//-->
+                                                                                                                                  
+</script>
+</head>
+                                                                                                                                  
+<body  border=0 bgcolor="DDDDDD"  text="000000" background="../js/dirbkgnd.gif" onLoad="javascript:load_image(document.form1)" >
+                                                                                                                                  
+<img src="../js/noaa_logo.gif" height=60 width=65><img src="../js/nws_logo.gif" height=60 width=65><img src="../js/ncep_80.gif" height=55 width=75>
+<font color="Blue" size=+2>   &nbsp &nbsp &nbsp NCEP Global Ensemble: TITLE </font> 
+<br><br>
+
+<TH><IMG SRC="https://www.emc.ncep.noaa.gov/emc/pages/disclaimer/disclaimer_small.png"</TH>                                                                                                                                  
+<table bgcolor="BBBBBB" frame="below" >                                                                                                                 
+<form name='form1'>
+
+<tr>
+
+<td><select name='prd' onchange='location=this.form.prd.options[this.form.prd.selectedIndex].value'>
+<option value='pqpf_us1.html' >PQPF
+<option value='rmop.html' selected>RMOP
+</select>
+</td>
+
+<td><select name='reg' onchange='load_image(this.form)'> 
+<option value='' >Northern American 15 Days Forecast
+<option value='_pac' >Pacific Ocean 15 Days Forecast
+<option value='_nh' >Global 15 Days Forecast
+</select>
+</td>
+
+
+<td>
+<select name="dy" onchange="load_image(this.form)">
+<option value="YYYYMMDD" selected>YYYYMMDD  
+<option value="PASTDAY1 " >PASTDAY1 
+<option value="PASTDAY2 " >PASTDAY2 
+<option value="PASTDAY3 " >PASTDAY3 
+<option value="PASTDAY4 " >PASTDAY4 
+<option value="PASTDAY5 " >PASTDAY5 
+<option value="PASTDAY6 " >PASTDAY6 
+<option value="PASTDAY7 " >PASTDAY7 
+<option value="PASTDAY8" >PASTDAY8
+<option value="PASTDAY9" >PASTDAY9
+<option value="PASTDAY10" >PASTDAY10
+<option value="PASTDAY11" >PASTDAY11
+<option value="PASTDAY12" >PASTDAY12
+<option value="PASTDAY13" >PASTDAY13
+<option value="PASTDAY14" >PASTDAY14
+<option value="PASTDAY15" >PASTDAY15
+<option value="PASTDAY16" >PASTDAY16
+<option value="PASTDAY17" >PASTDAY17
+<option value="PASTDAY18" >PASTDAY18
+<option value="PASTDAY19" >PASTDAY19
+<option value="PASTDAY20" >PASTDAY20
+<option value="PASTDAY21" >PASTDAY21
+<option value="PASTDAY22" >PASTDAY22
+<option value="PASTDAY23" >PASTDAY23
+<option value="PASTDAY24" >PASTDAY24
+<option value="PASTDAY25" >PASTDAY25
+<option value="PASTDAY26" >PASTDAY26
+<option value="PASTDAY27" >PASTDAY27
+<option value="PASTDAY28" >PASTDAY28
+<option value="PASTDAY29" >PASTDAY29
+<option value="PASTDAY30" >PASTDAY30
+</select>
+</td>
+
+<td>
+<select name="tz" onchange="load_image(this.form)">
+<option value="00" selected> 00Z
+</select>
+</td>
+                                                                                                                                                       
+
+</tr>
+
+</form>
+</table>
+
+<table bgcolor="BBBBBB" frame="below">
+<tr>
+<td>
+     <img src="IMAGE" name="my_image" width=750 height=600>
+</td>
+</tr>
+
+LOOP
+
+</table> 
+
+<br>
+
+<a HREF="https://www.emc.ncep.noaa.gov/gmb/yluo/mmap"> Click here </a> to go to g
+if files directory for more maps.
+
+<br>
+<p><a href="https://www.emc.ncep.noaa.gov/gmb/ens">Go Back to Ensemble Home Page<
+/a>
+
+<p><a href="https://www.emc.ncep.noaa.gov/">Go Back to EMC Home Page</a>
+
+</body>
+</html>
+

@@ -1,0 +1,22 @@
+
+# This script creates a working directory if it is not already made.
+# A master directory name is exported in the variable DTMP.
+# If DTMP is not already set and exported, a name is created and exported.
+# (The name created is "/stmp/$LOGNAME".)
+# The working directory name is exported in the variable DATA.
+# If DATA is not already set and exported, a name is created and exported.
+# (The name created is "/$DTMP/data$$".)
+# Also, exported variable MKDATA will be YES or NO depending on
+# whether DATA was made in this script invocation or not.
+# If DATA could not be made the script exits with a return code of 6.
+# This script is meant to be run inline, as in ". mkdata", but it can
+# can also be run in a shell if DATA has already been set and exported.
+
+export DTMP=${DTMP:-/stmp/$LOGNAME}
+export DATA=${DATA:-$DTMP/data$$}
+if [[ -d $DATA ]];then
+ export MKDATA=NO
+else
+ mkdir -p $DATA || exit 6
+ export MKDATA=YES
+fi

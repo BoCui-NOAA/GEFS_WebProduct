@@ -1,0 +1,17 @@
+SHELL=  /bin/sh
+CMD=	/nfsuser/g01/wx20yz/eprob/exec/VFPROB_20030101
+FC=     xlf_r
+FOPTS=  -qsmp=noauto
+LOPTS=
+INCS=
+SRCS=	VFPROB_20060301_10m.f GETANL.f GETGRB.f ND2YMD.f GRANGE.f               
+LIBS=	/nwprod/lib/libbacio_4.a \
+	/nwprod/lib/libw3_4.a \
+	/nwprod/lib/libbufr_4_32.a \
+        /nwprod/lib/libip_4.a \
+        /nwprod/lib/libsp_4.a \
+	-l essl
+$(CMD): $(SRCS)
+	$(FC) $(FOPTS) $(SRCS) $(LIBS) -o $(CMD)
+prob0:	$(SRCS)
+	$(FC) $(FOPTS) $(SRCS) /nwprod/w3lib90/iplib_4_604 $(LIBS) -o prob0

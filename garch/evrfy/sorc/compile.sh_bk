@@ -1,0 +1,31 @@
+SHELL=/bin/sh
+#set -x
+
+  module load EnvVars/1.0.2
+  module load lsf/10.1
+  module load bacio/2.0.2
+  module load w3nco/2.0.6
+  module load sp/2.0.2
+  module load ip/3.0.1
+  module load ips/18.0.1.163
+  module use -a /gpfs/dell1/nco/ops/nwpara/modulefiles/compiler_prod/ips/18.0.1
+
+  export FCMP=ifort
+
+export LIBS="${IP_LIBd} \
+              ${SP_LIBd} \
+              ${W3NCO_LIBd} \
+              ${BACIO_LIB4}"
+
+make -f makefile_outlier_20060601
+make -f makefile_outlier_28m 
+make -f makefile_ecm_10
+make -f makefile_VRFY_14m_f20060530
+##make -f makefile_VRFY_cmc16m_f20060530
+make -f makefile_VRFY_14m_atmp
+make -f makefile_vrfyex_ecm_20030101
+make -f makefile_VRFY_20m_a20070530
+make -f makefile_VRFY_14m_a20060530
+make -f makefile_VRFY_20m_f20070530
+##make -f makefile_VRFY_cmc16m_a20060530
+make -f makefile_VRFY_20m_a20060530

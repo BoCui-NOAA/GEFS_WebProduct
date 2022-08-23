@@ -1,0 +1,1 @@
+wget ftp.cpc.ncep.noaa.gov/GIS/JAWF/Precip/$1

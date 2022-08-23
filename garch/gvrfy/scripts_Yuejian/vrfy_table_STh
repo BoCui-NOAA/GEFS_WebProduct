@@ -1,0 +1,34 @@
+#---------------- start cut here ----------------------------------------------
+###############################################################################
+############### INPUT TABLE FOR GLOBAL MODEL VERIFICATION PROGRAM #############
+###############################################################################
+
+###
+### Modify this table according to your experiments
+###
+
+### 1. experiment pgb file directory (standard file name is pgbf[hrs].[yyyymmddhh])
+export DIR_ANL=/global/prh           ### directory to store analysis files
+export DIR_FST=/global/prh           ### directory to store forecast files
+
+### 2. experiment ID ( better to use one character as ID, e.g. a/b/c ... )
+export EXP_ID=h                           ### MRF is using s as ID              
+
+### 3. verification ( analysis .vs. forecasts )
+###    IVRFY=1 (default, operation daily) against one analysis ( all lead time forecasts )
+###    IVRFY=0 one initial forecasts against all available analysis
+export IVRFY=1
+
+### 4. verified time                      
+###    if IVRFY=1 VFSDAY/VFEDAY is the time of analysis
+###    if IVRFY=0 VFSDAY/VFEDAY is the time of forecast
+###    VFSDAY <= VFEDAY 
+export VFSDAY=$VFSDAY                      ### verification started [yyyymmddhh]
+export VFEDAY=$VFEDAY                      ### verification ended   [yyyymmddhh]
+
+### 5. forecast length ( hours, mode(FHOURS,24)=0, 384 hours is maximum )             
+export FHOURS=384
+
+############## INPUT TABLE FOR GLOBAL MODEL VERIFICATION PROGRAM ###############
+#-------------- end cut here ---------------------------------------------------
+

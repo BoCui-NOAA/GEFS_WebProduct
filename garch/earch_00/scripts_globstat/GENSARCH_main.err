@@ -1,0 +1,2280 @@
+++ date
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
+++ echo ' ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++'
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
++++ date +%Y%m%d
+++ Date=20130604
+++ export CDATE=2013060400
+++ CDATE=2013060400
+++ echo CDATE=2013060400
+++ '[' 2013060400 = '' ']'
+++ export CDATE=2013060400
+++ CDATE=2013060400
+++ export SCOM=/com
+++ SCOM=/com
+++ export DFROM=/p5com/gens/prod
+++ DFROM=/p5com/gens/prod
+++ export DFROM=/com/gens/prod
+++ DFROM=/com/gens/prod
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
+++ echo ' +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++'
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
++++ /nwprod/util/exec/ndate +06 2013060400
+++ export CDATEp06=2013060406
+++ CDATEp06=2013060406
++++ /nwprod/util/exec/ndate -06 2013060400
+++ export CDATEm06=2013060318
+++ CDATEm06=2013060318
++++ /nwprod/util/exec/ndate -12 2013060400
+++ export CDATEm12=2013060312
+++ CDATEm12=2013060312
++++ /nwprod/util/exec/ndate -18 2013060400
+++ export CDATEm18=2013060306
+++ CDATEm18=2013060306
++++ /nwprod/util/exec/ndate -24 2013060400
+++ export CDATEm24=2013060300
+++ CDATEm24=2013060300
++++ /nwprod/util/exec/ndate -30 2013060400
+++ export CDATEm30=2013060218
+++ CDATEm30=2013060218
++++ /nwprod/util/exec/ndate -36 2013060400
+++ export CDATEm36=2013060212
+++ CDATEm36=2013060212
++++ /nwprod/util/exec/ndate -42 2013060400
+++ export CDATEm42=2013060206
+++ CDATEm42=2013060206
++++ /nwprod/util/exec/ndate -48 2013060400
+++ export CDATEm48=2013060200
+++ CDATEm48=2013060200
++++ /nwprod/util/exec/ndate -54 2013060400
+++ export CDATEm54=2013060118
+++ CDATEm54=2013060118
++++ /nwprod/util/exec/ndate -60 2013060400
+++ export CDATEm60=2013060112
+++ CDATEm60=2013060112
++++ /nwprod/util/exec/ndate -72 2013060400
+++ export CDATEm72=2013060100
+++ CDATEm72=2013060100
++++ /nwprod/util/exec/ndate -84 2013060400
+++ export CDATEm84=2013053112
+++ CDATEm84=2013053112
++++ /nwprod/util/exec/ndate -96 2013060400
+++ export CDATEm96=2013053100
+++ CDATEm96=2013053100
++++ /nwprod/util/exec/ndate -108 2013060400
+++ export CDATEm108=2013053012
+++ CDATEm108=2013053012
++++ /nwprod/util/exec/ndate -120 2013060400
+++ export CDATEm120=2013053000
+++ CDATEm120=2013053000
+++ export CDATEp00=2013060400
+++ CDATEp00=2013060400
++++ /nwprod/util/exec/ndate +12 2013060400
+++ export CDATEp12=2013060412
+++ CDATEp12=2013060412
++++ /nwprod/util/exec/ndate +24 2013060400
+++ export CDATEp24=2013060500
+++ CDATEp24=2013060500
++++ /nwprod/util/exec/ndate -24 2013060400
++++ cut -c1-8
+++ export YMDM1=20130603
+++ YMDM1=20130603
++++ /nwprod/util/exec/ndate -48 2013060400
++++ cut -c1-8
+++ export YMDM2=20130602
+++ YMDM2=20130602
++++ /nwprod/util/exec/ndate -72 2013060400
++++ cut -c1-8
+++ export YMDM3=20130601
+++ YMDM3=20130601
++++ /nwprod/util/exec/ndate -96 2013060400
++++ cut -c1-8
+++ export YMDM4=20130531
+++ YMDM4=20130531
++++ /nwprod/util/exec/ndate -120 2013060400
++++ cut -c1-8
+++ export YMDM5=20130530
+++ YMDM5=20130530
++++ echo 2013060400
++++ cut -c1-8
+++ export CYMD=20130604
+++ CYMD=20130604
++++ echo 2013060300
++++ cut -c1-8
+++ export CYMDM1=20130603
+++ CYMDM1=20130603
++++ /nwprod/util/exec/ndate -96 2013060400
++++ cut -c1-6
+++ export YYYYMM=201305
+++ YYYYMM=201305
++++ echo 2013060400
++++ cut -c5-8
+++ export MMDD=0604
+++ MMDD=0604
++++ echo 2013060400
++++ cut -c7-8
+++ export DD=04
+++ DD=04
++++ echo 2013060400
++++ cut -c9-10
+++ export HH=00
+++ HH=00
+++ echo '++++++ Submite the NCEP ENSPOST_06 job ++++++'
+++ export CDATE=2013060306
+++ CDATE=2013060306
+++ out=/ptmp/Yan.Luo/ens06.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_06.sh
+++ bsub -q dev -W 3:00 -J ens06 -o /ptmp/Yan.Luo/ens06.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_06.sh
+++ echo '++++++ Submite the NCEP ENSPOST_12 job ++++++'
+++ export CDATE=2013060312
+++ CDATE=2013060312
+++ out=/ptmp/Yan.Luo/ens12.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_12.sh
+++ bsub -q dev -W 3:00 -J ens12 -o /ptmp/Yan.Luo/ens12.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_12.sh
+++ echo '++++++ Submite the NCEP ENSPOST_18 job ++++++'
+++ export CDATE=2013060318
+++ CDATE=2013060318
+++ out=/ptmp/Yan.Luo/ens18.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_18.sh
+++ bsub -q dev -W 3:00 -J ens18 -o /ptmp/Yan.Luo/ens18.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_18.sh
+++ sleep 1800
+++ echo '++++++ Submite the NCEP ENSPOST_00 job ++++++'
+++ export CDATE=2013060400
+++ CDATE=2013060400
+++ out=/ptmp/Yan.Luo/ens00.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_00.sh
+++ bsub -q dev -W 3:00 -J ens00 -o /ptmp/Yan.Luo/ens00.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_00.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_06 job ++++++'
+++ export CDATE=2013060306
+++ CDATE=2013060306
+++ out=/ptmp/Yan.Luo/ens06bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_12 job ++++++'
+++ export CDATE=2013060312
+++ CDATE=2013060312
+++ out=/ptmp/Yan.Luo/ens12bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_18 job ++++++'
+++ export CDATE=2013060318
+++ CDATE=2013060318
+++ out=/ptmp/Yan.Luo/ens18bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_00 job ++++++'
+++ export CDATE=2013060400
+++ CDATE=2013060400
+++ out=/ptmp/Yan.Luo/ens00bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12 job ++++++'
+++ export CDATE=2013060300
+++ CDATE=2013060300
+++ out=/ptmp/Yan.Luo/cmc_ens.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12 job ++++++'
+++ export CDATE=2013060400
+++ CDATE=2013060400
+++ out=/ptmp/Yan.Luo/cmc_ens.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12_BC job ++++++'
+++ export CDATE=2013060312
+++ CDATE=2013060312
+++ out=/ptmp/Yan.Luo/cmc_ens_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12_BC.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12_BC job ++++++'
+++ export CDATE=2013060400
+++ CDATE=2013060400
+++ out=/ptmp/Yan.Luo/cmc_ens_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12_BC.sh
+++ echo '++++++ Submite the ECM ENSPOST_12 job ++++++'
+++ echo '++++++ additional parameteres (t2m,uv250,uv850 ...)++++++'
+++ export CDATE=2013060312
+++ CDATE=2013060312
+++ out=/ptmp/Yan.Luo/ecm_ens12.aout
+++ job=/ensemble/save/Yan.Luo/ecmwf/jobs/JWSR_ECMWFENSH.sms.prod
+++ echo '++++++ Submite the ECM ENSPOST_00 job ++++++'
+++ export CDATE=2013060400
+++ CDATE=2013060400
+++ out=/ptmp/Yan.Luo/ecm_ens00.out
+++ job=/ensemble/save/Yan.Luo/ecmwf/jobs/JWSR_ECMWFENSH.sms.prod
+++ echo '++++++ Submite the FNMOC ENSPOST_00 job ++++++'
+++ export CDATE=2013060300
+++ CDATE=2013060300
+++ out=/ptmp/Yan.Luo/fno_ens00.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_12 job ++++++'
+++ export CDATE=2013060212
+++ CDATE=2013060212
+++ out=/ptmp/Yan.Luo/fno_ens12.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_bc_00 job ++++++'
+++ export CDATE=2013060300
+++ CDATE=2013060300
+++ out=/ptmp/Yan.Luo/fno_ens00_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC_bc.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_bc_12 job ++++++'
+++ export CDATE=2013060212
+++ CDATE=2013060212
+++ out=/ptmp/Yan.Luo/fno_ens12_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC_bc.sh
+++ echo '++++++ Submite real time parallel job ++++++'
+++ export CDATE=2013060400
+++ CDATE=2013060400
+++ out=/ptmp/Yan.Luo/GENS_para.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_para.sh
+++ out=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.sh
+++ bsub
+Job will be scheduled after Wed Jun  5 11:00:00 2013
+++ exit
+++ date
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
+++ echo ' ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++'
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
++++ date +%Y%m%d
+++ Date=20130605
+++ export CDATE=2013060500
+++ CDATE=2013060500
+++ echo CDATE=2013060500
+++ '[' 2013060500 = '' ']'
+++ export CDATE=2013060500
+++ CDATE=2013060500
+++ export SCOM=/com
+++ SCOM=/com
+++ export DFROM=/p5com/gens/prod
+++ DFROM=/p5com/gens/prod
+++ export DFROM=/com/gens/prod
+++ DFROM=/com/gens/prod
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
+++ echo ' +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++'
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
++++ /nwprod/util/exec/ndate +06 2013060500
+++ export CDATEp06=2013060506
+++ CDATEp06=2013060506
++++ /nwprod/util/exec/ndate -06 2013060500
+++ export CDATEm06=2013060418
+++ CDATEm06=2013060418
++++ /nwprod/util/exec/ndate -12 2013060500
+++ export CDATEm12=2013060412
+++ CDATEm12=2013060412
++++ /nwprod/util/exec/ndate -18 2013060500
+++ export CDATEm18=2013060406
+++ CDATEm18=2013060406
++++ /nwprod/util/exec/ndate -24 2013060500
+++ export CDATEm24=2013060400
+++ CDATEm24=2013060400
++++ /nwprod/util/exec/ndate -30 2013060500
+++ export CDATEm30=2013060318
+++ CDATEm30=2013060318
++++ /nwprod/util/exec/ndate -36 2013060500
+++ export CDATEm36=2013060312
+++ CDATEm36=2013060312
++++ /nwprod/util/exec/ndate -42 2013060500
+++ export CDATEm42=2013060306
+++ CDATEm42=2013060306
++++ /nwprod/util/exec/ndate -48 2013060500
+++ export CDATEm48=2013060300
+++ CDATEm48=2013060300
++++ /nwprod/util/exec/ndate -54 2013060500
+++ export CDATEm54=2013060218
+++ CDATEm54=2013060218
++++ /nwprod/util/exec/ndate -60 2013060500
+++ export CDATEm60=2013060212
+++ CDATEm60=2013060212
++++ /nwprod/util/exec/ndate -72 2013060500
+++ export CDATEm72=2013060200
+++ CDATEm72=2013060200
++++ /nwprod/util/exec/ndate -84 2013060500
+++ export CDATEm84=2013060112
+++ CDATEm84=2013060112
++++ /nwprod/util/exec/ndate -96 2013060500
+++ export CDATEm96=2013060100
+++ CDATEm96=2013060100
++++ /nwprod/util/exec/ndate -108 2013060500
+++ export CDATEm108=2013053112
+++ CDATEm108=2013053112
++++ /nwprod/util/exec/ndate -120 2013060500
+++ export CDATEm120=2013053100
+++ CDATEm120=2013053100
+++ export CDATEp00=2013060500
+++ CDATEp00=2013060500
++++ /nwprod/util/exec/ndate +12 2013060500
+++ export CDATEp12=2013060512
+++ CDATEp12=2013060512
++++ /nwprod/util/exec/ndate +24 2013060500
+++ export CDATEp24=2013060600
+++ CDATEp24=2013060600
++++ /nwprod/util/exec/ndate -24 2013060500
++++ cut -c1-8
+++ export YMDM1=20130604
+++ YMDM1=20130604
++++ /nwprod/util/exec/ndate -48 2013060500
++++ cut -c1-8
+++ export YMDM2=20130603
+++ YMDM2=20130603
++++ /nwprod/util/exec/ndate -72 2013060500
++++ cut -c1-8
+++ export YMDM3=20130602
+++ YMDM3=20130602
++++ /nwprod/util/exec/ndate -96 2013060500
++++ cut -c1-8
+++ export YMDM4=20130601
+++ YMDM4=20130601
++++ /nwprod/util/exec/ndate -120 2013060500
++++ cut -c1-8
+++ export YMDM5=20130531
+++ YMDM5=20130531
++++ echo 2013060500
++++ cut -c1-8
+++ export CYMD=20130605
+++ CYMD=20130605
++++ echo 2013060400
++++ cut -c1-8
+++ export CYMDM1=20130604
+++ CYMDM1=20130604
++++ /nwprod/util/exec/ndate -96 2013060500
++++ cut -c1-6
+++ export YYYYMM=201306
+++ YYYYMM=201306
++++ echo 2013060500
++++ cut -c5-8
+++ export MMDD=0605
+++ MMDD=0605
++++ echo 2013060500
++++ cut -c7-8
+++ export DD=05
+++ DD=05
++++ echo 2013060500
++++ cut -c9-10
+++ export HH=00
+++ HH=00
+++ echo '++++++ Submite the NCEP ENSPOST_06 job ++++++'
+++ export CDATE=2013060406
+++ CDATE=2013060406
+++ out=/ptmp/Yan.Luo/ens06.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_06.sh
+++ bsub -q dev -W 3:00 -J ens06 -o /ptmp/Yan.Luo/ens06.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_06.sh
+++ echo '++++++ Submite the NCEP ENSPOST_12 job ++++++'
+++ export CDATE=2013060412
+++ CDATE=2013060412
+++ out=/ptmp/Yan.Luo/ens12.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_12.sh
+++ bsub -q dev -W 3:00 -J ens12 -o /ptmp/Yan.Luo/ens12.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_12.sh
+++ echo '++++++ Submite the NCEP ENSPOST_18 job ++++++'
+++ export CDATE=2013060418
+++ CDATE=2013060418
+++ out=/ptmp/Yan.Luo/ens18.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_18.sh
+++ bsub -q dev -W 3:00 -J ens18 -o /ptmp/Yan.Luo/ens18.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_18.sh
+++ sleep 1800
+++ echo '++++++ Submite the NCEP ENSPOST_00 job ++++++'
+++ export CDATE=2013060500
+++ CDATE=2013060500
+++ out=/ptmp/Yan.Luo/ens00.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_00.sh
+++ bsub -q dev -W 3:00 -J ens00 -o /ptmp/Yan.Luo/ens00.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_00.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_06 job ++++++'
+++ export CDATE=2013060406
+++ CDATE=2013060406
+++ out=/ptmp/Yan.Luo/ens06bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_12 job ++++++'
+++ export CDATE=2013060412
+++ CDATE=2013060412
+++ out=/ptmp/Yan.Luo/ens12bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_18 job ++++++'
+++ export CDATE=2013060418
+++ CDATE=2013060418
+++ out=/ptmp/Yan.Luo/ens18bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_00 job ++++++'
+++ export CDATE=2013060500
+++ CDATE=2013060500
+++ out=/ptmp/Yan.Luo/ens00bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12 job ++++++'
+++ export CDATE=2013060400
+++ CDATE=2013060400
+++ out=/ptmp/Yan.Luo/cmc_ens.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12 job ++++++'
+++ export CDATE=2013060500
+++ CDATE=2013060500
+++ out=/ptmp/Yan.Luo/cmc_ens.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12_BC job ++++++'
+++ export CDATE=2013060412
+++ CDATE=2013060412
+++ out=/ptmp/Yan.Luo/cmc_ens_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12_BC.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12_BC job ++++++'
+++ export CDATE=2013060500
+++ CDATE=2013060500
+++ out=/ptmp/Yan.Luo/cmc_ens_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12_BC.sh
+++ echo '++++++ Submite the ECM ENSPOST_12 job ++++++'
+++ echo '++++++ additional parameteres (t2m,uv250,uv850 ...)++++++'
+++ export CDATE=2013060412
+++ CDATE=2013060412
+++ out=/ptmp/Yan.Luo/ecm_ens12.aout
+++ job=/ensemble/save/Yan.Luo/ecmwf/jobs/JWSR_ECMWFENSH.sms.prod
+++ echo '++++++ Submite the ECM ENSPOST_00 job ++++++'
+++ export CDATE=2013060500
+++ CDATE=2013060500
+++ out=/ptmp/Yan.Luo/ecm_ens00.out
+++ job=/ensemble/save/Yan.Luo/ecmwf/jobs/JWSR_ECMWFENSH.sms.prod
+++ echo '++++++ Submite the FNMOC ENSPOST_00 job ++++++'
+++ export CDATE=2013060400
+++ CDATE=2013060400
+++ out=/ptmp/Yan.Luo/fno_ens00.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_12 job ++++++'
+++ export CDATE=2013060312
+++ CDATE=2013060312
+++ out=/ptmp/Yan.Luo/fno_ens12.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_bc_00 job ++++++'
+++ export CDATE=2013060400
+++ CDATE=2013060400
+++ out=/ptmp/Yan.Luo/fno_ens00_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC_bc.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_bc_12 job ++++++'
+++ export CDATE=2013060312
+++ CDATE=2013060312
+++ out=/ptmp/Yan.Luo/fno_ens12_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC_bc.sh
+++ echo '++++++ Submite real time parallel job ++++++'
+++ export CDATE=2013060500
+++ CDATE=2013060500
+++ out=/ptmp/Yan.Luo/GENS_para.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_para.sh
+++ out=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.sh
+++ bsub
+Job will be scheduled after Thu Jun  6 11:00:00 2013
+++ exit
+++ date
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
+++ echo ' ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++'
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
++++ date +%Y%m%d
+++ Date=20130606
+++ export CDATE=2013060600
+++ CDATE=2013060600
+++ echo CDATE=2013060600
+++ '[' 2013060600 = '' ']'
+++ export CDATE=2013060600
+++ CDATE=2013060600
+++ export SCOM=/com
+++ SCOM=/com
+++ export DFROM=/p5com/gens/prod
+++ DFROM=/p5com/gens/prod
+++ export DFROM=/com/gens/prod
+++ DFROM=/com/gens/prod
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
+++ echo ' +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++'
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
++++ /nwprod/util/exec/ndate +06 2013060600
+++ export CDATEp06=2013060606
+++ CDATEp06=2013060606
++++ /nwprod/util/exec/ndate -06 2013060600
+++ export CDATEm06=2013060518
+++ CDATEm06=2013060518
++++ /nwprod/util/exec/ndate -12 2013060600
+++ export CDATEm12=2013060512
+++ CDATEm12=2013060512
++++ /nwprod/util/exec/ndate -18 2013060600
+++ export CDATEm18=2013060506
+++ CDATEm18=2013060506
++++ /nwprod/util/exec/ndate -24 2013060600
+++ export CDATEm24=2013060500
+++ CDATEm24=2013060500
++++ /nwprod/util/exec/ndate -30 2013060600
+++ export CDATEm30=2013060418
+++ CDATEm30=2013060418
++++ /nwprod/util/exec/ndate -36 2013060600
+++ export CDATEm36=2013060412
+++ CDATEm36=2013060412
++++ /nwprod/util/exec/ndate -42 2013060600
+++ export CDATEm42=2013060406
+++ CDATEm42=2013060406
++++ /nwprod/util/exec/ndate -48 2013060600
+++ export CDATEm48=2013060400
+++ CDATEm48=2013060400
++++ /nwprod/util/exec/ndate -54 2013060600
+++ export CDATEm54=2013060318
+++ CDATEm54=2013060318
++++ /nwprod/util/exec/ndate -60 2013060600
+++ export CDATEm60=2013060312
+++ CDATEm60=2013060312
++++ /nwprod/util/exec/ndate -72 2013060600
+++ export CDATEm72=2013060300
+++ CDATEm72=2013060300
++++ /nwprod/util/exec/ndate -84 2013060600
+++ export CDATEm84=2013060212
+++ CDATEm84=2013060212
++++ /nwprod/util/exec/ndate -96 2013060600
+++ export CDATEm96=2013060200
+++ CDATEm96=2013060200
++++ /nwprod/util/exec/ndate -108 2013060600
+++ export CDATEm108=2013060112
+++ CDATEm108=2013060112
++++ /nwprod/util/exec/ndate -120 2013060600
+++ export CDATEm120=2013060100
+++ CDATEm120=2013060100
+++ export CDATEp00=2013060600
+++ CDATEp00=2013060600
++++ /nwprod/util/exec/ndate +12 2013060600
+++ export CDATEp12=2013060612
+++ CDATEp12=2013060612
++++ /nwprod/util/exec/ndate +24 2013060600
+++ export CDATEp24=2013060700
+++ CDATEp24=2013060700
++++ /nwprod/util/exec/ndate -24 2013060600
++++ cut -c1-8
+++ export YMDM1=20130605
+++ YMDM1=20130605
++++ /nwprod/util/exec/ndate -48 2013060600
++++ cut -c1-8
+++ export YMDM2=20130604
+++ YMDM2=20130604
++++ /nwprod/util/exec/ndate -72 2013060600
++++ cut -c1-8
+++ export YMDM3=20130603
+++ YMDM3=20130603
++++ /nwprod/util/exec/ndate -96 2013060600
++++ cut -c1-8
+++ export YMDM4=20130602
+++ YMDM4=20130602
++++ /nwprod/util/exec/ndate -120 2013060600
++++ cut -c1-8
+++ export YMDM5=20130601
+++ YMDM5=20130601
++++ echo 2013060600
++++ cut -c1-8
+++ export CYMD=20130606
+++ CYMD=20130606
++++ echo 2013060500
++++ cut -c1-8
+++ export CYMDM1=20130605
+++ CYMDM1=20130605
++++ /nwprod/util/exec/ndate -96 2013060600
++++ cut -c1-6
+++ export YYYYMM=201306
+++ YYYYMM=201306
++++ echo 2013060600
++++ cut -c5-8
+++ export MMDD=0606
+++ MMDD=0606
++++ echo 2013060600
++++ cut -c7-8
+++ export DD=06
+++ DD=06
++++ echo 2013060600
++++ cut -c9-10
+++ export HH=00
+++ HH=00
+++ echo '++++++ Submite the NCEP ENSPOST_06 job ++++++'
+++ export CDATE=2013060506
+++ CDATE=2013060506
+++ out=/ptmp/Yan.Luo/ens06.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_06.sh
+++ bsub -q dev -W 3:00 -J ens06 -o /ptmp/Yan.Luo/ens06.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_06.sh
+++ echo '++++++ Submite the NCEP ENSPOST_12 job ++++++'
+++ export CDATE=2013060512
+++ CDATE=2013060512
+++ out=/ptmp/Yan.Luo/ens12.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_12.sh
+++ bsub -q dev -W 3:00 -J ens12 -o /ptmp/Yan.Luo/ens12.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_12.sh
+++ echo '++++++ Submite the NCEP ENSPOST_18 job ++++++'
+++ export CDATE=2013060518
+++ CDATE=2013060518
+++ out=/ptmp/Yan.Luo/ens18.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_18.sh
+++ bsub -q dev -W 3:00 -J ens18 -o /ptmp/Yan.Luo/ens18.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_18.sh
+++ sleep 1800
+++ echo '++++++ Submite the NCEP ENSPOST_00 job ++++++'
+++ export CDATE=2013060600
+++ CDATE=2013060600
+++ out=/ptmp/Yan.Luo/ens00.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_00.sh
+++ bsub -q dev -W 3:00 -J ens00 -o /ptmp/Yan.Luo/ens00.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_00.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_06 job ++++++'
+++ export CDATE=2013060506
+++ CDATE=2013060506
+++ out=/ptmp/Yan.Luo/ens06bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_12 job ++++++'
+++ export CDATE=2013060512
+++ CDATE=2013060512
+++ out=/ptmp/Yan.Luo/ens12bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_18 job ++++++'
+++ export CDATE=2013060518
+++ CDATE=2013060518
+++ out=/ptmp/Yan.Luo/ens18bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_00 job ++++++'
+++ export CDATE=2013060600
+++ CDATE=2013060600
+++ out=/ptmp/Yan.Luo/ens00bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12 job ++++++'
+++ export CDATE=2013060500
+++ CDATE=2013060500
+++ out=/ptmp/Yan.Luo/cmc_ens.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12 job ++++++'
+++ export CDATE=2013060600
+++ CDATE=2013060600
+++ out=/ptmp/Yan.Luo/cmc_ens.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12_BC job ++++++'
+++ export CDATE=2013060512
+++ CDATE=2013060512
+++ out=/ptmp/Yan.Luo/cmc_ens_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12_BC.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12_BC job ++++++'
+++ export CDATE=2013060600
+++ CDATE=2013060600
+++ out=/ptmp/Yan.Luo/cmc_ens_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12_BC.sh
+++ echo '++++++ Submite the ECM ENSPOST_12 job ++++++'
+++ echo '++++++ additional parameteres (t2m,uv250,uv850 ...)++++++'
+++ export CDATE=2013060512
+++ CDATE=2013060512
+++ out=/ptmp/Yan.Luo/ecm_ens12.aout
+++ job=/ensemble/save/Yan.Luo/ecmwf/jobs/JWSR_ECMWFENSH.sms.prod
+++ echo '++++++ Submite the ECM ENSPOST_00 job ++++++'
+++ export CDATE=2013060600
+++ CDATE=2013060600
+++ out=/ptmp/Yan.Luo/ecm_ens00.out
+++ job=/ensemble/save/Yan.Luo/ecmwf/jobs/JWSR_ECMWFENSH.sms.prod
+++ echo '++++++ Submite the FNMOC ENSPOST_00 job ++++++'
+++ export CDATE=2013060500
+++ CDATE=2013060500
+++ out=/ptmp/Yan.Luo/fno_ens00.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_12 job ++++++'
+++ export CDATE=2013060412
+++ CDATE=2013060412
+++ out=/ptmp/Yan.Luo/fno_ens12.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_bc_00 job ++++++'
+++ export CDATE=2013060500
+++ CDATE=2013060500
+++ out=/ptmp/Yan.Luo/fno_ens00_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC_bc.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_bc_12 job ++++++'
+++ export CDATE=2013060412
+++ CDATE=2013060412
+++ out=/ptmp/Yan.Luo/fno_ens12_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC_bc.sh
+++ echo '++++++ Submite real time parallel job ++++++'
+++ export CDATE=2013060600
+++ CDATE=2013060600
+++ out=/ptmp/Yan.Luo/GENS_para.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_para.sh
+++ out=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.sh
+++ bsub
+Job will be scheduled after Fri Jun  7 11:00:00 2013
+++ exit
+++ date
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
+++ echo ' ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++'
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
++++ date +%Y%m%d
+++ Date=20130607
+++ export CDATE=2013060700
+++ CDATE=2013060700
+++ echo CDATE=2013060700
+++ '[' 2013060700 = '' ']'
+++ export CDATE=2013060700
+++ CDATE=2013060700
+++ export SCOM=/com
+++ SCOM=/com
+++ export DFROM=/p5com/gens/prod
+++ DFROM=/p5com/gens/prod
+++ export DFROM=/com/gens/prod
+++ DFROM=/com/gens/prod
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
+++ echo ' +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++'
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
++++ /nwprod/util/exec/ndate +06 2013060700
+++ export CDATEp06=2013060706
+++ CDATEp06=2013060706
++++ /nwprod/util/exec/ndate -06 2013060700
+++ export CDATEm06=2013060618
+++ CDATEm06=2013060618
++++ /nwprod/util/exec/ndate -12 2013060700
+++ export CDATEm12=2013060612
+++ CDATEm12=2013060612
++++ /nwprod/util/exec/ndate -18 2013060700
+++ export CDATEm18=2013060606
+++ CDATEm18=2013060606
++++ /nwprod/util/exec/ndate -24 2013060700
+++ export CDATEm24=2013060600
+++ CDATEm24=2013060600
++++ /nwprod/util/exec/ndate -30 2013060700
+++ export CDATEm30=2013060518
+++ CDATEm30=2013060518
++++ /nwprod/util/exec/ndate -36 2013060700
+++ export CDATEm36=2013060512
+++ CDATEm36=2013060512
++++ /nwprod/util/exec/ndate -42 2013060700
+++ export CDATEm42=2013060506
+++ CDATEm42=2013060506
++++ /nwprod/util/exec/ndate -48 2013060700
+++ export CDATEm48=2013060500
+++ CDATEm48=2013060500
++++ /nwprod/util/exec/ndate -54 2013060700
+++ export CDATEm54=2013060418
+++ CDATEm54=2013060418
++++ /nwprod/util/exec/ndate -60 2013060700
+++ export CDATEm60=2013060412
+++ CDATEm60=2013060412
++++ /nwprod/util/exec/ndate -72 2013060700
+++ export CDATEm72=2013060400
+++ CDATEm72=2013060400
++++ /nwprod/util/exec/ndate -84 2013060700
+++ export CDATEm84=2013060312
+++ CDATEm84=2013060312
++++ /nwprod/util/exec/ndate -96 2013060700
+++ export CDATEm96=2013060300
+++ CDATEm96=2013060300
++++ /nwprod/util/exec/ndate -108 2013060700
+++ export CDATEm108=2013060212
+++ CDATEm108=2013060212
++++ /nwprod/util/exec/ndate -120 2013060700
+++ export CDATEm120=2013060200
+++ CDATEm120=2013060200
+++ export CDATEp00=2013060700
+++ CDATEp00=2013060700
++++ /nwprod/util/exec/ndate +12 2013060700
+++ export CDATEp12=2013060712
+++ CDATEp12=2013060712
++++ /nwprod/util/exec/ndate +24 2013060700
+++ export CDATEp24=2013060800
+++ CDATEp24=2013060800
++++ /nwprod/util/exec/ndate -24 2013060700
++++ cut -c1-8
+++ export YMDM1=20130606
+++ YMDM1=20130606
++++ /nwprod/util/exec/ndate -48 2013060700
++++ cut -c1-8
+++ export YMDM2=20130605
+++ YMDM2=20130605
++++ /nwprod/util/exec/ndate -72 2013060700
++++ cut -c1-8
+++ export YMDM3=20130604
+++ YMDM3=20130604
++++ /nwprod/util/exec/ndate -96 2013060700
++++ cut -c1-8
+++ export YMDM4=20130603
+++ YMDM4=20130603
++++ /nwprod/util/exec/ndate -120 2013060700
++++ cut -c1-8
+++ export YMDM5=20130602
+++ YMDM5=20130602
++++ echo 2013060700
++++ cut -c1-8
+++ export CYMD=20130607
+++ CYMD=20130607
++++ echo 2013060600
++++ cut -c1-8
+++ export CYMDM1=20130606
+++ CYMDM1=20130606
++++ /nwprod/util/exec/ndate -96 2013060700
++++ cut -c1-6
+++ export YYYYMM=201306
+++ YYYYMM=201306
++++ echo 2013060700
++++ cut -c5-8
+++ export MMDD=0607
+++ MMDD=0607
++++ echo 2013060700
++++ cut -c7-8
+++ export DD=07
+++ DD=07
++++ echo 2013060700
++++ cut -c9-10
+++ export HH=00
+++ HH=00
+++ echo '++++++ Submite the NCEP ENSPOST_06 job ++++++'
+++ export CDATE=2013060606
+++ CDATE=2013060606
+++ out=/ptmp/Yan.Luo/ens06.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_06.sh
+++ bsub -q dev -W 3:00 -J ens06 -o /ptmp/Yan.Luo/ens06.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_06.sh
+++ echo '++++++ Submite the NCEP ENSPOST_12 job ++++++'
+++ export CDATE=2013060612
+++ CDATE=2013060612
+++ out=/ptmp/Yan.Luo/ens12.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_12.sh
+++ bsub -q dev -W 3:00 -J ens12 -o /ptmp/Yan.Luo/ens12.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_12.sh
+++ echo '++++++ Submite the NCEP ENSPOST_18 job ++++++'
+++ export CDATE=2013060618
+++ CDATE=2013060618
+++ out=/ptmp/Yan.Luo/ens18.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_18.sh
+++ bsub -q dev -W 3:00 -J ens18 -o /ptmp/Yan.Luo/ens18.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_18.sh
+++ sleep 1800
+++ echo '++++++ Submite the NCEP ENSPOST_00 job ++++++'
+++ export CDATE=2013060700
+++ CDATE=2013060700
+++ out=/ptmp/Yan.Luo/ens00.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_00.sh
+++ bsub -q dev -W 3:00 -J ens00 -o /ptmp/Yan.Luo/ens00.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_00.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_06 job ++++++'
+++ export CDATE=2013060606
+++ CDATE=2013060606
+++ out=/ptmp/Yan.Luo/ens06bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_12 job ++++++'
+++ export CDATE=2013060612
+++ CDATE=2013060612
+++ out=/ptmp/Yan.Luo/ens12bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_18 job ++++++'
+++ export CDATE=2013060618
+++ CDATE=2013060618
+++ out=/ptmp/Yan.Luo/ens18bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_00 job ++++++'
+++ export CDATE=2013060700
+++ CDATE=2013060700
+++ out=/ptmp/Yan.Luo/ens00bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12 job ++++++'
+++ export CDATE=2013060600
+++ CDATE=2013060600
+++ out=/ptmp/Yan.Luo/cmc_ens.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12 job ++++++'
+++ export CDATE=2013060700
+++ CDATE=2013060700
+++ out=/ptmp/Yan.Luo/cmc_ens.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12_BC job ++++++'
+++ export CDATE=2013060612
+++ CDATE=2013060612
+++ out=/ptmp/Yan.Luo/cmc_ens_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12_BC.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12_BC job ++++++'
+++ export CDATE=2013060700
+++ CDATE=2013060700
+++ out=/ptmp/Yan.Luo/cmc_ens_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12_BC.sh
+++ echo '++++++ Submite the ECM ENSPOST_12 job ++++++'
+++ echo '++++++ additional parameteres (t2m,uv250,uv850 ...)++++++'
+++ export CDATE=2013060612
+++ CDATE=2013060612
+++ out=/ptmp/Yan.Luo/ecm_ens12.aout
+++ job=/ensemble/save/Yan.Luo/ecmwf/jobs/JWSR_ECMWFENSH.sms.prod
+++ echo '++++++ Submite the ECM ENSPOST_00 job ++++++'
+++ export CDATE=2013060700
+++ CDATE=2013060700
+++ out=/ptmp/Yan.Luo/ecm_ens00.out
+++ job=/ensemble/save/Yan.Luo/ecmwf/jobs/JWSR_ECMWFENSH.sms.prod
+++ echo '++++++ Submite the FNMOC ENSPOST_00 job ++++++'
+++ export CDATE=2013060600
+++ CDATE=2013060600
+++ out=/ptmp/Yan.Luo/fno_ens00.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_12 job ++++++'
+++ export CDATE=2013060512
+++ CDATE=2013060512
+++ out=/ptmp/Yan.Luo/fno_ens12.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_bc_00 job ++++++'
+++ export CDATE=2013060600
+++ CDATE=2013060600
+++ out=/ptmp/Yan.Luo/fno_ens00_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC_bc.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_bc_12 job ++++++'
+++ export CDATE=2013060512
+++ CDATE=2013060512
+++ out=/ptmp/Yan.Luo/fno_ens12_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC_bc.sh
+++ echo '++++++ Submite real time parallel job ++++++'
+++ export CDATE=2013060700
+++ CDATE=2013060700
+++ out=/ptmp/Yan.Luo/GENS_para.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_para.sh
+++ out=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.sh
+++ bsub
+Job will be scheduled after Sat Jun  8 11:00:00 2013
+++ exit
+++ date
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
+++ echo ' ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++'
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
++++ date +%Y%m%d
+++ Date=20130608
+++ export CDATE=2013060800
+++ CDATE=2013060800
+++ echo CDATE=2013060800
+++ '[' 2013060800 = '' ']'
+++ export CDATE=2013060800
+++ CDATE=2013060800
+++ export SCOM=/com
+++ SCOM=/com
+++ export DFROM=/p5com/gens/prod
+++ DFROM=/p5com/gens/prod
+++ export DFROM=/com/gens/prod
+++ DFROM=/com/gens/prod
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
+++ echo ' +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++'
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
++++ /nwprod/util/exec/ndate +06 2013060800
+++ export CDATEp06=2013060806
+++ CDATEp06=2013060806
++++ /nwprod/util/exec/ndate -06 2013060800
+++ export CDATEm06=2013060718
+++ CDATEm06=2013060718
++++ /nwprod/util/exec/ndate -12 2013060800
+++ export CDATEm12=2013060712
+++ CDATEm12=2013060712
++++ /nwprod/util/exec/ndate -18 2013060800
+++ export CDATEm18=2013060706
+++ CDATEm18=2013060706
++++ /nwprod/util/exec/ndate -24 2013060800
+++ export CDATEm24=2013060700
+++ CDATEm24=2013060700
++++ /nwprod/util/exec/ndate -30 2013060800
+++ export CDATEm30=2013060618
+++ CDATEm30=2013060618
++++ /nwprod/util/exec/ndate -36 2013060800
+++ export CDATEm36=2013060612
+++ CDATEm36=2013060612
++++ /nwprod/util/exec/ndate -42 2013060800
+++ export CDATEm42=2013060606
+++ CDATEm42=2013060606
++++ /nwprod/util/exec/ndate -48 2013060800
+++ export CDATEm48=2013060600
+++ CDATEm48=2013060600
++++ /nwprod/util/exec/ndate -54 2013060800
+++ export CDATEm54=2013060518
+++ CDATEm54=2013060518
++++ /nwprod/util/exec/ndate -60 2013060800
+++ export CDATEm60=2013060512
+++ CDATEm60=2013060512
++++ /nwprod/util/exec/ndate -72 2013060800
+++ export CDATEm72=2013060500
+++ CDATEm72=2013060500
++++ /nwprod/util/exec/ndate -84 2013060800
+++ export CDATEm84=2013060412
+++ CDATEm84=2013060412
++++ /nwprod/util/exec/ndate -96 2013060800
+++ export CDATEm96=2013060400
+++ CDATEm96=2013060400
++++ /nwprod/util/exec/ndate -108 2013060800
+++ export CDATEm108=2013060312
+++ CDATEm108=2013060312
++++ /nwprod/util/exec/ndate -120 2013060800
+++ export CDATEm120=2013060300
+++ CDATEm120=2013060300
+++ export CDATEp00=2013060800
+++ CDATEp00=2013060800
++++ /nwprod/util/exec/ndate +12 2013060800
+++ export CDATEp12=2013060812
+++ CDATEp12=2013060812
++++ /nwprod/util/exec/ndate +24 2013060800
+++ export CDATEp24=2013060900
+++ CDATEp24=2013060900
++++ /nwprod/util/exec/ndate -24 2013060800
++++ cut -c1-8
+++ export YMDM1=20130607
+++ YMDM1=20130607
++++ /nwprod/util/exec/ndate -48 2013060800
++++ cut -c1-8
+++ export YMDM2=20130606
+++ YMDM2=20130606
++++ /nwprod/util/exec/ndate -72 2013060800
++++ cut -c1-8
+++ export YMDM3=20130605
+++ YMDM3=20130605
++++ /nwprod/util/exec/ndate -96 2013060800
++++ cut -c1-8
+++ export YMDM4=20130604
+++ YMDM4=20130604
++++ /nwprod/util/exec/ndate -120 2013060800
++++ cut -c1-8
+++ export YMDM5=20130603
+++ YMDM5=20130603
++++ echo 2013060800
++++ cut -c1-8
+++ export CYMD=20130608
+++ CYMD=20130608
++++ echo 2013060700
++++ cut -c1-8
+++ export CYMDM1=20130607
+++ CYMDM1=20130607
++++ /nwprod/util/exec/ndate -96 2013060800
++++ cut -c1-6
+++ export YYYYMM=201306
+++ YYYYMM=201306
++++ echo 2013060800
++++ cut -c5-8
+++ export MMDD=0608
+++ MMDD=0608
++++ echo 2013060800
++++ cut -c7-8
+++ export DD=08
+++ DD=08
++++ echo 2013060800
++++ cut -c9-10
+++ export HH=00
+++ HH=00
+++ echo '++++++ Submite the NCEP ENSPOST_06 job ++++++'
+++ export CDATE=2013060706
+++ CDATE=2013060706
+++ out=/ptmp/Yan.Luo/ens06.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_06.sh
+++ bsub -q dev -W 3:00 -J ens06 -o /ptmp/Yan.Luo/ens06.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_06.sh
+++ echo '++++++ Submite the NCEP ENSPOST_12 job ++++++'
+++ export CDATE=2013060712
+++ CDATE=2013060712
+++ out=/ptmp/Yan.Luo/ens12.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_12.sh
+++ bsub -q dev -W 3:00 -J ens12 -o /ptmp/Yan.Luo/ens12.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_12.sh
+++ echo '++++++ Submite the NCEP ENSPOST_18 job ++++++'
+++ export CDATE=2013060718
+++ CDATE=2013060718
+++ out=/ptmp/Yan.Luo/ens18.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_18.sh
+++ bsub -q dev -W 3:00 -J ens18 -o /ptmp/Yan.Luo/ens18.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_18.sh
+++ sleep 1800
+++ echo '++++++ Submite the NCEP ENSPOST_00 job ++++++'
+++ export CDATE=2013060800
+++ CDATE=2013060800
+++ out=/ptmp/Yan.Luo/ens00.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_00.sh
+++ bsub -q dev -W 3:00 -J ens00 -o /ptmp/Yan.Luo/ens00.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_00.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_06 job ++++++'
+++ export CDATE=2013060706
+++ CDATE=2013060706
+++ out=/ptmp/Yan.Luo/ens06bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_12 job ++++++'
+++ export CDATE=2013060712
+++ CDATE=2013060712
+++ out=/ptmp/Yan.Luo/ens12bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_18 job ++++++'
+++ export CDATE=2013060718
+++ CDATE=2013060718
+++ out=/ptmp/Yan.Luo/ens18bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_00 job ++++++'
+++ export CDATE=2013060800
+++ CDATE=2013060800
+++ out=/ptmp/Yan.Luo/ens00bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12 job ++++++'
+++ export CDATE=2013060700
+++ CDATE=2013060700
+++ out=/ptmp/Yan.Luo/cmc_ens.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12 job ++++++'
+++ export CDATE=2013060800
+++ CDATE=2013060800
+++ out=/ptmp/Yan.Luo/cmc_ens.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12_BC job ++++++'
+++ export CDATE=2013060712
+++ CDATE=2013060712
+++ out=/ptmp/Yan.Luo/cmc_ens_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12_BC.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12_BC job ++++++'
+++ export CDATE=2013060800
+++ CDATE=2013060800
+++ out=/ptmp/Yan.Luo/cmc_ens_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12_BC.sh
+++ echo '++++++ Submite the ECM ENSPOST_12 job ++++++'
+++ echo '++++++ additional parameteres (t2m,uv250,uv850 ...)++++++'
+++ export CDATE=2013060712
+++ CDATE=2013060712
+++ out=/ptmp/Yan.Luo/ecm_ens12.aout
+++ job=/ensemble/save/Yan.Luo/ecmwf/jobs/JWSR_ECMWFENSH.sms.prod
+++ echo '++++++ Submite the ECM ENSPOST_00 job ++++++'
+++ export CDATE=2013060800
+++ CDATE=2013060800
+++ out=/ptmp/Yan.Luo/ecm_ens00.out
+++ job=/ensemble/save/Yan.Luo/ecmwf/jobs/JWSR_ECMWFENSH.sms.prod
+++ echo '++++++ Submite the FNMOC ENSPOST_00 job ++++++'
+++ export CDATE=2013060700
+++ CDATE=2013060700
+++ out=/ptmp/Yan.Luo/fno_ens00.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_12 job ++++++'
+++ export CDATE=2013060612
+++ CDATE=2013060612
+++ out=/ptmp/Yan.Luo/fno_ens12.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_bc_00 job ++++++'
+++ export CDATE=2013060700
+++ CDATE=2013060700
+++ out=/ptmp/Yan.Luo/fno_ens00_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC_bc.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_bc_12 job ++++++'
+++ export CDATE=2013060612
+++ CDATE=2013060612
+++ out=/ptmp/Yan.Luo/fno_ens12_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC_bc.sh
+++ echo '++++++ Submite real time parallel job ++++++'
+++ export CDATE=2013060800
+++ CDATE=2013060800
+++ out=/ptmp/Yan.Luo/GENS_para.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_para.sh
+++ out=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.sh
+++ bsub
+Job will be scheduled after Sun Jun  9 11:00:00 2013
+++ exit
+++ date
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
+++ echo ' ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++'
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
++++ date +%Y%m%d
+++ Date=20130609
+++ export CDATE=2013060900
+++ CDATE=2013060900
+++ echo CDATE=2013060900
+++ '[' 2013060900 = '' ']'
+++ export CDATE=2013060900
+++ CDATE=2013060900
+++ export SCOM=/com
+++ SCOM=/com
+++ export DFROM=/p5com/gens/prod
+++ DFROM=/p5com/gens/prod
+++ export DFROM=/com/gens/prod
+++ DFROM=/com/gens/prod
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
+++ echo ' +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++'
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
++++ /nwprod/util/exec/ndate +06 2013060900
+++ export CDATEp06=2013060906
+++ CDATEp06=2013060906
++++ /nwprod/util/exec/ndate -06 2013060900
+++ export CDATEm06=2013060818
+++ CDATEm06=2013060818
++++ /nwprod/util/exec/ndate -12 2013060900
+++ export CDATEm12=2013060812
+++ CDATEm12=2013060812
++++ /nwprod/util/exec/ndate -18 2013060900
+++ export CDATEm18=2013060806
+++ CDATEm18=2013060806
++++ /nwprod/util/exec/ndate -24 2013060900
+++ export CDATEm24=2013060800
+++ CDATEm24=2013060800
++++ /nwprod/util/exec/ndate -30 2013060900
+++ export CDATEm30=2013060718
+++ CDATEm30=2013060718
++++ /nwprod/util/exec/ndate -36 2013060900
+++ export CDATEm36=2013060712
+++ CDATEm36=2013060712
++++ /nwprod/util/exec/ndate -42 2013060900
+++ export CDATEm42=2013060706
+++ CDATEm42=2013060706
++++ /nwprod/util/exec/ndate -48 2013060900
+++ export CDATEm48=2013060700
+++ CDATEm48=2013060700
++++ /nwprod/util/exec/ndate -54 2013060900
+++ export CDATEm54=2013060618
+++ CDATEm54=2013060618
++++ /nwprod/util/exec/ndate -60 2013060900
+++ export CDATEm60=2013060612
+++ CDATEm60=2013060612
++++ /nwprod/util/exec/ndate -72 2013060900
+++ export CDATEm72=2013060600
+++ CDATEm72=2013060600
++++ /nwprod/util/exec/ndate -84 2013060900
+++ export CDATEm84=2013060512
+++ CDATEm84=2013060512
++++ /nwprod/util/exec/ndate -96 2013060900
+++ export CDATEm96=2013060500
+++ CDATEm96=2013060500
++++ /nwprod/util/exec/ndate -108 2013060900
+++ export CDATEm108=2013060412
+++ CDATEm108=2013060412
++++ /nwprod/util/exec/ndate -120 2013060900
+++ export CDATEm120=2013060400
+++ CDATEm120=2013060400
+++ export CDATEp00=2013060900
+++ CDATEp00=2013060900
++++ /nwprod/util/exec/ndate +12 2013060900
+++ export CDATEp12=2013060912
+++ CDATEp12=2013060912
++++ /nwprod/util/exec/ndate +24 2013060900
+++ export CDATEp24=2013061000
+++ CDATEp24=2013061000
++++ /nwprod/util/exec/ndate -24 2013060900
++++ cut -c1-8
+++ export YMDM1=20130608
+++ YMDM1=20130608
++++ /nwprod/util/exec/ndate -48 2013060900
++++ cut -c1-8
+++ export YMDM2=20130607
+++ YMDM2=20130607
++++ /nwprod/util/exec/ndate -72 2013060900
++++ cut -c1-8
+++ export YMDM3=20130606
+++ YMDM3=20130606
++++ /nwprod/util/exec/ndate -96 2013060900
++++ cut -c1-8
+++ export YMDM4=20130605
+++ YMDM4=20130605
++++ /nwprod/util/exec/ndate -120 2013060900
++++ cut -c1-8
+++ export YMDM5=20130604
+++ YMDM5=20130604
++++ echo 2013060900
++++ cut -c1-8
+++ export CYMD=20130609
+++ CYMD=20130609
++++ echo 2013060800
++++ cut -c1-8
+++ export CYMDM1=20130608
+++ CYMDM1=20130608
++++ /nwprod/util/exec/ndate -96 2013060900
++++ cut -c1-6
+++ export YYYYMM=201306
+++ YYYYMM=201306
++++ echo 2013060900
++++ cut -c5-8
+++ export MMDD=0609
+++ MMDD=0609
++++ echo 2013060900
++++ cut -c7-8
+++ export DD=09
+++ DD=09
++++ echo 2013060900
++++ cut -c9-10
+++ export HH=00
+++ HH=00
+++ echo '++++++ Submite the NCEP ENSPOST_06 job ++++++'
+++ export CDATE=2013060806
+++ CDATE=2013060806
+++ out=/ptmp/Yan.Luo/ens06.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_06.sh
+++ bsub -q dev -W 3:00 -J ens06 -o /ptmp/Yan.Luo/ens06.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_06.sh
+++ echo '++++++ Submite the NCEP ENSPOST_12 job ++++++'
+++ export CDATE=2013060812
+++ CDATE=2013060812
+++ out=/ptmp/Yan.Luo/ens12.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_12.sh
+++ bsub -q dev -W 3:00 -J ens12 -o /ptmp/Yan.Luo/ens12.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_12.sh
+++ echo '++++++ Submite the NCEP ENSPOST_18 job ++++++'
+++ export CDATE=2013060818
+++ CDATE=2013060818
+++ out=/ptmp/Yan.Luo/ens18.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_18.sh
+++ bsub -q dev -W 3:00 -J ens18 -o /ptmp/Yan.Luo/ens18.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_18.sh
+++ sleep 1800
+++ echo '++++++ Submite the NCEP ENSPOST_00 job ++++++'
+++ export CDATE=2013060900
+++ CDATE=2013060900
+++ out=/ptmp/Yan.Luo/ens00.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_00.sh
+++ bsub -q dev -W 3:00 -J ens00 -o /ptmp/Yan.Luo/ens00.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_00.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_06 job ++++++'
+++ export CDATE=2013060806
+++ CDATE=2013060806
+++ out=/ptmp/Yan.Luo/ens06bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_12 job ++++++'
+++ export CDATE=2013060812
+++ CDATE=2013060812
+++ out=/ptmp/Yan.Luo/ens12bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_18 job ++++++'
+++ export CDATE=2013060818
+++ CDATE=2013060818
+++ out=/ptmp/Yan.Luo/ens18bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_00 job ++++++'
+++ export CDATE=2013060900
+++ CDATE=2013060900
+++ out=/ptmp/Yan.Luo/ens00bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12 job ++++++'
+++ export CDATE=2013060800
+++ CDATE=2013060800
+++ out=/ptmp/Yan.Luo/cmc_ens.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12 job ++++++'
+++ export CDATE=2013060900
+++ CDATE=2013060900
+++ out=/ptmp/Yan.Luo/cmc_ens.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12_BC job ++++++'
+++ export CDATE=2013060812
+++ CDATE=2013060812
+++ out=/ptmp/Yan.Luo/cmc_ens_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12_BC.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12_BC job ++++++'
+++ export CDATE=2013060900
+++ CDATE=2013060900
+++ out=/ptmp/Yan.Luo/cmc_ens_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12_BC.sh
+++ echo '++++++ Submite the ECM ENSPOST_12 job ++++++'
+++ echo '++++++ additional parameteres (t2m,uv250,uv850 ...)++++++'
+++ export CDATE=2013060812
+++ CDATE=2013060812
+++ out=/ptmp/Yan.Luo/ecm_ens12.aout
+++ job=/ensemble/save/Yan.Luo/ecmwf/jobs/JWSR_ECMWFENSH.sms.prod
+++ echo '++++++ Submite the ECM ENSPOST_00 job ++++++'
+++ export CDATE=2013060900
+++ CDATE=2013060900
+++ out=/ptmp/Yan.Luo/ecm_ens00.out
+++ job=/ensemble/save/Yan.Luo/ecmwf/jobs/JWSR_ECMWFENSH.sms.prod
+++ echo '++++++ Submite the FNMOC ENSPOST_00 job ++++++'
+++ export CDATE=2013060800
+++ CDATE=2013060800
+++ out=/ptmp/Yan.Luo/fno_ens00.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_12 job ++++++'
+++ export CDATE=2013060712
+++ CDATE=2013060712
+++ out=/ptmp/Yan.Luo/fno_ens12.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_bc_00 job ++++++'
+++ export CDATE=2013060800
+++ CDATE=2013060800
+++ out=/ptmp/Yan.Luo/fno_ens00_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC_bc.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_bc_12 job ++++++'
+++ export CDATE=2013060712
+++ CDATE=2013060712
+++ out=/ptmp/Yan.Luo/fno_ens12_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC_bc.sh
+++ echo '++++++ Submite real time parallel job ++++++'
+++ export CDATE=2013060900
+++ CDATE=2013060900
+++ out=/ptmp/Yan.Luo/GENS_para.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_para.sh
+++ out=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.sh
+++ bsub
+Job will be scheduled after Mon Jun 10 11:00:00 2013
+++ exit
+++ date
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
+++ echo ' ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++'
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
++++ date +%Y%m%d
+++ Date=20130610
+++ export CDATE=2013061000
+++ CDATE=2013061000
+++ echo CDATE=2013061000
+++ '[' 2013061000 = '' ']'
+++ export CDATE=2013061000
+++ CDATE=2013061000
+++ export SCOM=/com
+++ SCOM=/com
+++ export DFROM=/p5com/gens/prod
+++ DFROM=/p5com/gens/prod
+++ export DFROM=/com/gens/prod
+++ DFROM=/com/gens/prod
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
+++ echo ' +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++'
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
++++ /nwprod/util/exec/ndate +06 2013061000
+++ export CDATEp06=2013061006
+++ CDATEp06=2013061006
++++ /nwprod/util/exec/ndate -06 2013061000
+++ export CDATEm06=2013060918
+++ CDATEm06=2013060918
++++ /nwprod/util/exec/ndate -12 2013061000
+++ export CDATEm12=2013060912
+++ CDATEm12=2013060912
++++ /nwprod/util/exec/ndate -18 2013061000
+++ export CDATEm18=2013060906
+++ CDATEm18=2013060906
++++ /nwprod/util/exec/ndate -24 2013061000
+++ export CDATEm24=2013060900
+++ CDATEm24=2013060900
++++ /nwprod/util/exec/ndate -30 2013061000
+++ export CDATEm30=2013060818
+++ CDATEm30=2013060818
++++ /nwprod/util/exec/ndate -36 2013061000
+++ export CDATEm36=2013060812
+++ CDATEm36=2013060812
++++ /nwprod/util/exec/ndate -42 2013061000
+++ export CDATEm42=2013060806
+++ CDATEm42=2013060806
++++ /nwprod/util/exec/ndate -48 2013061000
+++ export CDATEm48=2013060800
+++ CDATEm48=2013060800
++++ /nwprod/util/exec/ndate -54 2013061000
+++ export CDATEm54=2013060718
+++ CDATEm54=2013060718
++++ /nwprod/util/exec/ndate -60 2013061000
+++ export CDATEm60=2013060712
+++ CDATEm60=2013060712
++++ /nwprod/util/exec/ndate -72 2013061000
+++ export CDATEm72=2013060700
+++ CDATEm72=2013060700
++++ /nwprod/util/exec/ndate -84 2013061000
+++ export CDATEm84=2013060612
+++ CDATEm84=2013060612
++++ /nwprod/util/exec/ndate -96 2013061000
+++ export CDATEm96=2013060600
+++ CDATEm96=2013060600
++++ /nwprod/util/exec/ndate -108 2013061000
+++ export CDATEm108=2013060512
+++ CDATEm108=2013060512
++++ /nwprod/util/exec/ndate -120 2013061000
+++ export CDATEm120=2013060500
+++ CDATEm120=2013060500
+++ export CDATEp00=2013061000
+++ CDATEp00=2013061000
++++ /nwprod/util/exec/ndate +12 2013061000
+++ export CDATEp12=2013061012
+++ CDATEp12=2013061012
++++ /nwprod/util/exec/ndate +24 2013061000
+++ export CDATEp24=2013061100
+++ CDATEp24=2013061100
++++ /nwprod/util/exec/ndate -24 2013061000
++++ cut -c1-8
+++ export YMDM1=20130609
+++ YMDM1=20130609
++++ /nwprod/util/exec/ndate -48 2013061000
++++ cut -c1-8
+++ export YMDM2=20130608
+++ YMDM2=20130608
++++ /nwprod/util/exec/ndate -72 2013061000
++++ cut -c1-8
+++ export YMDM3=20130607
+++ YMDM3=20130607
++++ /nwprod/util/exec/ndate -96 2013061000
++++ cut -c1-8
+++ export YMDM4=20130606
+++ YMDM4=20130606
++++ /nwprod/util/exec/ndate -120 2013061000
++++ cut -c1-8
+++ export YMDM5=20130605
+++ YMDM5=20130605
++++ echo 2013061000
++++ cut -c1-8
+++ export CYMD=20130610
+++ CYMD=20130610
++++ echo 2013060900
++++ cut -c1-8
+++ export CYMDM1=20130609
+++ CYMDM1=20130609
++++ /nwprod/util/exec/ndate -96 2013061000
++++ cut -c1-6
+++ export YYYYMM=201306
+++ YYYYMM=201306
++++ echo 2013061000
++++ cut -c5-8
+++ export MMDD=0610
+++ MMDD=0610
++++ echo 2013061000
++++ cut -c7-8
+++ export DD=10
+++ DD=10
++++ echo 2013061000
++++ cut -c9-10
+++ export HH=00
+++ HH=00
+++ echo '++++++ Submite the NCEP ENSPOST_06 job ++++++'
+++ export CDATE=2013060906
+++ CDATE=2013060906
+++ out=/ptmp/Yan.Luo/ens06.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_06.sh
+++ bsub -q dev -W 3:00 -J ens06 -o /ptmp/Yan.Luo/ens06.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_06.sh
+++ echo '++++++ Submite the NCEP ENSPOST_12 job ++++++'
+++ export CDATE=2013060912
+++ CDATE=2013060912
+++ out=/ptmp/Yan.Luo/ens12.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_12.sh
+++ bsub -q dev -W 3:00 -J ens12 -o /ptmp/Yan.Luo/ens12.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_12.sh
+++ echo '++++++ Submite the NCEP ENSPOST_18 job ++++++'
+++ export CDATE=2013060918
+++ CDATE=2013060918
+++ out=/ptmp/Yan.Luo/ens18.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_18.sh
+++ bsub -q dev -W 3:00 -J ens18 -o /ptmp/Yan.Luo/ens18.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_18.sh
+++ sleep 1800
+++ echo '++++++ Submite the NCEP ENSPOST_00 job ++++++'
+++ export CDATE=2013061000
+++ CDATE=2013061000
+++ out=/ptmp/Yan.Luo/ens00.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_00.sh
+++ bsub -q dev -W 3:00 -J ens00 -o /ptmp/Yan.Luo/ens00.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_00.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_06 job ++++++'
+++ export CDATE=2013060906
+++ CDATE=2013060906
+++ out=/ptmp/Yan.Luo/ens06bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_12 job ++++++'
+++ export CDATE=2013060912
+++ CDATE=2013060912
+++ out=/ptmp/Yan.Luo/ens12bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_18 job ++++++'
+++ export CDATE=2013060918
+++ CDATE=2013060918
+++ out=/ptmp/Yan.Luo/ens18bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_00 job ++++++'
+++ export CDATE=2013061000
+++ CDATE=2013061000
+++ out=/ptmp/Yan.Luo/ens00bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12 job ++++++'
+++ export CDATE=2013060900
+++ CDATE=2013060900
+++ out=/ptmp/Yan.Luo/cmc_ens.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12 job ++++++'
+++ export CDATE=2013061000
+++ CDATE=2013061000
+++ out=/ptmp/Yan.Luo/cmc_ens.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12_BC job ++++++'
+++ export CDATE=2013060912
+++ CDATE=2013060912
+++ out=/ptmp/Yan.Luo/cmc_ens_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12_BC.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12_BC job ++++++'
+++ export CDATE=2013061000
+++ CDATE=2013061000
+++ out=/ptmp/Yan.Luo/cmc_ens_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12_BC.sh
+++ echo '++++++ Submite the ECM ENSPOST_12 job ++++++'
+++ echo '++++++ additional parameteres (t2m,uv250,uv850 ...)++++++'
+++ export CDATE=2013060912
+++ CDATE=2013060912
+++ out=/ptmp/Yan.Luo/ecm_ens12.aout
+++ job=/ensemble/save/Yan.Luo/ecmwf/jobs/JWSR_ECMWFENSH.sms.prod
+++ echo '++++++ Submite the ECM ENSPOST_00 job ++++++'
+++ export CDATE=2013061000
+++ CDATE=2013061000
+++ out=/ptmp/Yan.Luo/ecm_ens00.out
+++ job=/ensemble/save/Yan.Luo/ecmwf/jobs/JWSR_ECMWFENSH.sms.prod
+++ echo '++++++ Submite the FNMOC ENSPOST_00 job ++++++'
+++ export CDATE=2013060900
+++ CDATE=2013060900
+++ out=/ptmp/Yan.Luo/fno_ens00.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_12 job ++++++'
+++ export CDATE=2013060812
+++ CDATE=2013060812
+++ out=/ptmp/Yan.Luo/fno_ens12.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_bc_00 job ++++++'
+++ export CDATE=2013060900
+++ CDATE=2013060900
+++ out=/ptmp/Yan.Luo/fno_ens00_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC_bc.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_bc_12 job ++++++'
+++ export CDATE=2013060812
+++ CDATE=2013060812
+++ out=/ptmp/Yan.Luo/fno_ens12_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC_bc.sh
+++ echo '++++++ Submite real time parallel job ++++++'
+++ export CDATE=2013061000
+++ CDATE=2013061000
+++ out=/ptmp/Yan.Luo/GENS_para.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_para.sh
+++ out=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.sh
+++ bsub
+Job will be scheduled after Tue Jun 11 11:00:00 2013
+++ exit
+++ date
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
+++ echo ' ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++'
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
++++ date +%Y%m%d
+++ Date=20130611
+++ export CDATE=2013061100
+++ CDATE=2013061100
+++ echo CDATE=2013061100
+++ '[' 2013061100 = '' ']'
+++ export CDATE=2013061100
+++ CDATE=2013061100
+++ export SCOM=/com
+++ SCOM=/com
+++ export DFROM=/p5com/gens/prod
+++ DFROM=/p5com/gens/prod
+++ export DFROM=/com/gens/prod
+++ DFROM=/com/gens/prod
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
+++ echo ' +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++'
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
++++ /nwprod/util/exec/ndate +06 2013061100
+++ export CDATEp06=2013061106
+++ CDATEp06=2013061106
++++ /nwprod/util/exec/ndate -06 2013061100
+++ export CDATEm06=2013061018
+++ CDATEm06=2013061018
++++ /nwprod/util/exec/ndate -12 2013061100
+++ export CDATEm12=2013061012
+++ CDATEm12=2013061012
++++ /nwprod/util/exec/ndate -18 2013061100
+++ export CDATEm18=2013061006
+++ CDATEm18=2013061006
++++ /nwprod/util/exec/ndate -24 2013061100
+++ export CDATEm24=2013061000
+++ CDATEm24=2013061000
++++ /nwprod/util/exec/ndate -30 2013061100
+++ export CDATEm30=2013060918
+++ CDATEm30=2013060918
++++ /nwprod/util/exec/ndate -36 2013061100
+++ export CDATEm36=2013060912
+++ CDATEm36=2013060912
++++ /nwprod/util/exec/ndate -42 2013061100
+++ export CDATEm42=2013060906
+++ CDATEm42=2013060906
++++ /nwprod/util/exec/ndate -48 2013061100
+++ export CDATEm48=2013060900
+++ CDATEm48=2013060900
++++ /nwprod/util/exec/ndate -54 2013061100
+++ export CDATEm54=2013060818
+++ CDATEm54=2013060818
++++ /nwprod/util/exec/ndate -60 2013061100
+++ export CDATEm60=2013060812
+++ CDATEm60=2013060812
++++ /nwprod/util/exec/ndate -72 2013061100
+++ export CDATEm72=2013060800
+++ CDATEm72=2013060800
++++ /nwprod/util/exec/ndate -84 2013061100
+++ export CDATEm84=2013060712
+++ CDATEm84=2013060712
++++ /nwprod/util/exec/ndate -96 2013061100
+++ export CDATEm96=2013060700
+++ CDATEm96=2013060700
++++ /nwprod/util/exec/ndate -108 2013061100
+++ export CDATEm108=2013060612
+++ CDATEm108=2013060612
++++ /nwprod/util/exec/ndate -120 2013061100
+++ export CDATEm120=2013060600
+++ CDATEm120=2013060600
+++ export CDATEp00=2013061100
+++ CDATEp00=2013061100
++++ /nwprod/util/exec/ndate +12 2013061100
+++ export CDATEp12=2013061112
+++ CDATEp12=2013061112
++++ /nwprod/util/exec/ndate +24 2013061100
+++ export CDATEp24=2013061200
+++ CDATEp24=2013061200
++++ /nwprod/util/exec/ndate -24 2013061100
++++ cut -c1-8
+++ export YMDM1=20130610
+++ YMDM1=20130610
++++ /nwprod/util/exec/ndate -48 2013061100
++++ cut -c1-8
+++ export YMDM2=20130609
+++ YMDM2=20130609
++++ /nwprod/util/exec/ndate -72 2013061100
++++ cut -c1-8
+++ export YMDM3=20130608
+++ YMDM3=20130608
++++ /nwprod/util/exec/ndate -96 2013061100
++++ cut -c1-8
+++ export YMDM4=20130607
+++ YMDM4=20130607
++++ /nwprod/util/exec/ndate -120 2013061100
++++ cut -c1-8
+++ export YMDM5=20130606
+++ YMDM5=20130606
++++ echo 2013061100
++++ cut -c1-8
+++ export CYMD=20130611
+++ CYMD=20130611
++++ echo 2013061000
++++ cut -c1-8
+++ export CYMDM1=20130610
+++ CYMDM1=20130610
++++ /nwprod/util/exec/ndate -96 2013061100
++++ cut -c1-6
+++ export YYYYMM=201306
+++ YYYYMM=201306
++++ echo 2013061100
++++ cut -c5-8
+++ export MMDD=0611
+++ MMDD=0611
++++ echo 2013061100
++++ cut -c7-8
+++ export DD=11
+++ DD=11
++++ echo 2013061100
++++ cut -c9-10
+++ export HH=00
+++ HH=00
+++ echo '++++++ Submite the NCEP ENSPOST_06 job ++++++'
+++ export CDATE=2013061006
+++ CDATE=2013061006
+++ out=/ptmp/Yan.Luo/ens06.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_06.sh
+++ bsub -q dev -W 3:00 -J ens06 -o /ptmp/Yan.Luo/ens06.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_06.sh
+ESL is  and ELF is 0
+/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_06.sh
+++ echo '++++++ Submite the NCEP ENSPOST_12 job ++++++'
+++ export CDATE=2013061012
+++ CDATE=2013061012
+++ out=/ptmp/Yan.Luo/ens12.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_12.sh
+++ bsub -q dev -W 3:00 -J ens12 -o /ptmp/Yan.Luo/ens12.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_12.sh
+ESL is  and ELF is 0
+/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_12.sh
+++ echo '++++++ Submite the NCEP ENSPOST_18 job ++++++'
+++ export CDATE=2013061018
+++ CDATE=2013061018
+++ out=/ptmp/Yan.Luo/ens18.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_18.sh
+++ bsub -q dev -W 3:00 -J ens18 -o /ptmp/Yan.Luo/ens18.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_18.sh
+ESL is  and ELF is 0
+/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_18.sh
+++ sleep 1800
+++ echo '++++++ Submite the NCEP ENSPOST_00 job ++++++'
+++ export CDATE=2013061100
+++ CDATE=2013061100
+++ out=/ptmp/Yan.Luo/ens00.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_00.sh
+++ bsub -q dev -W 3:00 -J ens00 -o /ptmp/Yan.Luo/ens00.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_00.sh
+ESL is  and ELF is 0
+/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_00.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_06 job ++++++'
+++ export CDATE=2013061006
+++ CDATE=2013061006
+++ out=/ptmp/Yan.Luo/ens06bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_12 job ++++++'
+++ export CDATE=2013061012
+++ CDATE=2013061012
+++ out=/ptmp/Yan.Luo/ens12bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_18 job ++++++'
+++ export CDATE=2013061018
+++ CDATE=2013061018
+++ out=/ptmp/Yan.Luo/ens18bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_00 job ++++++'
+++ export CDATE=2013061100
+++ CDATE=2013061100
+++ out=/ptmp/Yan.Luo/ens00bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12 job ++++++'
+++ export CDATE=2013061000
+++ CDATE=2013061000
+++ out=/ptmp/Yan.Luo/cmc_ens.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12 job ++++++'
+++ export CDATE=2013061100
+++ CDATE=2013061100
+++ out=/ptmp/Yan.Luo/cmc_ens.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12_BC job ++++++'
+++ export CDATE=2013061012
+++ CDATE=2013061012
+++ out=/ptmp/Yan.Luo/cmc_ens_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12_BC.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12_BC job ++++++'
+++ export CDATE=2013061100
+++ CDATE=2013061100
+++ out=/ptmp/Yan.Luo/cmc_ens_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12_BC.sh
+++ echo '++++++ Submite the ECM ENSPOST_12 job ++++++'
+++ echo '++++++ additional parameteres (t2m,uv250,uv850 ...)++++++'
+++ export CDATE=2013061012
+++ CDATE=2013061012
+++ out=/ptmp/Yan.Luo/ecm_ens12.aout
+++ job=/ensemble/save/Yan.Luo/ecmwf/jobs/JWSR_ECMWFENSH.sms.prod
+++ echo '++++++ Submite the ECM ENSPOST_00 job ++++++'
+++ export CDATE=2013061100
+++ CDATE=2013061100
+++ out=/ptmp/Yan.Luo/ecm_ens00.out
+++ job=/ensemble/save/Yan.Luo/ecmwf/jobs/JWSR_ECMWFENSH.sms.prod
+++ echo '++++++ Submite the FNMOC ENSPOST_00 job ++++++'
+++ export CDATE=2013061000
+++ CDATE=2013061000
+++ out=/ptmp/Yan.Luo/fno_ens00.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_12 job ++++++'
+++ export CDATE=2013060912
+++ CDATE=2013060912
+++ out=/ptmp/Yan.Luo/fno_ens12.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_bc_00 job ++++++'
+++ export CDATE=2013061000
+++ CDATE=2013061000
+++ out=/ptmp/Yan.Luo/fno_ens00_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC_bc.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_bc_12 job ++++++'
+++ export CDATE=2013060912
+++ CDATE=2013060912
+++ out=/ptmp/Yan.Luo/fno_ens12_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC_bc.sh
+++ echo '++++++ Submite real time parallel job ++++++'
+++ export CDATE=2013061100
+++ CDATE=2013061100
+++ out=/ptmp/Yan.Luo/GENS_para.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_para.sh
+++ out=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.sh
+++ bsub
+ESL is  and ELF is 0
+#/bin/sh;#BSUB -J GENSARCH_main.sh;#BSUB -o /ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.out;#BSUB -e /ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.err;#BSUB -q "dev";#BSUB -b 11:00;#BSUB -W 3:00 ;set -x ;date ;echo " +++++++++++++++++++++++++++++++++++++++++++++++++";echo " ++++++++ ENSEMBLE ARCHIVE +++++++++++++++";echo " +++++++++++++++++++++++++++++++++++++++++++++++++" ;###;### get date;### ;Date=${2:-$(date +%Y%m%d)};export CDATE=${Date}00;echo "CDATE=$CDATE" ;### CDATE=YYYYMMDDHH Y2K comparable;### export from outside of script ;if [ "$CDATE" = "" ]; then; echo "CDATE = $CDATE "; echo "JOB EXIT NOW !!!!!!"; exit;fi ;export CDATE=$CDATE;export SCOM=/com;export DFROM=/p5com/gens/prod;export DFROM=$SCOM/gens/prod ;echo " +++++++++++++++++++++++++++++++++++++++++++++++++";echo " +++++ GLOBAL ENSEMBLE ARCHIVE on MIST +++++++++";echo " +++++++++++++++++++++++++++++++++++++++++++++++++" ;###;### Define the time for each cycle and different days;### ;export CDATEp06=`$nhours +06 $CDATE`;export CDATEm06=`$nhours -06 $CDATE`;export CDATEm12=`$nhours -12 $CDATE`;export CDATEm18=`$nhours -18 $CDATE`;export CDATEm24=`$nhours -24 $CDATE`;export CDATEm30=`$nhours -30 $CDATE`;export CDATEm36=`$nhours -36 $CDATE`;export CDATEm42=`$nhours -42 $CDATE`;export CDATEm48=`$nhours -48 $CDATE`;export CDATEm54=`$nhours -54 $CDATE`;export CDATEm60=`$nhours -60 $CDATE`;export CDATEm72=`$nhours -72 $CDATE`;export CDATEm84=`$nhours -84 $CDATE`;export CDATEm96=`$nhours -96 $CDATE`;export CDATEm108=`$nhours -108 $CDATE`;export CDATEm120=`$nhours -120 $CDATE`;export CDATEp00=$CDATE;export CDATEp12=`$nhours +12 $CDATE`;export CDATEp24=`$nhours +24 $CDATE`;export YMDM1=`$nhours -24 $CDATE | cut -c1-8`;export YMDM2=`$nhours -48 $CDATE | cut -c1-8`;export YMDM3=`$nhours -72 $CDATE | cut -c1-8`;export YMDM4=`$nhours -96 $CDATE | cut -c1-8`;export YMDM5=`$nhours -120 $CDATE | cut -c1-8`;export CYMD=`echo $CDATE | cut -c1-8`;export CYMDM1=`echo $CDATEm24 | cut -c1-8`;export YYYYMM=`$nhours -96 $CDATE | cut -c1-6`;export MMDD=`echo $CDATE | cut -c5-8`;export DD=`echo $CDATE | cut -c7-8`;export HH=`echo $CDATE | cut -c9-10` ;################### Global ensemble data archive #################### ;echo "++++++ Submite the NCEP ENSPOST_06 job ++++++";export CDATE=$CDATEm18;out=$PTMP/$LOGNAME/ens06.out;job=$SHOME/$LOGNAME/earch/scripts/ENSPOST_06.sh;#sub -e CDATE -a GEN-MTN -w "+00" -t 3000 -j ens06 -o $out $job;bsub -q "dev" -W 3:00 -J ens06 -o $out $job;#$job > $out ;echo "++++++ Submite the NCEP ENSPOST_12 job ++++++";export CDATE=$CDATEm12;out=$PTMP/$LOGNAME/ens12.out;job=$SHOME/$LOGNAME/earch/scripts/ENSPOST_12.sh;#sub -e CDATE -a GEN-MTN -w "+00" -t 3000 -j ens12 -o $out $job;bsub -q "dev" -W 3:00 -J ens12 -o $out $job;#$job > $out ;echo "++++++ Submite the NCEP ENSPOST_18 job ++++++";export CDATE=$CDATEm06;out=$PTMP/$LOGNAME/ens18.out;job=$SHOME/$LOGNAME/earch/scripts/ENSPOST_18.sh;#sub -e CDATE -a GEN-MTN -w "+00" -t 3000 -j ens18 -o $out $job;bsub -q "dev" -W 3:00 -J ens18 -o $out $job;#$job > $out ;sleep 1800 ;echo "++++++ Submite the NCEP ENSPOST_00 job ++++++";export CDATE=$CDATEp00;out=$PTMP/$LOGNAME/ens00.out;job=$SHOME/$LOGNAME/earch/scripts/ENSPOST_00.sh;#sub -e CDATE -a GEN-MTN -w "+0030" -t 3000 -j ens00 -o $out $job;bsub -q "dev" -W 3:00 -J ens00 -o $out $job;#$job > $out & ;echo "++++++ Submite the NCEP BC ENSPOST_06 job ++++++";export CDATE=$CDATEm18;out=$PTMP/$LOGNAME/ens06bc.out;job=$SHOME/$LOGNAME/earch/scripts/ENSPOST_BC.sh;#sub -e CDATE -a GEN-MTN -t 3000 -w "+0005" -j ens06bc -o $out $job ;echo "++++++ Submite the NCEP BC ENSPOST_12 job ++++++";export CDATE=$CDATEm12;out=$PTMP/$LOGNAME/ens12bc.out;job=$SHOME/$LOGNAME/earch/scripts/ENSPOST_BC.sh;#sub -e CDATE -a GEN-MTN -t 3000 -w "+0025" -j ens12bc -o $out $job ;echo "++++++ Submite the NCEP BC ENSPOST_18 job ++++++";export CDATE=$CDATEm06;out=$PTMP/$LOGNAME/ens18bc.out;job=$SHOME/$LOGNAME/earch/scripts/ENSPOST_BC.sh;#sub -e CDATE -a GEN-MTN -t 3000 -w "+0045" -j ens18bc -o $out $job ;echo "++++++ Submite the NCEP BC ENSPOST_00 job ++++++";export CDATE=$CDATEp00;out=$PTMP/$LOGNAME/ens00bc.out;job=$SHOME/$LOGNAME/earch/scripts/ENSPOST_BC.sh;#sub -e CDATE -a GEN-MTN -t 4000 -w "+0065" -j ens00bc -o $out $job ;echo "++++++ Submite the CMC ENSPOST_00+12 job ++++++";export CDATE=$CDATEm24;out=$PTMP/$LOGNAME/cmc_ens.out;job=$SHOME/$LOGNAME/earch/scripts/ENSPOST_CMC_00+12.sh;#sub -e CDATE -a GEN-MTN -t 8000 -w "+0030" -j cmc_ens -o $out $job ;echo "++++++ Submite the CMC ENSPOST_00+12 job ++++++";export CDATE=$CDATEp00;out=$PTMP/$LOGNAME/cmc_ens.out;job=$SHOME/$LOGNAME/earch/scripts/ENSPOST_CMC_00+12.sh;#sub -e CDATE -a GEN-MTN -t 8000 -w "+0300" -j cmc_ens -o $out $job ;echo "++++++ Submite the CMC ENSPOST_00+12_BC job ++++++";export CDATE=$CDATEm12;out=$PTMP/$LOGNAME/cmc_ens_bc.out;job=$SHOME/$LOGNAME/earch/scripts/ENSPOST_CMC_00+12_BC.sh;#sub -e CDATE -a GEN-MTN -t 3000 -w "+0000" -j cmc_ens_bc -o $out $job ;echo "++++++ Submite the CMC ENSPOST_00+12_BC job ++++++";export CDATE=$CDATEp00;out=$PTMP/$LOGNAME/cmc_ens_bc.out;job=$SHOME/$LOGNAME/earch/scripts/ENSPOST_CMC_00+12_BC.sh;#sub -e CDATE -a GEN-MTN -t 3000 -w "+0355" -j cmc_ens_bc -o $out $job ;### following four jobs need review for /p5com???#### (03/04/2009);echo "++++++ Submite the ECM ENSPOST_12 job ++++++";echo "++++++ additional parameteres (t2m,uv250,uv850 ...)++++++";export CDATE=$CDATEm12;out=$PTMP/$LOGNAME/ecm_ens12.aout;job=$SHOME/$LOGNAME/ecmwf/jobs/JWSR_ECMWFENSH.sms.prod;#sub -e CDATE -a GEN-MTN -t 9000 -w "+0050" -j ecm_ens -o $out $job ;echo "++++++ Submite the ECM ENSPOST_00 job ++++++";export CDATE=$CDATEp00;out=$PTMP/$LOGNAME/ecm_ens00.out;#job=$SHOME/$LOGNAME/earch/scripts/ENSPOST_ECM_00.sh;job=$SHOME/$LOGNAME/ecmwf/jobs/JWSR_ECMWFENSH.sms.prod;#sub -e CDATE -a GEN-MTN -t 9000 -w "+0250" -j ecm_ens -o $out $job ;echo "++++++ Submite the FNMOC ENSPOST_00 job ++++++";export CDATE=$CDATEm24;out=$PTMP/$LOGNAME/fno_ens00.out;job=$SHOME/$LOGNAME/earch/scripts/ENSPOST_FNMOC.sh;#sub -e CDATE -a GEN-MTN -w "+0000" -t 3000 -j fno_ens_00 -o $out $job ;echo "++++++ Submite the FNMOC ENSPOST_12 job ++++++";export CDATE=$CDATEm36;out=$PTMP/$LOGNAME/fno_ens12.out;job=$SHOME/$LOGNAME/earch/scripts/ENSPOST_FNMOC.sh;#sub -e CDATE -a GEN-MTN -w "+0050" -t 3000 -j fno_ens_12 -o $out $job ;echo "++++++ Submite the FNMOC ENSPOST_bc_00 job ++++++";export CDATE=$CDATEm24;out=$PTMP/$LOGNAME/fno_ens00_bc.out;job=$SHOME/$LOGNAME/earch/scripts/ENSPOST_FNMOC_bc.sh;#sub -e CDATE -a GEN-MTN -w "+0000" -t 3000 -j fno_ens_00_bc -o $out $job ;echo "++++++ Submite the FNMOC ENSPOST_bc_12 job ++++++";export CDATE=$CDATEm36;out=$PTMP/$LOGNAME/fno_ens12_bc.out;job=$SHOME/$LOGNAME/earch/scripts/ENSPOST_FNMOC_bc.sh;#sub -e CDATE -a GEN-MTN -w "+0050" -t 3000 -j fno_ens_12_bc -o $out $job ;echo "++++++ Submite real time parallel job ++++++";export CDATE=$CDATEp00;out=$PTMP/$LOGNAME/GENS_para.out;job=$SHOME/$LOGNAME/earch/scripts/GENSARCH_para.sh;##sub -e CDATE -a GEN-MTN -w "+0000" -j gen_par -o $out $job ;###;### Submit the schedual job itself;### ;#echo "++++++ Submite the GENSARCH_main job ++++++";out=$SHOME/$LOGNAME/earch/scripts/GENSARCH_main.out;job=$SHOME/$LOGNAME/earch/scripts/GENSARCH_main.sh;#sub -a GFS-MTN -q 1 -p 1/1 -w ${NEXT_JOB_TIME} -t 3:00:00 -j GENSARCH_main.sh_seperatedjobs -o $out $job;bsub < $job ;exit
+Job will be scheduled after Wed Jun 12 11:00:00 2013
+++ exit
+++ date
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
+++ echo ' ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++'
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
++++ date +%Y%m%d
+++ Date=20130612
+++ export CDATE=2013061200
+++ CDATE=2013061200
+++ echo CDATE=2013061200
+++ '[' 2013061200 = '' ']'
+++ export CDATE=2013061200
+++ CDATE=2013061200
+++ export SCOM=/com
+++ SCOM=/com
+++ export DFROM=/p5com/gens/prod
+++ DFROM=/p5com/gens/prod
+++ export DFROM=/com/gens/prod
+++ DFROM=/com/gens/prod
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
+++ echo ' +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++'
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
++++ /nwprod/util/exec/ndate +06 2013061200
+++ export CDATEp06=2013061206
+++ CDATEp06=2013061206
++++ /nwprod/util/exec/ndate -06 2013061200
+++ export CDATEm06=2013061118
+++ CDATEm06=2013061118
++++ /nwprod/util/exec/ndate -12 2013061200
+++ export CDATEm12=2013061112
+++ CDATEm12=2013061112
++++ /nwprod/util/exec/ndate -18 2013061200
+++ export CDATEm18=2013061106
+++ CDATEm18=2013061106
++++ /nwprod/util/exec/ndate -24 2013061200
+++ export CDATEm24=2013061100
+++ CDATEm24=2013061100
++++ /nwprod/util/exec/ndate -30 2013061200
+++ export CDATEm30=2013061018
+++ CDATEm30=2013061018
++++ /nwprod/util/exec/ndate -36 2013061200
+++ export CDATEm36=2013061012
+++ CDATEm36=2013061012
++++ /nwprod/util/exec/ndate -42 2013061200
+++ export CDATEm42=2013061006
+++ CDATEm42=2013061006
++++ /nwprod/util/exec/ndate -48 2013061200
+++ export CDATEm48=2013061000
+++ CDATEm48=2013061000
++++ /nwprod/util/exec/ndate -54 2013061200
+++ export CDATEm54=2013060918
+++ CDATEm54=2013060918
++++ /nwprod/util/exec/ndate -60 2013061200
+++ export CDATEm60=2013060912
+++ CDATEm60=2013060912
++++ /nwprod/util/exec/ndate -72 2013061200
+++ export CDATEm72=2013060900
+++ CDATEm72=2013060900
++++ /nwprod/util/exec/ndate -84 2013061200
+++ export CDATEm84=2013060812
+++ CDATEm84=2013060812
++++ /nwprod/util/exec/ndate -96 2013061200
+++ export CDATEm96=2013060800
+++ CDATEm96=2013060800
++++ /nwprod/util/exec/ndate -108 2013061200
+++ export CDATEm108=2013060712
+++ CDATEm108=2013060712
++++ /nwprod/util/exec/ndate -120 2013061200
+++ export CDATEm120=2013060700
+++ CDATEm120=2013060700
+++ export CDATEp00=2013061200
+++ CDATEp00=2013061200
++++ /nwprod/util/exec/ndate +12 2013061200
+++ export CDATEp12=2013061212
+++ CDATEp12=2013061212
++++ /nwprod/util/exec/ndate +24 2013061200
+++ export CDATEp24=2013061300
+++ CDATEp24=2013061300
++++ /nwprod/util/exec/ndate -24 2013061200
++++ cut -c1-8
+++ export YMDM1=20130611
+++ YMDM1=20130611
++++ /nwprod/util/exec/ndate -48 2013061200
++++ cut -c1-8
+++ export YMDM2=20130610
+++ YMDM2=20130610
++++ /nwprod/util/exec/ndate -72 2013061200
++++ cut -c1-8
+++ export YMDM3=20130609
+++ YMDM3=20130609
++++ /nwprod/util/exec/ndate -96 2013061200
++++ cut -c1-8
+++ export YMDM4=20130608
+++ YMDM4=20130608
++++ /nwprod/util/exec/ndate -120 2013061200
++++ cut -c1-8
+++ export YMDM5=20130607
+++ YMDM5=20130607
++++ echo 2013061200
++++ cut -c1-8
+++ export CYMD=20130612
+++ CYMD=20130612
++++ echo 2013061100
++++ cut -c1-8
+++ export CYMDM1=20130611
+++ CYMDM1=20130611
++++ /nwprod/util/exec/ndate -96 2013061200
++++ cut -c1-6
+++ export YYYYMM=201306
+++ YYYYMM=201306
++++ echo 2013061200
++++ cut -c5-8
+++ export MMDD=0612
+++ MMDD=0612
++++ echo 2013061200
++++ cut -c7-8
+++ export DD=12
+++ DD=12
++++ echo 2013061200
++++ cut -c9-10
+++ export HH=00
+++ HH=00
+++ echo '++++++ Submite the NCEP ENSPOST_06 job ++++++'
+++ export CDATE=2013061106
+++ CDATE=2013061106
+++ out=/ptmp/Yan.Luo/ens06.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_06.sh
+++ bsub -q dev -W 3:00 -J ens06 -o /ptmp/Yan.Luo/ens06.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_06.sh
+++ echo '++++++ Submite the NCEP ENSPOST_12 job ++++++'
+++ export CDATE=2013061112
+++ CDATE=2013061112
+++ out=/ptmp/Yan.Luo/ens12.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_12.sh
+++ bsub -q dev -W 3:00 -J ens12 -o /ptmp/Yan.Luo/ens12.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_12.sh
+++ echo '++++++ Submite the NCEP ENSPOST_18 job ++++++'
+++ export CDATE=2013061118
+++ CDATE=2013061118
+++ out=/ptmp/Yan.Luo/ens18.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_18.sh
+++ bsub -q dev -W 3:00 -J ens18 -o /ptmp/Yan.Luo/ens18.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_18.sh
+++ sleep 1800
+++ echo '++++++ Submite the NCEP ENSPOST_00 job ++++++'
+++ export CDATE=2013061200
+++ CDATE=2013061200
+++ out=/ptmp/Yan.Luo/ens00.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_00.sh
+++ bsub -q dev -W 3:00 -J ens00 -o /ptmp/Yan.Luo/ens00.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_00.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_06 job ++++++'
+++ export CDATE=2013061106
+++ CDATE=2013061106
+++ out=/ptmp/Yan.Luo/ens06bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_12 job ++++++'
+++ export CDATE=2013061112
+++ CDATE=2013061112
+++ out=/ptmp/Yan.Luo/ens12bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_18 job ++++++'
+++ export CDATE=2013061118
+++ CDATE=2013061118
+++ out=/ptmp/Yan.Luo/ens18bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_00 job ++++++'
+++ export CDATE=2013061200
+++ CDATE=2013061200
+++ out=/ptmp/Yan.Luo/ens00bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12 job ++++++'
+++ export CDATE=2013061100
+++ CDATE=2013061100
+++ out=/ptmp/Yan.Luo/cmc_ens.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12 job ++++++'
+++ export CDATE=2013061200
+++ CDATE=2013061200
+++ out=/ptmp/Yan.Luo/cmc_ens.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12_BC job ++++++'
+++ export CDATE=2013061112
+++ CDATE=2013061112
+++ out=/ptmp/Yan.Luo/cmc_ens_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12_BC.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12_BC job ++++++'
+++ export CDATE=2013061200
+++ CDATE=2013061200
+++ out=/ptmp/Yan.Luo/cmc_ens_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12_BC.sh
+++ echo '++++++ Submite the ECM ENSPOST_12 job ++++++'
+++ echo '++++++ additional parameteres (t2m,uv250,uv850 ...)++++++'
+++ export CDATE=2013061112
+++ CDATE=2013061112
+++ out=/ptmp/Yan.Luo/ecm_ens12.aout
+++ job=/ensemble/save/Yan.Luo/ecmwf/jobs/JWSR_ECMWFENSH.sms.prod
+++ echo '++++++ Submite the ECM ENSPOST_00 job ++++++'
+++ export CDATE=2013061200
+++ CDATE=2013061200
+++ out=/ptmp/Yan.Luo/ecm_ens00.out
+++ job=/ensemble/save/Yan.Luo/ecmwf/jobs/JWSR_ECMWFENSH.sms.prod
+++ echo '++++++ Submite the FNMOC ENSPOST_00 job ++++++'
+++ export CDATE=2013061100
+++ CDATE=2013061100
+++ out=/ptmp/Yan.Luo/fno_ens00.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_12 job ++++++'
+++ export CDATE=2013061012
+++ CDATE=2013061012
+++ out=/ptmp/Yan.Luo/fno_ens12.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_bc_00 job ++++++'
+++ export CDATE=2013061100
+++ CDATE=2013061100
+++ out=/ptmp/Yan.Luo/fno_ens00_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC_bc.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_bc_12 job ++++++'
+++ export CDATE=2013061012
+++ CDATE=2013061012
+++ out=/ptmp/Yan.Luo/fno_ens12_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC_bc.sh
+++ echo '++++++ Submite real time parallel job ++++++'
+++ export CDATE=2013061200
+++ CDATE=2013061200
+++ out=/ptmp/Yan.Luo/GENS_para.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_para.sh
+++ out=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.sh
+++ bsub
+Job will be scheduled after Thu Jun 13 11:00:00 2013
+++ exit
+++ date
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
+++ echo ' ++++++++     ENSEMBLE ARCHIVE       +++++++++++++++'
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
++++ date +%Y%m%d
+++ Date=20130613
+++ export CDATE=2013061300
+++ CDATE=2013061300
+++ echo CDATE=2013061300
+++ '[' 2013061300 = '' ']'
+++ export CDATE=2013061300
+++ CDATE=2013061300
+++ export SCOM=/com
+++ SCOM=/com
+++ export DFROM=/p5com/gens/prod
+++ DFROM=/p5com/gens/prod
+++ export DFROM=/com/gens/prod
+++ DFROM=/com/gens/prod
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
+++ echo ' +++++ GLOBAL ENSEMBLE ARCHIVE on MIST   +++++++++'
+++ echo ' +++++++++++++++++++++++++++++++++++++++++++++++++'
++++ /nwprod/util/exec/ndate +06 2013061300
+++ export CDATEp06=2013061306
+++ CDATEp06=2013061306
++++ /nwprod/util/exec/ndate -06 2013061300
+++ export CDATEm06=2013061218
+++ CDATEm06=2013061218
++++ /nwprod/util/exec/ndate -12 2013061300
+++ export CDATEm12=2013061212
+++ CDATEm12=2013061212
++++ /nwprod/util/exec/ndate -18 2013061300
+++ export CDATEm18=2013061206
+++ CDATEm18=2013061206
++++ /nwprod/util/exec/ndate -24 2013061300
+++ export CDATEm24=2013061200
+++ CDATEm24=2013061200
++++ /nwprod/util/exec/ndate -30 2013061300
+++ export CDATEm30=2013061118
+++ CDATEm30=2013061118
++++ /nwprod/util/exec/ndate -36 2013061300
+++ export CDATEm36=2013061112
+++ CDATEm36=2013061112
++++ /nwprod/util/exec/ndate -42 2013061300
+++ export CDATEm42=2013061106
+++ CDATEm42=2013061106
++++ /nwprod/util/exec/ndate -48 2013061300
+++ export CDATEm48=2013061100
+++ CDATEm48=2013061100
++++ /nwprod/util/exec/ndate -54 2013061300
+++ export CDATEm54=2013061018
+++ CDATEm54=2013061018
++++ /nwprod/util/exec/ndate -60 2013061300
+++ export CDATEm60=2013061012
+++ CDATEm60=2013061012
++++ /nwprod/util/exec/ndate -72 2013061300
+++ export CDATEm72=2013061000
+++ CDATEm72=2013061000
++++ /nwprod/util/exec/ndate -84 2013061300
+++ export CDATEm84=2013060912
+++ CDATEm84=2013060912
++++ /nwprod/util/exec/ndate -96 2013061300
+++ export CDATEm96=2013060900
+++ CDATEm96=2013060900
++++ /nwprod/util/exec/ndate -108 2013061300
+++ export CDATEm108=2013060812
+++ CDATEm108=2013060812
++++ /nwprod/util/exec/ndate -120 2013061300
+++ export CDATEm120=2013060800
+++ CDATEm120=2013060800
+++ export CDATEp00=2013061300
+++ CDATEp00=2013061300
++++ /nwprod/util/exec/ndate +12 2013061300
+++ export CDATEp12=2013061312
+++ CDATEp12=2013061312
++++ /nwprod/util/exec/ndate +24 2013061300
+++ export CDATEp24=2013061400
+++ CDATEp24=2013061400
++++ /nwprod/util/exec/ndate -24 2013061300
++++ cut -c1-8
+++ export YMDM1=20130612
+++ YMDM1=20130612
++++ /nwprod/util/exec/ndate -48 2013061300
++++ cut -c1-8
+++ export YMDM2=20130611
+++ YMDM2=20130611
++++ /nwprod/util/exec/ndate -72 2013061300
++++ cut -c1-8
+++ export YMDM3=20130610
+++ YMDM3=20130610
++++ /nwprod/util/exec/ndate -96 2013061300
++++ cut -c1-8
+++ export YMDM4=20130609
+++ YMDM4=20130609
++++ /nwprod/util/exec/ndate -120 2013061300
++++ cut -c1-8
+++ export YMDM5=20130608
+++ YMDM5=20130608
++++ echo 2013061300
++++ cut -c1-8
+++ export CYMD=20130613
+++ CYMD=20130613
++++ echo 2013061200
++++ cut -c1-8
+++ export CYMDM1=20130612
+++ CYMDM1=20130612
++++ /nwprod/util/exec/ndate -96 2013061300
++++ cut -c1-6
+++ export YYYYMM=201306
+++ YYYYMM=201306
++++ echo 2013061300
++++ cut -c5-8
+++ export MMDD=0613
+++ MMDD=0613
++++ echo 2013061300
++++ cut -c7-8
+++ export DD=13
+++ DD=13
++++ echo 2013061300
++++ cut -c9-10
+++ export HH=00
+++ HH=00
+++ echo '++++++ Submite the NCEP ENSPOST_06 job ++++++'
+++ export CDATE=2013061206
+++ CDATE=2013061206
+++ out=/ptmp/Yan.Luo/ens06.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_06.sh
+++ bsub -q dev -W 3:00 -J ens06 -o /ptmp/Yan.Luo/ens06.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_06.sh
+++ echo '++++++ Submite the NCEP ENSPOST_12 job ++++++'
+++ export CDATE=2013061212
+++ CDATE=2013061212
+++ out=/ptmp/Yan.Luo/ens12.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_12.sh
+++ bsub -q dev -W 3:00 -J ens12 -o /ptmp/Yan.Luo/ens12.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_12.sh
+++ echo '++++++ Submite the NCEP ENSPOST_18 job ++++++'
+++ export CDATE=2013061218
+++ CDATE=2013061218
+++ out=/ptmp/Yan.Luo/ens18.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_18.sh
+++ bsub -q dev -W 3:00 -J ens18 -o /ptmp/Yan.Luo/ens18.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_18.sh
+++ sleep 1800
+++ echo '++++++ Submite the NCEP ENSPOST_00 job ++++++'
+++ export CDATE=2013061300
+++ CDATE=2013061300
+++ out=/ptmp/Yan.Luo/ens00.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_00.sh
+++ bsub -q dev -W 3:00 -J ens00 -o /ptmp/Yan.Luo/ens00.out /ensemble/save/Yan.Luo/earch/scripts/ENSPOST_00.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_06 job ++++++'
+++ export CDATE=2013061206
+++ CDATE=2013061206
+++ out=/ptmp/Yan.Luo/ens06bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_12 job ++++++'
+++ export CDATE=2013061212
+++ CDATE=2013061212
+++ out=/ptmp/Yan.Luo/ens12bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_18 job ++++++'
+++ export CDATE=2013061218
+++ CDATE=2013061218
+++ out=/ptmp/Yan.Luo/ens18bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the NCEP BC ENSPOST_00 job ++++++'
+++ export CDATE=2013061300
+++ CDATE=2013061300
+++ out=/ptmp/Yan.Luo/ens00bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_BC.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12 job ++++++'
+++ export CDATE=2013061200
+++ CDATE=2013061200
+++ out=/ptmp/Yan.Luo/cmc_ens.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12 job ++++++'
+++ export CDATE=2013061300
+++ CDATE=2013061300
+++ out=/ptmp/Yan.Luo/cmc_ens.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12_BC job ++++++'
+++ export CDATE=2013061212
+++ CDATE=2013061212
+++ out=/ptmp/Yan.Luo/cmc_ens_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12_BC.sh
+++ echo '++++++ Submite the CMC ENSPOST_00+12_BC job ++++++'
+++ export CDATE=2013061300
+++ CDATE=2013061300
+++ out=/ptmp/Yan.Luo/cmc_ens_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_CMC_00+12_BC.sh
+++ echo '++++++ Submite the ECM ENSPOST_12 job ++++++'
+++ echo '++++++ additional parameteres (t2m,uv250,uv850 ...)++++++'
+++ export CDATE=2013061212
+++ CDATE=2013061212
+++ out=/ptmp/Yan.Luo/ecm_ens12.aout
+++ job=/ensemble/save/Yan.Luo/ecmwf/jobs/JWSR_ECMWFENSH.sms.prod
+++ echo '++++++ Submite the ECM ENSPOST_00 job ++++++'
+++ export CDATE=2013061300
+++ CDATE=2013061300
+++ out=/ptmp/Yan.Luo/ecm_ens00.out
+++ job=/ensemble/save/Yan.Luo/ecmwf/jobs/JWSR_ECMWFENSH.sms.prod
+++ echo '++++++ Submite the FNMOC ENSPOST_00 job ++++++'
+++ export CDATE=2013061200
+++ CDATE=2013061200
+++ out=/ptmp/Yan.Luo/fno_ens00.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_12 job ++++++'
+++ export CDATE=2013061112
+++ CDATE=2013061112
+++ out=/ptmp/Yan.Luo/fno_ens12.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_bc_00 job ++++++'
+++ export CDATE=2013061200
+++ CDATE=2013061200
+++ out=/ptmp/Yan.Luo/fno_ens00_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC_bc.sh
+++ echo '++++++ Submite the FNMOC ENSPOST_bc_12 job ++++++'
+++ export CDATE=2013061112
+++ CDATE=2013061112
+++ out=/ptmp/Yan.Luo/fno_ens12_bc.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/ENSPOST_FNMOC_bc.sh
+++ echo '++++++ Submite real time parallel job ++++++'
+++ export CDATE=2013061300
+++ CDATE=2013061300
+++ out=/ptmp/Yan.Luo/GENS_para.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_para.sh
+++ out=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.out
+++ job=/ensemble/save/Yan.Luo/earch/scripts/GENSARCH_main.sh
+++ bsub
+Job will be scheduled after Fri Jun 14 11:00:00 2013
+++ exit

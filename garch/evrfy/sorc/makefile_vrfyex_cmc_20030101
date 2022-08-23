@@ -1,0 +1,20 @@
+SHELL=  /bin/sh
+CMD=	/nfsuser/g01/wx20yz/evrfy/exec/vrfy_cmc_20030101  
+FC=     xlf_r
+FOPTS=  -qsmp=noauto
+LOPTS=
+INCS=
+SRCS=   VRFYEN_CMC_20030101.f GETANL.f GET23Y.f GRANGE.f ACGRID.f \
+	GRD2WV.f LATWMN.f SUMWAV.f RMSAWT.f GETCAC.f GETGRB_cmc.f  \
+	FGROUP_cmc.f TALAGR_cmc.f PUTGRB.f  \
+        FPTALA_cmc.f STATES.f SORTMM.f SPREAD.f OUTLIE.f SORT.f
+LIBS=   /nwprod/lib/libbacio_4.a \
+        /nwprod/lib/libw3_4.a \
+        /nwprod/lib/libbufr_4_32.a \
+        /nwprod/lib/libip_4.a \
+        /nwprod/lib/libsp_4.a \
+        -l essl
+$(CMD): $(SRCS)
+	$(FC) $(FOPTS) $(SRCS) $(LIBS) -o $(CMD)
+vrfy0:	$(SRCS)
+	$(FC) $(FOPTS) $(SRCS) /nwprod/w3lib90/iplib_4_604 $(LIBS) -o vrfy0

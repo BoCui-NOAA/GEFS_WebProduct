@@ -1,0 +1,15 @@
+#!/bin/ksh
+#
+# show selected information from llq -l
+#
+#if (( $# > 0 )); then
+#  echo LoadLeveler jobs for $*
+#fi
+#llq $* -f %o %id %jn %dq %gl %c %p %st %dh %dd %h|\
+#  sed -e"s/--------------$//" -e"s/              $//" \
+#      -e"/^$/d"
+#llq $* -f %o %c %gl %jn %id %p %st %dq %dh %dd %h|\
+#   cut -c1-8,12-17,23-31,34-70,80-133
+llq $* -f %dq %dh %dd %st %p %jn %id %o %c %gl %nh %h|\
+   cut -c1-81,89-97,101-106,112-120,123-138|\
+   sed -e"/^$/d"

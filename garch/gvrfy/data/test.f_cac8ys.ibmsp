@@ -1,0 +1,24 @@
+      program test
+      dimension a(145,37)
+C--------+----------+---------+---------+---------+---------+---------+--
+      open (unit=10,
+     *      file='cac8ys.format',
+     *      status='old',form='formatted')
+      open (unit=50,
+     *      file='cac8ys.ibmsp',
+     *      status='new',form='unformatted')
+      il=1000
+      do k = 1, 12
+       read (10,999) ((a(i,j),i=1,145),j=1,37)
+       print *, '--',k,il,a(1,1)
+       write(50) k,il,a
+      enddo
+      il=500  
+      do k = 1, 12
+       read (10,999) ((a(i,j),i=1,145),j=1,37)
+       print *, '--',k,il,a(1,1)
+       write(50) k,il,a
+      enddo
+ 999  format(5f10.4)
+      stop
+      end

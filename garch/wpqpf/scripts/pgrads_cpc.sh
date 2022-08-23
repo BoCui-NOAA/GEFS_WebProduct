@@ -1,0 +1,41 @@
+
+#set -x
+if [ $# -lt 3 ]; then
+   echo "  The input arguments less then 3 "
+   echo "  You must specify the filename   "
+   exit 8
+fi
+
+pgradsx=/ensemble/save/yan.luo/wpqpf/exec/pgrads_cpc
+##uname=`who am i | awk '{print $1}'`
+tmpdir=/$ptmp/yan.luo/cpc
+cdir=`pwd`
+
+if [ ! -s $tmpdir ]; then
+  mkdir -p $tmpdir
+fi
+if [ -s $tmpdir/temp.new ]; then
+  rm $tmpdir/temp.new
+fi
+cd $tmpdir
+
+echo "         ######################################### "
+echo "         **** We start to make grads preci file ** "
+echo "         ****        Please  wait !!!!!!!      *** "
+echo "         ######################################### "
+
+/nwprod/util/exec/grbindex $1 $2                  
+
+echo "&namin"       >input
+echo "cpgb='$1',cpgi='$2',cpge='$3'"  >>input
+echo "/"        >>input
+
+cat input
+
+$pgradsx <input
+
+ls -l $tmpdir
+echo " ========================================= "
+echo " The new file called $tmpdir/$1.new "
+echo " ========================================= "
+

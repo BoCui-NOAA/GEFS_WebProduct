@@ -1,0 +1,60 @@
+#for dd in 28 29 30
+#do
+
+# for cyc in 00 06 12 18
+# do
+
+#  export CDATE=201111$dd$cyc;ENSPOST_BC_para_makeup.sh
+
+# done
+#done
+
+#for dd in 01 02 03 04 05
+#for dd in 06 07 08 09 10
+#for dd in 11 12 13 14 15 
+#for dd in  16 17 18 19 20
+#for dd in 21 22 23 24 25 26 27 28 29 30 31
+#do
+
+# for cyc in 00 06 12 18
+# do
+
+#  export CDATE=201112$dd$cyc;ENSPOST_BC_para_makeup.sh
+
+# done
+#done
+
+#for dd in 01 02 03 04 05 06 07 08 09 10
+#for dd in 11 12 13 14 15 16 17 18 19 20
+#for dd in  21 22 23 24 25 26 27 28 29 30 31
+#do
+
+# for cyc in 00 06 12 18
+# do
+
+#  export CDATE=201201$dd$cyc;ENSPOST_BC_para_makeup.sh
+
+# done
+#done
+
+#for dd in  01 02 03 04 05 06 07 08 09 10
+#do
+
+# for cyc in 00 06 12 18
+# do
+
+#  export CDATE=201202$dd$cyc;ENSPOST_BC_para_makeup.sh
+
+# done
+#done
+
+for dd in  11 12 13 14
+do
+
+ for cyc in 00 06 12 18
+ do
+
+  export CDATE=201202$dd$cyc;ENSPOST_BC_para_makeup.sh
+
+ done
+done

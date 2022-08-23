@@ -1,0 +1,54 @@
+### example 1
+#!/bin/sh
+#@ wall_clock_limit=00:30:00
+#@ requirements = Feature == "beta"
+#@ job_type = parallel
+#@ output = /tmp/wx20yz/garch.o$(jobid)
+#@ error = /tmp/wx20yz/garch.e$(jobid)
+#@ total_tasks = 1 
+#@ node = 1 
+#@ node_usage = shared
+#@ network.MPI=switch,not_shared,us
+#@ class = dev
+#
+#@ queue
+#
+
+#!/bin/ksh
+
+set -x
+
+#YYYYMM=200403
+YYYYMM=$YYYYMM
+hpssdir=/NCEPDEV/hpssuser/g01/globstat
+
+YYMM=`echo $YYYYMM | cut -c3-6`
+
+icnt=0
+if [ $icnt -eq 0 ]; then
+
+cd $GLOBAL/ENS;pwd
+hpsstar pu1 $hpssdir/ENSPRCP/prcp.$YYMM.tar precip.${YYYYMM}*
+hpsstar pu1 $hpssdir/ENSPRCP_BC/prcp_24hbc.$YYMM.tar precip_24hbc.${YYYYMM}*
+hpsstar pu1 $hpssdir/ENSZ500/z500.$YYMM.tar z500.${YYYYMM}*
+hpsstar pu1 $hpssdir/ENSZ1000/z1000.$YYMM.tar z1000.${YYYYMM}*
+hpsstar pu1 $hpssdir/ENST850/t850.$YYMM.tar t850.${YYYYMM}*
+hpsstar pu1 $hpssdir/ENST2M/t2m.$YYMM.tar t2m.${YYYYMM}*
+hpsstar pu1 $hpssdir/ENSU10M/u10m.$YYMM.tar u10m.${YYYYMM}*
+hpsstar pu1 $hpssdir/ENSV10M/v10m.$YYMM.tar v10m.${YYYYMM}*
+cd $GLOBAL/ENS_bc;pwd
+hpsstar pu1 $hpssdir/ENSZ500_BC/z500.$YYMM.tar z500.${YYYYMM}*
+hpsstar pu1 $hpssdir/ENSZ1000_BC/z1000.$YYMM.tar z1000.${YYYYMM}*
+hpsstar pu1 $hpssdir/ENST850_BC/t850.$YYMM.tar t850.${YYYYMM}*
+hpsstar pu1 $hpssdir/ENST2M_BC/t2m.$YYMM.tar t2m.${YYYYMM}*
+hpsstar pu1 $hpssdir/ENSU10M_BC/u10m.$YYMM.tar u10m.${YYYYMM}*
+hpsstar pu1 $hpssdir/ENSV10M_BC/v10m.$YYMM.tar v10m.${YYYYMM}*
+
+cd $GLOBAL/cmc_ens
+hpsstar pu1 $hpssdir/ENSZ500_cmc/z500.$YYMM.tar z500.${YYYYMM}*
+
+cd $GLOBAL/ecm_ens
+hpsstar pu1 $hpssdir/ENSZ500_ecm/z500.$YYMM.tar z500.${YYYYMM}*
+
+fi
+

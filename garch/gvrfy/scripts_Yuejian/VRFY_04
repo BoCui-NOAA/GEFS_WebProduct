@@ -1,0 +1,91 @@
+### example 1
+#!/bin/sh
+#@ wall_clock_limit=29:00:00
+#@ requirements = Feature == "beta"
+#@ job_type = parallel
+#@ output = /ptmp/wx20yz/garch.o$(jobid)
+#@ error = /ptmp/wx20yz/garch.e$(jobid)
+#@ total_tasks = 30
+#@ node = 30
+#@ node_usage = shared
+#@ network.MPI=switch,not_shared,us
+#@ class = dev
+#@ account_no = GEN-MTN
+#
+#@ queue
+#
+
+#set -x
+
+cd $SHOME/$LOGNAME/gvrfy/scripts;pwd
+
+if [ "$CDATE" -eq "" ]; then
+   echo "No data for CDATE, please check"
+   exit 8
+fi
+
+YMD=`echo $CDATE | cut -c1-8`
+YMDM1=`$nhours -24 $CDATE | cut -c1-8`
+YMDM2=`$nhours -48 $CDATE | cut -c1-8`
+YMDM3=`$nhours -72 $CDATE | cut -c1-8`
+YMDM4=`$nhours -96 $CDATE | cut -c1-8`
+YMDM5=`$nhours -120 $CDATE | cut -c1-8`
+   
+####
+####  GrADs plotting job.
+####
+####   Updated daily ( started from Dec. 13th 2004 )
+
+cd $SHOME/$LOGNAME/gvrfy/grads;pwd
+CDATE=$CDATE    
+export EDYMD=`echo $CDATE | cut -c1-8`
+export STYMD=`$nhours -744 $CDATE | cut -c1-8`
+$SHOME/$LOGNAME/gvrfy/grads/RUN_VRFY01_GRADS.sh $STYMD $EDYMD grads_table_VRFY01
+
+cd $SHOME/$LOGNAME/gvrfy/grads;pwd
+CDATE=$CDATE    
+export EDYMD=`echo $CDATE | cut -c1-8`
+export STYMD=`$nhours -744 $CDATE | cut -c1-8`
+$SHOME/$LOGNAME/gvrfy/grads/RUN_VRFY02_GRADS.sh $STYMD $EDYMD grads_table_VRFY02
+
+cd $SHOME/$LOGNAME/gvrfy/grads;pwd
+CDATE=$CDATE    
+export EDYMD=`echo $CDATE | cut -c1-8`
+export STYMD=`$nhours -744 $CDATE | cut -c1-8`
+$SHOME/$LOGNAME/gvrfy/grads/RUN_VRFY03_GRADS.sh $STYMD $EDYMD grads_table_VRFY03
+
+cd $SHOME/$LOGNAME/gvrfy/grads;pwd
+CDATE=$CDATE    
+export EDYMD=`echo $CDATE | cut -c1-8`
+export STYMD=`$nhours -744 $CDATE | cut -c1-8`
+export STYMD=20060227
+export STYMD=20070101
+export STYMD=20071201
+$SHOME/$LOGNAME/gvrfy/grads/RUN_VRFY04_GRADS.sh $STYMD $EDYMD grads_table_VRFY04
+
+cd $SHOME/$LOGNAME/gvrfy/grads;pwd
+CDATE=$CDATE    
+export EDYMD=`echo $CDATE | cut -c1-8`
+export EDYMD=`$nhours -120 $CDATE | cut -c1-8`
+export STYMD=`$nhours -864 $CDATE | cut -c1-8`
+#$SHOME/$LOGNAME/gvrfy/grads/RUN_CPREG_GRADS.sh 20070420 $EDYMD grads_table_CPREG
+$SHOME/$LOGNAME/gvrfy/grads/RUN_CPREG_GRADS.sh $STYMD $EDYMD grads_table_CPREG
+#$SHOME/$LOGNAME/gvrfy/grads/RUN_PREG_GRADS.sh $STYMD $EDYMD grads_table_PREG
+
+#CDATE=$CDATE    
+#export EDYMD=`echo $CDATE | cut -c1-8`
+#export STYMD=20051106                              
+#$SHOME/$LOGNAME/gvrfy/grads/RUN_PRZ_GRADS.sh $STYMD $EDYMD grads_table_PRZ
+
+export EDYMD=`$nhours -72 $CDATE | cut -c1-8`
+export STYMD=`$nhours -816 $CDATE | cut -c1-8`
+$SHOME/$LOGNAME/gvrfy/grads/RUNQ_16d_GRADS.sh
+
+export EDYMD=`$nhours -72 $CDATE | cut -c1-8`
+export STYMD=`$nhours -816 $CDATE | cut -c1-8`
+$SHOME/$LOGNAME/gvrfy/grads/RUNQ_3dk_GRADS.sh
+
+### stopped by 05/25/2007
+#$SHOME/$LOGNAME/pvrfy/grads/PLOT_PUB_prx_t00z.sh 20070318 $YMDM1 /global/shared/stat/wgne gfs prx 
+#$SHOME/$LOGNAME/pvrfy/grads/PLOT_PUB_prx_t12z.sh 20070318 $YMDM1 /global/shared/stat/wgne gfs prx 
+

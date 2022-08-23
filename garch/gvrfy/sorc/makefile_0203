@@ -1,0 +1,17 @@
+SHELL=  /bin/sh
+CMD=	/ensemble/save/Yan.Luo/gvrfy/exec/vrfy_0203
+FC=     ifort
+FOPTS=  -r8  -convert big_endian
+FFLAGS= -mkl -openmp -p  -xHOST -r8 -O0 -i4 -traceback -assume byterecl -list
+LOPTS=
+INCS=
+SRCS=	VFMAIN_0006.f GETANL.f GET23Y_0203.f GRANGE.f ACGRID.f GRD2WV.f LATWMN.f \
+	SUMWAV.f RMSAWT.f GETCAC.f ACGRIDV.f FITR30.f 
+LIBS=   /nwprod/lib/libbacio_v2.0.1_8.a \
+        /nwprod/lib/libw3nco_v2.0.6_d.a \
+        /nwprod/lib/libip_v2.0.0_d.a \
+        /nwprod/lib/libsp_v2.0.1_d.a
+$(CMD): $(SRCS)
+	$(FC) $(FOPTS) $(FFLAGS) $(SRCS) $(LIBS) -o $(CMD)
+vrfy0:	$(SRCS)
+	$(FC) $(FOPTS) $(FFLAGS) $(SRCS) /nwprod/w3lib90/iplib_4_604 $(LIBS) -o vrfy0

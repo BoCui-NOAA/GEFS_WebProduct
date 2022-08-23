@@ -1,0 +1,270 @@
+XL Fortran for AIX Version 08.01.0000.0003 --- xyz.f 09/17/04 09:24:09
+ 
+>>>>> OPTIONS SECTION <<<<<
+***   Options In Effect   ***
+  
+         ==  On / Off Options  ==
+         DBG             ESCAPE          I4              LIST
+         NOLM            OBJECT          SOURCE          STRICT
+         SWAPOMP         THREADED        UNWIND          NOZEROSIZE
+  
+         ==  Options Of Integer Type ==
+         FIXED(72)             MAXMEM(2048)          OPTIMIZE(2)
+         SPILLSIZE(512)
+  
+         ==  Options of Integer and Character Type ==
+         SMP(NOAUTO,SCHEDULE(RUNTIME))
+  
+         ==  Options Of Character Type  ==
+         64(LARGETYPE)         ALIAS(STD,INTPTR)     ALIGN(STRUCT(NATURAL))
+         ARCH(PWR4)            AUTODBL(NONE)         DIRECTIVE(IBM*,IBMT,SMP$,$OMP,IBMP)
+         FLAG(I,I)             FLOAT(RNDSNGL,MAF,FOLD)
+         HALT(S)               IEEE(NEAR)            INTSIZE(4)
+         LANGLVL(EXTENDED)     POSITION(APPENDOLD)   REALSIZE(8)
+         SAVE(ALL)             UNROLL(AUTO)          XFLAG()
+         XLF77(NOLEADZERO,GEDIT77,NOBLANKPAD,OLDBOZ,INTARG,INTXOR,PERSISTENT,SOFTEOF)
+         XLF90(NOSIGNEDZERO,NOAUTODEALLOC)
+  
+>>>>> SOURCE SECTION <<<<<
+          1 |       program XYZ
+          2 |       use funcphys
+          3 |       use physcons
+          4 |c
+          5 |c      call qpvs
+          6 |       call gfuncphys
+          7 |       rh=90.
+          8 |       t=300.
+          9 |       p=1000.
+         10 |       q=0.
+         11 |       print *, ' rh=',rh,' t=',t,' p=',p,' q=',q
+         12 |       p=p*100.
+         13 |       es=fpvs(t)
+         14 |       es=min(es,p)
+         15 |       shs=con_eps*es/(p+con_epsm1*es)
+         16 |       q=rh*shs*0.01
+         17 |       print*,'tr,es,shs',t,es,shs,fpvs(t),q
+         18 |c
+         19 |       stop
+         20 |       end
+** xyz   === End of Compilation 1 ===
+ 
+>>>>> OBJECT SECTION <<<<<
+
+
+-qdebug=NLDSTM:
+
+ GPR's set/used:   ssus ssss ssss s---  ---- ---- ---- --ss
+ FPR's set/used:   ssss ssss ssss ss--  ---- ---- ---- --ss
+ CCR's set/used:   ss-- -sss
+
+     | 000000                           PDEF     xyz
+    0|                                  PROC     
+    0| 000000 mfspr    7C0802A6   1     LFLR     gr0=lr
+    0| 000004 fmr      FC000090   1     LRFL     fp0=fp0
+    0| 000008 stfd     DBE1FFF8   1     STFL     #stack(gr1,-8)=fp31
+    0| 00000C std      FBE1FFE8   1     ST8      #stack(gr1,-24)=gr31
+    0| 000010 std      FBC1FFE0   1     ST8      #stack(gr1,-32)=gr30
+    0| 000014 stfd     DBC1FFF0   1     STFL     #stack(gr1,-16)=fp30
+    0| 000018 std      F8010010   1     ST8      #stack(gr1,16)=gr0
+    0| 00001C stdu     F821FF31   1     ST8U     gr1,#stack(gr1,-208)=gr1
+    6| 000020 bl       4BFFFFE1   0     CALL     __funcphys_MOD_gfuncphys,0,__funcphys_MOD_gfuncphys",fcr",gr1,cr[01567]",gr0",gr3"-gr12",fp0"-fp13",mq",lr",fcr",xer",fsr",ca",ctr"
+    6| 000024 ori      60000000   1
+   11| 000028 addi     38600006   1     LI       gr3=6
+    7| 00002C ld       EBE20008   1     L8       gr31=.$STATIC_BSS(gr2,0)
+   11| 000030 addi     38800101   1     LI       gr4=257
+    7| 000034 ld       EBC20010   1     L8       gr30=.+CONSTANT_AREA(gr2,0)
+   11| 000038 addi     38A00000   1     LI       gr5=0
+   11| 00003C addi     38C00400   1     LI       gr6=1024
+   11| 000040 addi     39000000   1     LI       gr8=0
+   11| 000044 addi     38E00000   1     LI       gr7=0
+   11| 000048 addi     39200000   1     LI       gr9=0
+    7| 00004C lfs      C3FE0000   1     LFS      fp31=+CONSTANT_AREA(gr30,0)
+    9| 000050 lfs      C03E0008   1     LFS      fp1=+CONSTANT_AREA(gr30,8)
+    8| 000054 lfs      C01E0004   1     LFS      fp0=+CONSTANT_AREA(gr30,4)
+    8| 000058 stfd     D81F0008   1     STFL     t(gr31,8)=fp0
+    9| 00005C stfd     D83F0010   1     STFL     p(gr31,16)=fp1
+    7| 000060 stfd     DBFF0000   1     STFL     rh(gr31,0)=fp31
+   10| 000064 lfs      C05E000C   1     LFS      fp2=+CONSTANT_AREA(gr30,12)
+   10| 000068 stfd     D85F0018   1     STFL     q(gr31,24)=fp2
+   11| 00006C bl       4BFFFF95   0     CALL     gr3=_xlfBeginIO,7,gr3-gr9,_xlfBeginIO",fcr",gr1,cr[01567]",gr0",gr4"-gr12",fp0"-fp13",mq",lr",fcr",xer",fsr",ca",ctr"
+   11| 000070 ori      60000000   1
+   11| 000074 std      F86100A0   1     ST8      #parameter_store0(gr1,160)=gr3
+   11| 000078 addis    3CC02072   1     LIU      gr6=8306
+   11| 00007C addi     38A00004   1     LI       gr5=4
+   11| 000080 addi     3881007C   1     AI       gr4=gr1,124,ca"
+   11| 000084 addi     3806683D   1     AI       gr0=gr6,26685,ca"
+   11| 000088 addi     38C00001   1     LI       gr6=1
+   11| 00008C stw      9001007C   1     ST4Z     T_7(gr1,124)=gr0
+   11| 000090 bl       4BFFFF71   0     CALL     _xlfWriteLDChar,4,gr3,T_7",gr4-gr6,_xlfWriteLDChar",fcr",gr1,cr[01567]",gr0",gr3"-gr12",fp0"-fp13",mq",lr",fcr",xer",fsr",ca",ctr"
+   11| 000094 ori      60000000   1
+   11| 000098 ld       E86100A0   1     L8       gr3=#parameter_store0(gr1,160)
+   11| 00009C ori      63E40000   1     LR       gr4=gr31
+   11| 0000A0 addi     38C00008   1     LI       gr6=8
+   11| 0000A4 addi     38A00008   1     LI       gr5=8
+   11| 0000A8 bl       4BFFFF59   0     CALL     _xlfWriteLDReal,4,gr3,rh,gr4-gr6,_xlfWriteLDReal",fcr",gr1,cr[01567]",gr0",gr3"-gr12",fp0"-fp13",mq",lr",fcr",xer",fsr",ca",ctr"
+   11| 0000AC ori      60000000   1
+   11| 0000B0 addis    3CA02074   1     LIU      gr5=8308
+   11| 0000B4 addi     38810070   1     AI       gr4=gr1,112,ca"
+   11| 0000B8 addi     38C00001   1     LI       gr6=1
+   11| 0000BC ld       E86100A0   1     L8       gr3=#parameter_store0(gr1,160)
+   11| 0000C0 addi     38A53D00   1     AI       gr5=gr5,15616,ca"
+   11| 0000C4 stswi    7CA41DAA   1     STSI     T_8(gr4,0)=3,gr5,mq"
+   11| 0000C8 addi     38A00003   1     LI       gr5=3
+   11| 0000CC bl       4BFFFF35   0     CALL     _xlfWriteLDChar,4,gr3,T_8",gr4-gr6,_xlfWriteLDChar",fcr",gr1,cr[01567]",gr0",gr3"-gr12",fp0"-fp13",mq",lr",fcr",xer",fsr",ca",ctr"
+   11| 0000D0 ori      60000000   1
+   11| 0000D4 ld       E86100A0   1     L8       gr3=#parameter_store0(gr1,160)
+   11| 0000D8 addi     389F0008   1     AI       gr4=gr31,8,ca"
+   11| 0000DC addi     38C00008   1     LI       gr6=8
+   11| 0000E0 addi     38A00008   1     LI       gr5=8
+   11| 0000E4 bl       4BFFFF1D   0     CALL     _xlfWriteLDReal,4,gr3,t,gr4-gr6,_xlfWriteLDReal",fcr",gr1,cr[01567]",gr0",gr3"-gr12",fp0"-fp13",mq",lr",fcr",xer",fsr",ca",ctr"
+   11| 0000E8 ori      60000000   1
+   11| 0000EC addis    3CA02070   1     LIU      gr5=8304
+   11| 0000F0 addi     38810073   1     AI       gr4=gr1,115,ca"
+   11| 0000F4 addi     38C00001   1     LI       gr6=1
+   11| 0000F8 ld       E86100A0   1     L8       gr3=#parameter_store0(gr1,160)
+   11| 0000FC addi     38A53D00   1     AI       gr5=gr5,15616,ca"
+   11| 000100 stswi    7CA41DAA   1     STSI     T_9(gr4,0)=3,gr5,mq"
+   11| 000104 addi     38A00003   1     LI       gr5=3
+   11| 000108 bl       4BFFFEF9   0     CALL     _xlfWriteLDChar,4,gr3,T_9",gr4-gr6,_xlfWriteLDChar",fcr",gr1,cr[01567]",gr0",gr3"-gr12",fp0"-fp13",mq",lr",fcr",xer",fsr",ca",ctr"
+   11| 00010C ori      60000000   1
+   11| 000110 addi     38C00008   1     LI       gr6=8
+   11| 000114 addi     38A00008   1     LI       gr5=8
+   11| 000118 addi     389F0010   1     AI       gr4=gr31,16,ca"
+   11| 00011C ld       E86100A0   1     L8       gr3=#parameter_store0(gr1,160)
+   11| 000120 bl       4BFFFEE1   0     CALL     _xlfWriteLDReal,4,gr3,p,gr4-gr6,_xlfWriteLDReal",fcr",gr1,cr[01567]",gr0",gr3"-gr12",fp0"-fp13",mq",lr",fcr",xer",fsr",ca",ctr"
+   11| 000124 ori      60000000   1
+   11| 000128 addis    3CA02071   1     LIU      gr5=8305
+   11| 00012C addi     38810076   1     AI       gr4=gr1,118,ca"
+   11| 000130 addi     38C00001   1     LI       gr6=1
+   11| 000134 ld       E86100A0   1     L8       gr3=#parameter_store0(gr1,160)
+   11| 000138 addi     38A53D00   1     AI       gr5=gr5,15616,ca"
+   11| 00013C stswi    7CA41DAA   1     STSI     T_10(gr4,0)=3,gr5,mq"
+   11| 000140 addi     38A00003   1     LI       gr5=3
+   11| 000144 bl       4BFFFEBD   0     CALL     _xlfWriteLDChar,4,gr3,T_10",gr4-gr6,_xlfWriteLDChar",fcr",gr1,cr[01567]",gr0",gr3"-gr12",fp0"-fp13",mq",lr",fcr",xer",fsr",ca",ctr"
+   11| 000148 ori      60000000   1
+   11| 00014C ld       E86100A0   1     L8       gr3=#parameter_store0(gr1,160)
+   11| 000150 addi     389F0018   1     AI       gr4=gr31,24,ca"
+   11| 000154 addi     38C00008   1     LI       gr6=8
+   11| 000158 addi     38A00008   1     LI       gr5=8
+   11| 00015C bl       4BFFFEA5   0     CALL     _xlfWriteLDReal,4,gr3,q,gr4-gr6,_xlfWriteLDReal",fcr",gr1,cr[01567]",gr0",gr3"-gr12",fp0"-fp13",mq",lr",fcr",xer",fsr",ca",ctr"
+   11| 000160 ori      60000000   1
+   11| 000164 ld       E86100A0   1     L8       gr3=#parameter_store0(gr1,160)
+   11| 000168 bl       4BFFFE99   0     CALL     gr3=_xlfEndIO,1,gr3,_xlfEndIO",fcr",gr1,cr[01567]",gr0",gr4"-gr12",fp0"-fp13",mq",lr",fcr",xer",fsr",ca",ctr"
+   11| 00016C ori      60000000   1
+   13| 000170 addi     387F0008   1     AI       gr3=gr31,8,ca"
+   12| 000174 lfs      C3DE0010   1     LFS      fp30=+CONSTANT_AREA(gr30,16)
+   12| 000178 stfd     DBDF0010   1     STFL     p(gr31,16)=fp30
+   13| 00017C bl       4BFFFE85   0     CALLN    fp1=__funcphys_MOD_fpvs,1,t,gr3,__funcphys_MOD_fpvs,__funcphys_MOD_fpvs",gr1,cr[01567]",gr0",gr3"-gr12",fp0",fp2"-fp13",mq",lr",fcr",
+   13| 000180 ori      60000000   1
+   14| 000184 fcmpu    FC1E0800   1     CFL      cr0=fp30,fp1
+   15| 000188 lfd      C81E0018   1     LFL      fp0=+CONSTANT_AREA(gr30,24)
+   16| 00018C lfd      C89E0028   1     LFL      fp4=+CONSTANT_AREA(gr30,40)
+   15| 000190 lfd      C87E0020   1     LFL      fp3=+CONSTANT_AREA(gr30,32)
+   17| 000194 addi     39200000   1     LI       gr9=0
+   14| 000198 fmr      FC40F090   1     LRFL     fp2=fp30
+   17| 00019C addi     39000000   1     LI       gr8=0
+   17| 0001A0 addi     38E00000   1     LI       gr7=0
+   17| 0001A4 addi     38C00400   1     LI       gr6=1024
+   17| 0001A8 addi     38600006   1     LI       gr3=6
+   17| 0001AC addi     38A00000   1     LI       gr5=0
+   17| 0001B0 addi     38800101   1     LI       gr4=257
+   14| 0001B4 bc       40810008   0     BF       CL.2,cr0,0x40/fgt,
+   14| 0001B8 fmr      FC400890   2     LRFL     fp2=fp1
+   14|                              CL.2:
+   15| 0001BC fmadd    FC22F0FA   1     FMA      fp1=fp30,fp2,fp3,fcr
+   15| 0001C0 fmul     FC020032   1     MFL      fp0=fp2,fp0,fcr
+   14| 0001C4 stfd     D85F0020   1     STFL     es(gr31,32)=fp2
+   15| 0001C8 fdiv     FC000824  17     DFL      fp0=fp0,fp1,fcr
+   15| 0001CC stfd     D81F0028   0     STFL     shs(gr31,40)=fp0
+   16| 0001D0 fmul     FC0007F2   4     MFL      fp0=fp0,fp31,fcr
+   16| 0001D4 fmul     FC000132   4     MFL      fp0=fp0,fp4,fcr
+   16| 0001D8 stfd     D81F0018   0     STFL     q(gr31,24)=fp0
+   17| 0001DC bl       4BFFFE25   0     CALL     gr3=_xlfBeginIO,7,gr3-gr9,_xlfBeginIO",fcr",gr1,cr[01567]",gr0",gr4"-gr12",fp0"-fp13",mq",lr",fcr",xer",fsr",ca",ctr"
+   17| 0001E0 ori      60000000   1
+   17| 0001E4 std      F86100A8   1     ST8      #parameter_store1(gr1,168)=gr3
+   17| 0001E8 lwz      801E0030   1     L4Z      gr0=+CONSTANT_AREA(gr30,48)
+   17| 0001EC lwz      80FE0034   1     L4Z      gr7=+CONSTANT_AREA(gr30,52)
+   17| 0001F0 lbz      891E0038   1     L1Z      gr8=+CONSTANT_AREA(gr30,56)
+   17| 0001F4 addi     38810080   1     AI       gr4=gr1,128,ca"
+   17| 0001F8 addi     38A00009   1     LI       gr5=9
+   17| 0001FC stw      90E10084   1     ST4A     <a1:d132:l4>(gr1,132)=gr7
+   17| 000200 addi     38C00001   1     LI       gr6=1
+   17| 000204 stb      99010088   1     ST1Z     <a1:d136:l1>(gr1,136)=gr8
+   17| 000208 stw      90010080   1     ST4A     <a1:d128:l4>(gr1,128)=gr0
+   17| 00020C bl       4BFFFDF5   0     CALL     _xlfWriteLDChar,4,gr3,T_11",gr4-gr6,_xlfWriteLDChar",fcr",gr1,cr[01567]",gr0",gr3"-gr12",fp0"-fp13",mq",lr",fcr",xer",fsr",ca",ctr"
+   17| 000210 ori      60000000   1
+   17| 000214 addi     389F0008   1     AI       gr4=gr31,8,ca"
+   17| 000218 addi     38A00008   1     LI       gr5=8
+   17| 00021C addi     38C00008   1     LI       gr6=8
+   17| 000220 ld       E86100A8   1     L8       gr3=#parameter_store1(gr1,168)
+   17| 000224 bl       4BFFFDDD   0     CALL     _xlfWriteLDReal,4,gr3,t,gr4-gr6,_xlfWriteLDReal",fcr",gr1,cr[01567]",gr0",gr3"-gr12",fp0"-fp13",mq",lr",fcr",xer",fsr",ca",ctr"
+   17| 000228 ori      60000000   1
+   17| 00022C addi     38C00008   1     LI       gr6=8
+   17| 000230 addi     38A00008   1     LI       gr5=8
+   17| 000234 addi     389F0020   1     AI       gr4=gr31,32,ca"
+   17| 000238 ld       E86100A8   1     L8       gr3=#parameter_store1(gr1,168)
+   17| 00023C bl       4BFFFDC5   0     CALL     _xlfWriteLDReal,4,gr3,es,gr4-gr6,_xlfWriteLDReal",fcr",gr1,cr[01567]",gr0",gr3"-gr12",fp0"-fp13",mq",lr",fcr",xer",fsr",ca",ctr"
+   17| 000240 ori      60000000   1
+   17| 000244 addi     38C00008   1     LI       gr6=8
+   17| 000248 addi     38A00008   1     LI       gr5=8
+   17| 00024C addi     389F0028   1     AI       gr4=gr31,40,ca"
+   17| 000250 ld       E86100A8   1     L8       gr3=#parameter_store1(gr1,168)
+   17| 000254 bl       4BFFFDAD   0     CALL     _xlfWriteLDReal,4,gr3,shs,gr4-gr6,_xlfWriteLDReal",fcr",gr1,cr[01567]",gr0",gr3"-gr12",fp0"-fp13",mq",lr",fcr",xer",fsr",ca",ctr"
+   17| 000258 ori      60000000   1
+   17| 00025C addi     387F0008   1     AI       gr3=gr31,8,ca"
+   17| 000260 bl       4BFFFDA1   0     CALLN    fp1=__funcphys_MOD_fpvs,1,t,gr3,__funcphys_MOD_fpvs,__funcphys_MOD_fpvs",gr1,cr[01567]",gr0",gr3"-gr12",fp0",fp2"-fp13",mq",lr",fcr",
+   17| 000264 ori      60000000   1
+   17| 000268 addi     38810090   1     AI       gr4=gr1,144,ca"
+   17| 00026C addi     38C00008   1     LI       gr6=8
+   17| 000270 addi     38A00008   1     LI       gr5=8
+   17| 000274 ld       E86100A8   1     L8       gr3=#parameter_store1(gr1,168)
+   17| 000278 stfd     D8210090   1     STFL     T_12(gr1,144)=fp1
+   17| 00027C bl       4BFFFD85   0     CALL     _xlfWriteLDReal,4,gr3,T_12",gr4-gr6,_xlfWriteLDReal",fcr",gr1,cr[01567]",gr0",gr3"-gr12",fp0"-fp13",mq",lr",fcr",xer",fsr",ca",ctr"
+   17| 000280 ori      60000000   1
+   17| 000284 ld       E86100A8   1     L8       gr3=#parameter_store1(gr1,168)
+   17| 000288 addi     389F0018   1     AI       gr4=gr31,24,ca"
+   17| 00028C addi     38C00008   1     LI       gr6=8
+   17| 000290 addi     38A00008   1     LI       gr5=8
+   17| 000294 bl       4BFFFD6D   0     CALL     _xlfWriteLDReal,4,gr3,q,gr4-gr6,_xlfWriteLDReal",fcr",gr1,cr[01567]",gr0",gr3"-gr12",fp0"-fp13",mq",lr",fcr",xer",fsr",ca",ctr"
+   17| 000298 ori      60000000   1
+   17| 00029C ld       E86100A8   1     L8       gr3=#parameter_store1(gr1,168)
+   17| 0002A0 bl       4BFFFD61   0     CALL     gr3=_xlfEndIO,1,gr3,_xlfEndIO",fcr",gr1,cr[01567]",gr0",gr4"-gr12",fp0"-fp13",mq",lr",fcr",xer",fsr",ca",ctr"
+   17| 0002A4 ori      60000000   1
+   19| 0002A8 addi     38600000   1     LI       gr3=0
+   19| 0002AC bl       4BFFFD55   0     CALL     _xlfExit,1,gr3,_xlfExit",fcr",gr1,cr[01567]",gr0",gr3"-gr12",fp0"-fp13",mq",lr",fcr",xer",fsr",ca",ctr"
+   19| 0002B0 ori      60000000   1
+   19| 0002B4 tw       7C8E7008   1     TRAP     9
+   19|                              CL.1:
+   10| 0002B8 b        48000000   0
+     |               Tag Table
+     | 0002BC        00000000 00012241 82020000 000002BC 00037879 7A
+     |               Instruction count          175
+     |               Straight-line exec time    172
+     |               Constant Area
+     | 000000        42B40000 43960000 447A0000 00000000 47C35000 49424D20
+     | 000018        3FE3E75E E94FEF23 BFD83142 2D6021BA 3F847AE1 47AE147B
+     | 000030        74722C65 732C7368 73
+
+ 
+ 
+>>>>> FILE TABLE SECTION <<<<<
+ 
+ 
+                                       FILE CREATION        FROM
+FILE NO   FILENAME                    DATE       TIME       FILE    LINE
+     0    xyz.f                       09/17/04   09:06:50
+ 
+ 
+>>>>> COMPILATION EPILOGUE SECTION <<<<<
+ 
+ 
+FORTRAN Summary of Diagnosed Conditions
+ 
+TOTAL   UNRECOVERABLE  SEVERE       ERROR     WARNING    INFORMATIONAL
+               (U)       (S)         (E)        (W)          (I)
+    0           0         0           0          0            0
+ 
+ 
+    Source records read.......................................      20
+1501-510  Compilation successful for file xyz.f.
+1501-543  Object file created.

@@ -1,0 +1,245 @@
+#!/bin/sh
+
+#@ wall_clock_limit=00:15:00
+#@ requirements = Feature == "beta"
+#@ job_type = serial
+#@ output = /ptmp/wx22lu/CCPA/ccpa.o$(jobid)
+#@ error = /ptmp/wx22lu/CCPA/ccpa.e$(jobid)
+#@ total_tasks = 1
+#@ node = 1
+#@ node_usage = shared
+#@ network.MPI=switch,shared,us
+#@ class = dev
+#@ account_no = GEN-T20
+#
+#@ queue
+#
+
+#$SMSBIN/smsinit $LOADL_STEP_ID
+date
+
+set -xa
+
+#
+# #### 02/24/2010 #######################################################
+# Statistically adjust STAGE IV precipitation analysis (6-hourly)
+#  to generate Climatologically Calibrated Precipitation Analysis (CCPA)
+# #######################################################################
+
+##############################################
+# Define the root directory in which the output
+#      and work directories are located
+# PTM: Switch it to /ptmp/$LOGNAM for developer mode
+# MET, ENVIR and RUN: used to define the output directory
+##############################################
+PTM=
+PTM=/$ptmp/$LOGNAME
+NET=ccpa
+ENVIR=prod
+RUN=ccpa
+
+##############################################
+# SENDCOM  - Copy Files From TMPDIR to $COMOUT
+# SENDSMS  - Flag Events on SMS
+# COPYSRC - switch for re-copying source files of STAGE IV data files
+#   YES  =   do the re-copy anyway
+#   NO   =   do the re-copy ONLY IF the files has been updated since last time of execution 
+# SENDCCPA: swithch for copying the CCPA output (hrap domain only)
+#            files to the CCPA directory for developer's monitoring 
+##############################################
+export SENDCOM=YES
+export SENDSMS=YES
+export SENDDBN=NO 
+export SENDCCPA=YES 
+export COPYSRC=NO
+
+#########################################################################
+# Define input, output directories for monitoring purpose
+#########################################################################
+export ZDIR=$PTM/tmpnwprd/CCPA_st4    #directory used to store STAGE IV raw data
+                                      #One subdirectory for each date
+export ODIR=$PTM/tmpnwprd/CCPA_out    #directory used to store output files at
+                                      #the same grid as STAGE IV
+                                      #One subdirectory for each date
+
+#########################################################################
+# Obtain unique process id (pid) and make temp (work) directory
+#########################################################################
+export job=ccpa
+export pid=$$
+export DATA=$PTM/tmpnwprd/${job}.${pid}   #work directory
+
+mkdir -p $DATA
+cd $DATA
+
+cyc=12
+export cycle=t${cyc}z
+####################################
+# File To Log Msgs
+####################################
+export jlogfile=$PTM/com/logs/jlogfile
+
+####################################
+# Determine Job Output Name on System
+####################################
+export outid="LL$job"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+
+##############################################
+# Define input constants and COM directories
+##############################################
+#  interp -----  -i parameter for copygb (method of interpolation)  
+#  grid ---- grid definition of input data, defined in ../ush/copygb_pcp.sh
+#  rfc-src=COMIN 
+#  COMIN ---- (Partial) name of directory of INPUT, source of STAGE IV raw data
+#  COMOUT ---- (Partial) name of directory of OUTPUT files
+#  COMTAR ---- (Partial) name of directory of OUTPUT files for archive
+####################################
+export interp=3
+export grid=hrap
+COMIN=/com/hourly/prod/nam_pcpn_anal
+export rfc_src=$COMIN
+#export COMOUT=/lfs/h1/ops/canned/com/ccpa/v4.2/${RUN}
+export COMOUT=/lfs/h1/ops/prod/com/ccpa/v4.2/${RUN}
+#export COMOUT=/ensemble2/noscrub/yan.luo/ccpa_30day_para/${RUN}
+export COMTAR=/lfs/h2/emc/vpppg/noscrub/yan.luo/COM_TAR
+#export CCPAOUT=$PTM/com/${NET}/${ENVIR}/${RUN}
+export CCPAOUT=/ensemble/noscrub/yan.luo/3hr_ccpa/$grid/${RUN}
+####################################
+# Specify Execution Areas
+# Switch home_dir to /nwprod for operation
+####################################
+export home_dir=/lfs/h2/emc/vpppg/save/yan.luo/tskr_prec/3hr_CCPA
+#export home_dir=/nwprod
+export exec_dir=$home_dir/exec
+export script_dir=$home_dir/scripts
+export ush_dir=$home_dir/ush
+export coeff_dir=$home_dir/fix/CCPA_CONUS_reg_coef_8thd  
+export mask_fil=$home_dir/fix/CCPA_CONUS_cpc_mask_8thd.bin
+
+export util_dir=/apps/ops/prod/nco/core/prod_util.v2.0.5
+export utilscript=$util_dir/ush
+export EXECUTIL=$util_dir/exec
+
+#----------------------------------------------------------
+# Executables
+#
+export grads_exe=/usrx/local/dev/packages/grads/2.2.0/bin/grads
+export wgrib_exe=/apps/ops/prod/libs/intel/19.1.3.304/grib_util/1.2.2/bin/wgrib
+export copygb_exe=$ush_dir/copygb_pcp.sh
+export nhours=/apps/ops/prod/nco/core/prod_util.v2.0.5/exec/ndate
+
+##############################
+# Run setup to initialize working directory and utility scripts
+##############################
+sh $utilscript/setup.sh
+
+##############################
+# Run setpdy and initialize PDY variables
+##############################
+sh $utilscript/setpdy.sh
+. PDY
+
+if [ $# -eq 0 ]; then
+# REAL TIME MODE
+#############################################################
+# Execute the script
+# Run Today's job (processing  24h precip ending at 12Z today)
+##############################
+#  Specify work directory 
+##############################
+#export work_dir=$DATA
+export work_dir=$DATA/TODAY
+mkdir -p $work_dir      
+cd $work_dir
+export rfc_dir=$work_dir/dataST4  #to store the input STAGE IV files
+export out_dir=$work_dir/outST4   #to store the output CCPA files
+mkdir -p $rfc_dir
+mkdir -p $out_dir
+mkdir -p $work_dir/rfc_ST4      
+  echo  Run Today job -----  processing 24h precip ending at 12Z Today
+  $script_dir/ccpav4_conus.prod_archive.sh $PDYm1 $PDY 
+# for hh in 18 00 06 12
+# do 
+# $ush_dir/rfcqpe_6h_to_3h.sh $PDYm1 $hh
+#  done
+cd $DATA
+
+echo *************************************************************
+echo *************************************************************
+echo *************************************************************
+
+#  Re-Run Yesterday's job ( processing 24h precip ending at 12Z Yesterday)
+#  If the source data files are not updated, the script will stop.        
+#  This will be the case for most days.
+##############################
+#  Specify work directory 
+##############################
+#export work_dir=$DATA
+export work_dir=$DATA/YESTERDAY
+mkdir -p $work_dir
+cd $work_dir
+export rfc_dir=$work_dir/dataST4  #to store the input STAGE IV files
+export out_dir=$work_dir/outST4   #to store the output CCPA files
+mkdir -p $rfc_dir
+mkdir -p $out_dir
+mkdir -p $work_dir/rfc_ST4      
+  echo  Re-Run Yesterday job -----  processing 24h precip ending at 12Z Yesterday
+  $script_dir/ccpav4_conus.prod_archive.sh $PDYm2 $PDYm1 
+# for hh in 18 00 06 12
+# do 
+# $ush_dir/rfcqpe_6h_to_3h.sh $PDYm2 $hh
+# done
+cd $DATA
+
+#############################################################
+else
+# HISTORICAL MODE 
+  b_date=$1
+  if (( $# > 1 )); then
+    e_date=$2
+  else
+    e_date=$1
+  fi
+  dthis=$b_date
+  while [ $dthis -le $e_date ];
+  do
+
+  dnext=`$nhours +24 $dthis\00 | cut -c1-8`
+
+##############################
+#  Specify work directory 
+##############################
+#export work_dir=$DATA
+  export work_dir=$DATA/$dthis
+  mkdir -p $work_dir
+  cd $work_dir
+export rfc_dir=$work_dir/dataST4  #to store the input STAGE IV files
+export out_dir=$work_dir/outST4   #to store the output CCPA files
+mkdir -p $rfc_dir
+mkdir -p $out_dir
+mkdir -p $work_dir/rfc_ST4      
+  echo  Run $dthis job -----  processing 24h precip ending at 12Z $dnext
+  $script_dir/ccpav4_conus.prod_archive.sh $dthis $dnext 
+# for hh in 18 00 06 12
+# do 
+# $ush_dir/rfcqpe_6h_to_3h.sh $dthis $hh
+#  done
+  cd $DATA
+  dthis=$dnext
+  done
+fi
+
+cat $pgmout.*
+msg="JOB COMPLETED NORMALLY"
+postmsg "$jlogfile" "$msg"
+
+##############################
+# Remove the Temporary working directory
+##############################
+cd $PTM/tmpnwprd
+#rm -rf $DATA
+
+date
+#$SMSBIN/endt

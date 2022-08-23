@@ -1,0 +1,17 @@
+SHELL=  /bin/sh
+CMD=	vrfy_avn
+FC=     xlf_r
+FOPTS=  -qsmp=noauto
+LOPTS=
+INCS=
+SRCS=	VFMAIN_avn.f GETANL.f GET23Y.f GRANGE.f ACGRID.f GRD2WV.f LATWMN.f \
+	SUMWAV.f RMSAWT.f GETCAC.f ACGRIDV.f FITR30.f 
+LIBS=	/nwprod/w3lib90/bacio_4 \
+	/nwprod/w3lib90/w3lib_4 \
+	/nfsuser/g01/wx20mi/w3lib90/iplib_4_604 \
+	/nfsuser/g01/wx20mi/w3lib90/splib_4_604 \
+	-l essl
+$(CMD): $(SRCS)
+	$(FC) $(FOPTS) $(SRCS) $(LIBS) -o $(CMD)
+vrfy0:	$(SRCS)
+	$(FC) $(FOPTS) $(SRCS) /nwprod/w3lib90/iplib_4_604 $(LIBS) -o vrfy0

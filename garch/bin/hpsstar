@@ -1,0 +1,245 @@
+#!/bin/sh
+set -u
+usage="\
+Usage:  $0  man
+        $0  quo              [Userid|'all'|'alls#']
+        $0  put|pu1|pu2|putv        Tarfile File ...
+        $0  get|gem          Tarfile [File ...]
+        $0  getnostage|gemnostage   Tarfile [File ...]
+        $0  inv|inx|inw      Tarfile
+        $0  idx              Tarfile
+        $0  del|dem          Tarfiles (wildcards accepted)
+        $0  rmf|rmd          Non-empty|empty Directory
+        $0  ren              Old-Dir-Name New-Name
+        $0  dip|dir|dix      [Tarfile|Directory]
+        $0  mkd              Directory
+        $0  fnd              Files/Directories (wildcards accepted)
+use 'hpsstar man' for detailed info"
+uhelp='
+This script creates, retrieves, and manages tarfiles on HPSS.
+
+Actions:
+  man   prints this man page
+  quo   prints quota for you or another user or all or all sorted by field #
+  put   creates a tarfile (one copy) and its index
+  pu1   creates a tarfile (one copy) and its index
+  pu2   creates a tarfile (two copies) and its index
+  get   retrieves all or part of a tarfile
+  gem   retrieves all or part of a tarfile and redates the files
+  getnostage   better performance for retrieving part of a large tarfile
+  gemnostage   rbetter performance for retrieving part of a large tarfile and redates the files
+  inv   gives a verbose inventory of a tarfile
+  inx   gives just a list of entries in a tarfile
+  inw   gives a Wesley inventory of a tarfile
+  idx   rebuilds an index
+  del   deletes tarfiles and its index (wildcards accepted)
+  dem   deletes files with interactive response (wildcards accepted)
+  rmf   removes non-empty directories
+  rmd   removes empty directories
+  ren   rename directory
+  dip   gives a listing of a tarfile and its index
+  dir   gives a verbose listing
+  dix   gives a compact listing 
+  mkd   makes a directory
+  fnd   traverse a directory tree looking for files and directories (wildcard accepted) 
+
+Note that the default local directory is your own directory in /hpssuser;
+otherwise a full path name is required.
+
+This command interfaces with the High Performance Storage System (HPSS)
+using htar and the client API.  Class of Service is automatically computed.
+
+Examples.
+Check quota.
+  hpsstar quo
+Make a directory.
+  hpsstar mkd tmpdir
+Create a tarfile.
+  hpsstar put tmpdir/Test.tar *
+Get a directory listing.
+  hpsstar dir tmpdir
+Inventory a tarfile.
+  hpsstar inv tmpdir/Test.tar
+Retrieve entire tarfile.
+  hpsstar get tmpdir/Test.tar
+Retrieve just the .f files in a tarfile.
+  hpsstar get tmpdir/Test.tar $(hpsstar inx tmpdir/Test.tar|grep '\''\.f$'\'')
+Using "nostage" option for better performance when retrieving small port of files in a large tarfile (>10GB)
+  hpsstar getnostage tmpdir/Test.tar $(hpsstar inx tmpdir/Test.tar|grep '\''\.f$'\'')
+Delete all tarfiles beginning with T under tmpdir.
+  for f in $(hpsstar dix tmpdir|grep ^T.*\.tar$);do hpsstar del tmpdir/$f;done
+  or simply
+  hpsstar del tmpdir/"T*.tar"
+Delete interactively all tarfiles beginning with T under tmpdir.
+  hpsstar dem tmpdir/"T*.tar"
+Find all files begnning with T in the current directory tree
+  hpsstar fnd "T*.tar"
+Remove a directory.
+  hpsstar rmd tmpdir
+Rename a directory
+  hpsstar ren olddir newdir
+For a large tarball (> ) and only extract a small port of files
+
+Mark Iredell
+Doris Pan
+April, 24, 2008'
+
+if [[ $# -eq 0 ]];then
+  echo "$usage" >&2
+  exit 1
+fi
+export PATH=$PATH:/usrx/local/hpss/bin
+export PATH=$PATH:/usrx/local/hpss/non-dce/utilities/bin
+export PATH=$PATH:/usrx/local/bin
+export HPSS_NDCG_SERVERS=gbhpsscore/8001
+#export HPSS_HOSTNAME=$(hostname -s)_data
+export GROUPNAME=${GROUPNAME:-$(groups|cut -d' ' -f1)}
+#export GROUPNAME=${GROUPNAME:-$(groups|cut -d' ' -f3)}
+#
+#GROUPS=`groups`
+#for GROUP in $GROUPS; do
+#        G1=`echo $GROUP|awk '{print substr($1,1,1)}'`
+#        if [[ $G1 = g ]]; then
+#                GROUPNAME=$GROUP
+#                break
+#        fi
+#done
+rc=0
+action=$1
+object=${2:-.}
+
+[[ $object = /* ]]||object=/hpssuser/$GROUPNAME/$LOGNAME/$object
+case $action in
+  man) echo "$usage";echo "$uhelp";;
+  quo) object=${2:-$LOGNAME}
+       if [[ $object = alls? ]];then
+       hpssquota all|grep [A-Z]
+       hpssquota all|grep -v [A-Z]|sort -nr -k${object#alls}
+       else hpssquota $object;fi;;
+  put) if [[ $# -ge 3 ]];then shift 2
+       t=0;for k in $(du -ks $*|awk '{print $1}');do ((t+=k));done;((t=t/1024))
+       if [[ $t -lt 30 ]];then c1=211;elif [[ $t -lt 2000 ]];then c1=221;else c1=231;fi
+       t=$(ls -R $*|wc -l);((t=t/1024))
+       if [[ $t -lt 1 ]];then c2=201;elif [[ $t -lt 30 ]];then c2=211;else c2=221;fi
+       htar -cvf $object -Y $c1:$c2 $*;rc=$?
+       else rc=-42;fi;;
+  pu1) if [[ $# -ge 3 ]];then shift 2
+       t=0;for k in $(du -ks $*|awk '{print $1}');do ((t+=k));done;((t=t/1024))
+       if [[ $t -lt 30 ]];then c1=211;elif [[ $t -lt 2000 ]];then c1=221;else c1=231;fi
+       t=$(ls -R $*|wc -l);((t=t/1024))
+       if [[ $t -lt 1 ]];then c2=201;elif [[ $t -lt 30 ]];then c2=211;else c2=221;fi
+       htar -cvf $object -Y $c1:$c2 $*;rc=$?
+       else rc=-42;fi;;
+  pu2) if [[ $# -ge 3 ]];then shift 2
+       t=0;for k in $(du -ks $*|awk '{print $1}');do ((t+=k));done;((t=t/1024))
+       if [[ $t -lt 30 ]];then c1=212;elif [[ $t -lt 2000 ]];then c1=222;else c1=232;fi
+       t=$(ls -R $*|wc -l);((t=t/1024))
+       if [[ $t -lt 1 ]];then c2=201;elif [[ $t -lt 30 ]];then c2=211;else c2=221;fi
+       htar -cvf $object -Y $c1:$c2 $*;rc=$?
+       else rc=-42;fi;;
+  putv) if [[ $# -ge 3 ]];then shift 2
+       t=0;for k in $(du -ks $*|awk '{print $1}');do ((t+=k));done;((t=t/1024))
+       if [[ $t -lt 30 ]];then c1=211;elif [[ $t -lt 2000 ]];then c1=221;else c1=231;fi
+       t=$(ls -R $*|wc -l);((t=t/1024))
+       if [[ $t -lt 1 ]];then c2=201;elif [[ $t -lt 30 ]];then c2=211;else c2=221;fi
+       htar -H verify=compare -cvf $object -Y $c1:$c2 $*;rc=$? 
+       else rc=-42;fi;;               
+  get) if [[ $# -ge 2 ]];then shift 2
+       if [[ $# -eq 0 ]];then
+       htar -xvf $object;rc=$?
+       else
+       htar -xvf $object $*;rc=$?
+       fi
+       else rc=-42;fi;;
+  getnostage) if [[ $# -ge 2 ]];then shift 2
+       if [[ $# -eq 0 ]];then
+       htar -Hnostage -xvf $object;rc=$?
+       else
+       htar -Hnostage -xvf $object $*;rc=$?
+       fi
+       else rc=-42;fi;;
+  gem) if [[ $# -ge 2 ]];then shift 2
+       if [[ $# -eq 0 ]];then
+       htar -xvmf $object;rc=$?
+       else
+       htar -xvmf $object $*;rc=$?
+       fi
+       else rc=-42;fi;;
+  gemnostage) if [[ $# -ge 2 ]];then shift 2
+       if [[ $# -eq 0 ]];then
+       htar -Hnostage -xvmf $object;rc=$?
+       else
+       htar -Hnostage -xvmf $object $*;rc=$?
+       fi
+       else rc=-42;fi;;
+  inv) if [[ $# -eq 2 ]];then
+       htar -tvf $object;rc=$?
+       else rc=-42;fi;;
+  inx) if [[ $# -eq 2 ]];then
+       htar -tvf $object|awk '{print $7}';rc=$?
+       else rc=-42;fi;;
+  inw) if [[ $# -eq 2 ]];then
+       echo $object $(htar -tvf $object|awk '{print $7}'|tr '\n' ' ');rc=$?
+       else rc=-42;fi;;
+  idx) if [[ $# -eq 2 ]];then
+#       hpssrm $object.idx >/dev/null
+       hsi "rm $object.idx"
+       t=$(htar -Xvf $object -Y :222|wc -l);((t=t/1024))
+       if [[ $t -lt 1 ]];then c2=201;elif [[ $t -lt 30 ]];then c2=211;else c2=221;fi
+#       hpssrm $object.idx >/dev/null
+       hsi "rm $object.idx"
+       htar -Xvf $object -Y :$c2;rc=$?
+       else rc=-42;fi;;
+  del) if [[ $# -eq 2 ]];then
+#       hpssrm $object;rc=$?;hpssrm $object.idx
+	hsi "rm $object; rm $object.idx"; rc=$?
+       else rc=-42;fi;;
+  dem) if [[ $# -eq 2 ]];then
+#       hpssrm $object;rc=$?;hpssrm $object.idx
+	hsi "mdelete $object; mdelete $object.idx"; rc=$?
+       else rc=-42;fi;;
+  rmf) if [[ $# -eq 2 ]];then
+       hsi "rm -R $object/*; rmdir $object";rc=$?
+       else rc=-42;fi;;
+  rmd) if [[ $# -eq 2 ]];then
+       hsi "rmdir $object";rc=$?
+       else rc=-42;fi;;
+  ren) if [[ $# -ge 3 ]];then shift 2
+       if [[ $# -eq 1 ]];then
+       hsi "rename $object $*";rc=$?
+       fi
+       else rc=-42;fi;;
+  dip) if [[ $# -le 2 ]];then
+#       hpssls -l $object;rc=$?;[[ $rc = 0 ]]&&hpssls -l $object.idx
+       hsi -P "ls -l $object"; rc=$?;[[ $rc = 0 ]]&&hsi -P "ls -l $object.idx" 
+       else rc=-42;fi;;
+  dir) if [[ $# -le 2 ]];then
+#       hpssls -l $object|sort -k12;rc=$?
+       hsi -P "ls -l $object";rc=$?
+       else rc=-42;fi;;
+  dix) if [[ $# -eq 2 ]];then
+       hsi list $object;rc=$?;
+       elif [[ $# -eq 1 ]]; then
+       hsi list ;rc=$?
+       else rc=-42;fi;;
+  mkd) if [[ $# -eq 2 ]];then
+#       hpssmkdir $object;rc=$?
+       hsi mkdir -p $object;rc=$?
+       else rc=-42;fi;;
+  fnd) if [[ $# -eq 2 ]];then
+       object=${2:-$object}
+       echo $object
+       hsi find . -name $object -depth -print
+       rc=$?
+       else rc=-42;fi;;
+  *) rc=-41;;
+esac
+if [[ $rc -eq -41 ]];then
+  echo $0: unrecognized action $action >&2
+  echo "$usage" >&2
+elif [[ $rc -eq -42 ]];then
+  echo $0: incorrect number of arguments for action $action >&2
+  echo "$usage" >&2
+fi
+exit $rc
+

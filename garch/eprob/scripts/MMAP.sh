@@ -1,0 +1,166 @@
+set -x
+if [ $# -lt 1 ]; then
+  echo "Usage:$0 need [YYYYMMDD] input"
+  exit 8
+fi
+
+GTMP=/lfs/h2/emc/ptmp
+PTMP=/lfs/h2/emc/ptmp
+SHOME=/lfs/h2/emc/vpppg/save
+home=$SHOME/yan.luo
+
+mkdir $PTMP/yan.luo/mmap
+cd    $PTMP/yan.luo/mmap
+
+CDATE=$1\00
+
+cp $GTMP/yan.luo/vfprob/prob.grads   .
+cp $GTMP/yan.luo/vfprob/tmp.dat      .
+cp $home/grads/*.gs .
+cp $home/eprob/scripts/*.gs .
+cp $datdir/dis_avg.dat .
+
+$SHOME/yan.luo/bin/grib2ctl_sp.sh prob.grads >mmap.ctl
+
+gribmap -i mmap.ctl
+
+IYMDH=`$nhours +24   $CDATE`
+VYMDP0=`$nhours +00  $CDATE`
+VYMDP1=`$nhours +12  $CDATE`
+VYMDP2=`$nhours +24  $CDATE`
+VYMDP3=`$nhours +36  $CDATE`
+VYMDP4=`$nhours +48  $CDATE`
+VYMDP5=`$nhours +60  $CDATE`
+VYMDP6=`$nhours +72  $CDATE`
+VYMDP7=`$nhours +84  $CDATE`
+VYMDP8=`$nhours +96  $CDATE`
+VYMDP9=`$nhours +108  $CDATE`
+VYMD10=`$nhours +120  $CDATE`
+VYMD11=`$nhours +132  $CDATE`
+VYMD12=`$nhours +144  $CDATE`
+VYMD13=`$nhours +156  $CDATE`
+VYMD14=`$nhours +168  $CDATE`
+VYMD15=`$nhours +180  $CDATE`
+VYMD16=`$nhours +192  $CDATE`
+VYMD17=`$nhours +204  $CDATE`
+VYMD18=`$nhours +216  $CDATE`
+VYMD19=`$nhours +228  $CDATE`
+VYMD20=`$nhours +240  $CDATE`
+VYMD21=`$nhours +252  $CDATE`
+VYMD22=`$nhours +264  $CDATE`
+VYMD23=`$nhours +276  $CDATE`
+VYMD24=`$nhours +288  $CDATE`
+VYMD25=`$nhours +300  $CDATE`
+VYMD26=`$nhours +312  $CDATE`
+VYMD27=`$nhours +324  $CDATE`
+VYMD28=`$nhours +336  $CDATE`
+VYMD29=`$nhours +348  $CDATE`
+VYMD30=`$nhours +360  $CDATE`
+VYMD31=`$nhours +372  $CDATE`
+VYMD32=`$nhours +384  $CDATE`
+
+sed -e "s/IYMDH/$CDATE/" \
+    -e "s/VYMDP0/$VYMDP0/" \
+    -e "s/VYMDP1/$VYMDP1/" \
+    -e "s/VYMDP2/$VYMDP2/" \
+    -e "s/VYMDP3/$VYMDP3/" \
+    -e "s/VYMDP4/$VYMDP4/" \
+    -e "s/VYMDP5/$VYMDP5/" \
+    -e "s/VYMDP6/$VYMDP6/" \
+    -e "s/VYMDP7/$VYMDP7/" \
+    -e "s/VYMDP8/$VYMDP8/" \
+    -e "s/VYMDP9/$VYMDP9/" \
+    -e "s/VYMD10/$VYMD10/" \
+    -e "s/VYMD11/$VYMD11/" \
+    -e "s/VYMD12/$VYMD12/" \
+    -e "s/VYMD13/$VYMD13/" \
+    -e "s/VYMD14/$VYMD14/" \
+    -e "s/VYMD15/$VYMD15/" \
+    -e "s/VYMD16/$VYMD16/" \
+    -e "s/VYMD17/$VYMD17/" \
+    -e "s/VYMD18/$VYMD18/" \
+    -e "s/VYMD19/$VYMD19/" \
+    -e "s/VYMD20/$VYMD20/" \
+    -e "s/VYMD21/$VYMD21/" \
+    -e "s/VYMD22/$VYMD22/" \
+    -e "s/VYMD23/$VYMD23/" \
+    -e "s/VYMD24/$VYMD24/" \
+    -e "s/VYMD25/$VYMD25/" \
+    -e "s/VYMD26/$VYMD26/" \
+    -e "s/VYMD27/$VYMD27/" \
+    -e "s/VYMD28/$VYMD28/" \
+    -e "s/VYMD29/$VYMD29/" \
+    -e "s/VYMD30/$VYMD30/" \
+    -e "s/VYMD31/$VYMD31/" \
+    -e "s/VYMD32/$VYMD32/" \
+    $SHOME/yan.luo/eprob/scripts/mmap.gs >mmap.gs
+
+pwd
+
+#xgrads -cl "mmap.gs"
+grads -cbl "mmap.gs"
+
+#SGIDIR=/export/sgi62/data/wd23ja/WebServer/htdocs/ens/relpred/figs
+SGIDIR=/export-1/sgi100/data/WebServer/htdocs/ens/relpred/figs    
+#WWWDIR=/disk066/emc/htdocs/gmb/yzhu/mmap                             
+WWWDIR=/usr/people/emc/htdocs/gmb/yluo/mmap                             
+RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo/mmap                             
+ 
+#ftpsgimkdir sgi100 $SGIDIR $CDATE
+#ftpwwwmkdir www    $WWWDIR $CDATE
+ftpemcrzdmmkdir emcrzdm $RZDMDIR $CDATE
+
+for fhr in 24 48 72 96 120 144 168 192 216 240 264 288 312 336 360 
+do
+ export CDATE=$CDATE
+ # gxgif -r -x 1100 -y 850 -i mmap_${CDATE}_$fhr.gr -o mmap_${CDATE}_$fhr.gif
+ #gxgif -r -x 695 -y 545 -i mmap_${CDATE}_$fhr.gr -o mmap_${CDATE}_$fhr.gif
+ #ftpsgi sgi100 put $SGIDIR/$CDATE /ptmp/wx20yz/mmap mmap_${CDATE}_$fhr.gif
+ #ftpwww www    put $WWWDIR/$CDATE /ptmp/wx20yz/mmap mmap_${CDATE}_$fhr.gif
+ ftpemcrzdm emcrzdm put $RZDMDIR/$CDATE $PTMP/yan.luo/mmap mmap_${CDATE}_$fhr.png
+done
+
+KYMD01=`$nhours -00  $CDATE`
+KYMD02=`$nhours -24  $CDATE`
+KYMD03=`$nhours -48  $CDATE`
+KYMD04=`$nhours -72  $CDATE`
+KYMD05=`$nhours -96  $CDATE`
+KYMD06=`$nhours -120 $CDATE`
+KYMD07=`$nhours -144 $CDATE`
+KYMD08=`$nhours -168 $CDATE`
+KYMD09=`$nhours -192 $CDATE`
+KYMD10=`$nhours -216 $CDATE`
+KYMD11=`$nhours -240 $CDATE`
+KYMD12=`$nhours -264 $CDATE`
+KYMD13=`$nhours -288 $CDATE`
+KYMD14=`$nhours -312 $CDATE`
+KYMD15=`$nhours -336 $CDATE`
+KYMD16=`$nhours -360 $CDATE`
+
+sed -e "s/YYYYMMDD01/$KYMD01/g" \
+    -e "s/YYYYMMDD02/$KYMD02/g" \
+    -e "s/YYYYMMDD03/$KYMD03/g" \
+    -e "s/YYYYMMDD04/$KYMD04/g" \
+    -e "s/YYYYMMDD05/$KYMD05/g" \
+    -e "s/YYYYMMDD06/$KYMD06/g" \
+    -e "s/YYYYMMDD07/$KYMD07/g" \
+    -e "s/YYYYMMDD08/$KYMD08/g" \
+    -e "s/YYYYMMDD09/$KYMD09/g" \
+    -e "s/YYYYMMDD10/$KYMD10/g" \
+    -e "s/YYYYMMDD11/$KYMD11/g" \
+    -e "s/YYYYMMDD12/$KYMD12/g" \
+    -e "s/YYYYMMDD13/$KYMD13/g" \
+    -e "s/YYYYMMDD14/$KYMD14/g" \
+    -e "s/YYYYMMDD15/$KYMD15/g" \
+    -e "s/YYYYMMDD16/$KYMD16/g" \
+    $SHOME/yan.luo/eprob/scripts/relpred.html >relpred.html
+
+SGIDIR=/export-1/sgi100/data/WebServer/htdocs/ens/yluo            
+#ftpsgi sgi100 put $SGIDIR /ptmp/wx20yz/mmap relpred.html
+
+sed -e "s/ens\/relpred\/figs/gmb\/yluo\/mmap/" \
+       relpred.html >relpred.rzdm_html
+mv relpred.rzdm_html relpred.html
+RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo/html/opr
+ftpemcrzdm emcrzdm put $RZDMDIR $PTMP/yan.luo/mmap relpred.html
+

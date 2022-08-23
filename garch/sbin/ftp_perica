@@ -1,0 +1,48 @@
+
+if [ $# -lt 4 ]; then
+ echo " Usage: $0 need arguments input "
+ echo "        1). get, put, mget or mput         "
+ echo "        2). remote directory               "
+ echo "        3). local directory                "
+ echo "        4). from file name or wild card    "
+ echo "        5). to file name ( option )        "
+ exit 8
+fi
+
+###
+### problem: looks mput mget for wild card ( e.g. pgbf*.1999051000 )
+###          does not work
+###
+
+set -x
+
+Oname=$5
+KC=`echo $1 | cut -c1-1`
+if [ "$KC" = "m" ]; then
+ SET=prompt
+ Ofile=
+else
+ SET=
+ Ofile=$Oname
+fi
+
+cd $3
+
+#send to perica's directory
+
+ ftp -i -n <<EOF2
+
+ open ftp.eng.utah.edu
+
+ user perica karlo1
+
+ cd $2      
+
+ bin
+
+ put $4           
+
+ quit
+
+ EOF2
+

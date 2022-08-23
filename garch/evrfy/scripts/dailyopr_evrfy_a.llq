@@ -1,0 +1,92 @@
+
+### example to submit gridtobs job
+#!/bin/sh
+#@ wall_clock_limit=03:40:00
+#@ requirements = Feature == "beta"
+#@ group = devonprod
+#@ job_type = parallel
+#@ output = /tmp/yan.luo/fits.o$(jobid)
+#@ error = /tmp/yan.luo/fits.e$(jobid)
+#@ total_tasks = 1
+#@ node = 1
+#@ node_usage = shared
+#@ network.MPI=switch,not_shared,us
+#@ class = dev
+#@ account_no = GEN-MTN
+#
+#@ queue
+#
+
+
+### to verify today's analysis (current)
+
+export SHOME=/lfs/h2/emc/vpppg/save
+export GTMP=/lfs/h2/emc/ptmp
+export nhours=/apps/ops/prod/nco/core/prod_util.v2.0.5/exec/ndate
+export windex=/apps/ops/prod/libs/intel/19.1.3.304/grib_util/1.2.2/bin/grbindex
+CDATE=$CDATE
+CDATEp00=$CDATE
+CDATEm24=`$nhours -24 $CDATE`
+
+cd $SHOME/yan.luo/evrfy/scripts
+
+echo "++++++ Submite the ENSVRFY (NEW) job +++"
+export CDATE=$CDATEm24
+out=$GTMP/yan.luo/evrfy_old.out
+job=$SHOME/yan.luo/evrfy/scripts/VRFY_NCEP_14m_ahgt.sh
+#sub -a GEN-MTN -e CDATE -w "+0000" -j evrfy_old -o $out $job
+$job > $out
+
+export CDATE=$CDATEm24
+out=$GTMP/yan.luo/evrfy_told.out
+job=$SHOME/yan.luo/evrfy/scripts/VRFY_NCEP_14m_atmp.sh
+#sub -a GEN-MTN -e CDATE -w "+0000" -j evrfy_old -o $out $job
+$job > $out
+
+export CDATE=$CDATEp00
+out=$GTMP/yan.luo/evrfy_new.out
+job=$SHOME/yan.luo/evrfy/scripts/VRFY_NCEP_14m_ahgt.sh
+#sub -a GEN-MTN -e CDATE -w "+0110" -j evrfy_new -o $out $job
+$job > $out
+
+export CDATE=$CDATEp00
+out=$GTMP/yan.luo/evrfy_tnew.out
+job=$SHOME/yan.luo/evrfy/scripts/VRFY_NCEP_14m_atmp.sh
+#sub -a GEN-MTN -e CDATE -w "+0110" -j evrfy_new -o $out $job
+$job > $out
+
+export CDATE=$CDATEm24
+out=$GTMP/yan.luo/evrfy_new_ecm.out
+job=$SHOME/yan.luo/evrfy/scripts/VRFY_ECM_10m_ahgt.sh
+#sub -a GEN-MTN -e CDATE -w "+0100" -j evrfy_ecm -o $out $job
+$job > $out
+
+export CDATE=$CDATEp00
+out=$GTMP/yan.luo/evrfy_new_cmc.out
+job=$SHOME/yan.luo/evrfy/scripts/VRFY_CMC_16m_ahgt.sh
+#sub -a GEN-MTN -e CDATE -w "+0100" -j evrfy_cmc -o $out $job
+$job > $out
+
+export CDATE=$CDATEm24
+out=$GTMP/yan.luo/evrfy_bold.out
+job=$SHOME/yan.luo/evrfy/scripts/VRFY_NCEP_14m_abhgt.sh
+#sub -a GEN-MTN -e CDATE -w "+0000" -j evrfy_bold -o $out $job
+$job > $out
+
+export CDATE=$CDATEm24
+out=$GTMP/yan.luo/evrfy_btold.out
+job=$SHOME/yan.luo/evrfy/scripts/VRFY_NCEP_14m_abtmp.sh
+#sub -a GEN-MTN -e CDATE -w "+0000" -j evrfy_bold -o $out $job
+$job > $out
+
+export CDATE=$CDATEp00
+out=$GTMP/yan.luo/evrfy_bnew.out
+job=$SHOME/yan.luo/evrfy/scripts/VRFY_NCEP_14m_abhgt.sh
+#sub -a GEN-MTN -e CDATE -w "+0110" -j evrfy_bnew -o $out $job
+$job > $out
+
+export CDATE=$CDATEp00
+out=$GTMP/yan.luo/evrfy_btnew.out
+job=$SHOME/yan.luo/evrfy/scripts/VRFY_NCEP_14m_abtmp.sh
+#sub -a GEN-MTN -e CDATE -w "+0110" -j evrfy_bnew -o $out $job
+$job > $out
