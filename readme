@@ -1,0 +1,18 @@
+Summary
+
+clone the whole package from develop branch of https://github.com/BoCui-NOAA/naefs_cqpf
+
+git clone git@github.com:BoCui-NOAA/naefs_cqpf.git
+cd naefs_cqpf
+mv ccpa /lfs/h2/emc/vpppg/save/$LOGNAME
+mv cqpf /lfs/h2/emc/vpppg/save/$LOGNAME
+mv garch  /lfs/h2/emc/vpppg/save/$LOGNAME
+mv run_web   /lfs/h2/emc/vpppg/save/$LOGNAME
+cd /lfs/h2/emc/vpppg/save/garch
+# Job_link ( all directoried are linked to /lfs/h2/emc/vpppg/save/$LOGNAME)
+cd /lfs/h2/emc/vpppg/save/$LOGNAME/run_web
+# Run the following  3 jobs
+CCPA_archive_cactus
+test_cactus
+GARCH_cactus
+
