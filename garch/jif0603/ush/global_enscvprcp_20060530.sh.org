@@ -1,0 +1,36 @@
+######################### CALLED BY EXENSCQPF ##########################
+echo "------------------------------------------------"
+echo "Ensemble CQPF -> global_enscvprcp.sh            "
+echo "------------------------------------------------"
+echo "History: Feb 2004 - First implementation of this new script."
+echo "AUTHOR: Yuejian Zhu (wx20yz)"
+
+### gribin -- input grib file
+### indexin -- input grib index file
+### gribout -- output grib file
+
+#export NDATE=/nwprod/util/exec/ndate
+#export GBINDX=/nwprod/util/exec/grbindex
+#export WGRIB=/nwprod/util/exec/wgrib
+
+export EXECGLOBAL=$SHOME/$LOGNAME/jif0603/exec
+
+$windex $1 $2
+
+
+echo "&namin"       >input
+echo "cpgb='$1',cpgi='$2',cpge='$3',ini=0,ipr=12,isp=12,itu=12"  >>input
+echo "/"        >>input
+
+cat input
+
+export pgm=global_enscvprcp
+#. prep_step
+
+#startmsg
+
+#$EXECGLOBAL/global_enscvprcp_20060530  <input  >> $pgmout 2>errfile
+$EXECGLOBAL/global_enscvprcp_20060530  <input  2>errfile
+#export err=$?;err_chk
+
+rm input

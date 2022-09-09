@@ -9,11 +9,13 @@ set -x
 
 SHOME=/lfs/h2/emc/vpppg/save
 COMIN=/lfs/h1/ops/prod/com/ccpa/v4.2
-tempdir=/$ptmp/yan.luo/plot_ccpa
+tempdir=/$ptmp/$LOGNAME/plot_ccpa
 export nhours=/apps/ops/prod/nco/core/prod_util.v2.0.5/exec/ndate
 #CDATE=2021082400
 CDATE=`$nhours -216 $CDATE`
 #CDATE=`$nhours -24 $CDATE`
+
+grib2ctl=$SHOME/$LOGNAME/ccpa/xbin/grib2ctl
 
 ndays=8
 
@@ -24,11 +26,12 @@ while [ $iday -le $ndays ]; do
 mkdir -p $tempdir
 cd $tempdir; rm * 
 
-cp $SHOME/$LOGNAME/grads/rgbset.gs .
-cp $SHOME/$LOGNAME/grads/cbar.gs   .
-cp $SHOME/$LOGNAME/grads/cbarn.gs   .
+cp $SHOME/$LOGNAME/ccpa/grads/rgbset.gs .
+cp $SHOME/$LOGNAME/ccpa/grads/cbar.gs   .
+cp $SHOME/$LOGNAME/ccpa/grads/cbarn.gs   .
 
-scripts=$SHOME/$LOGNAME/plot_ccpa/grads
+
+scripts=$SHOME/$LOGNAME/ccpa/plot_ccpa/grads
 
 
 YY=`echo $CDATE | cut -c1-4`
@@ -62,7 +65,7 @@ do
    18) tt=06;ymd=$datnext;;
    24) tt=12;ymd=$datnext
   esac
-    grib2ctl -verf ccpa_${ymd}${tt}_06h   > ccpa_${ymd}${tt}_06h.ctl
+    $grib2ctl -verf ccpa_${ymd}${tt}_06h   > ccpa_${ymd}${tt}_06h.ctl
     gribmap -i ccpa_${ymd}${tt}_06h.ctl 
 
 sed -e "s/YYMMDD/$ymd/"  \
@@ -70,8 +73,8 @@ sed -e "s/YYMMDD/$ymd/"  \
     $scripts/ccpa_6hr.GS  >ccpa_6hr.gs
 grads -cbl "run ccpa_6hr.gs"
 
-export RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo/ccpa
-ssh -l wd20yl emcrzdm "mkdir -p $RZDMDIR/$datnext"
+export RZDMDIR=/home/people/emc/www/htdocs/gmb/wx20cb/ccpa
+ssh -l bocui emcrzdm "mkdir -p $RZDMDIR/$datnext"
 
 done
 
@@ -88,7 +91,7 @@ grads -cbl "run ccpa_24hr.gs"
   iday=`expr $iday + 1`
   CDATE=`$nhours +24 $CDATE`
 
-scp *.png wd20yl@emcrzdm:$RZDMDIR/$datnext
+scp *.png bocui@emcrzdm:$RZDMDIR/$datnext
 
 done
 
@@ -116,10 +119,10 @@ done
 cat $scripts/CCPA_E.HTML   >>CCPA.html
 
 cp -p CCPA.html CCPA_prod.html
-export RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo
-scp CCPA.html wd20yl@emcrzdm:$RZDMDIR
-scp CCPA_prod.html wd20yl@emcrzdm:$RZDMDIR
-ssh -l wd20yl emcrzdm "export date=$PDYp1;$RZDMDIR/ccpa/make_link_24h.sh"
-ssh -l wd20yl emcrzdm "export date=$PDY;$RZDMDIR/ccpa/make_link_06h.sh"
+export RZDMDIR=/home/people/emc/www/htdocs/gmb/wx20cb
+scp CCPA.html bocui@emcrzdm:$RZDMDIR
+scp CCPA_prod.html bocui@emcrzdm:$RZDMDIR
+ssh -l bocui emcrzdm "export date=$PDYp1;$RZDMDIR/ccpa/make_link_24h.sh"
+ssh -l bocui emcrzdm "export date=$PDY;$RZDMDIR/ccpa/make_link_06h.sh"
 
 exit

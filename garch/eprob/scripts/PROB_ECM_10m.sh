@@ -7,7 +7,7 @@
 set -x
 date;pwd
 
-tmpdir=$GTMP/yan.luo/vfprob_ecm
+tmpdir=$GTMP/$LOGNAME/vfprob_ecm
 
 if [ -s $tmpdir ]; then
   rm $tmpdir/*
@@ -17,8 +17,8 @@ else
   cd $tmpdir
 fi
 
-sorc=$SHOME/yan.luo/eprob/scripts
-bindir=$SHOME/yan.luo/bin
+sorc=$SHOME/$LOGNAME/eprob/scripts
+bindir=$SHOME/$LOGNAME/bin
 
 ################################################################
 ymdh=$CDATE           
@@ -101,9 +101,9 @@ cat input2 input1 input3 > param
 
 export sorc YYMM ymdh tmpdir
 
-$SHOME/yan.luo/eprob/exec/prob_ecm <param
+$SHOME/$LOGNAME/eprob/exec/prob_ecm <param
 
-cp prob.ens $SHOME/yan.luo/global/vfprob/PROB10e.$ymdh
+cp prob.ens $SHOME/$LOGNAME/global/vfprob/PROB10e.$ymdh
 
 rm input1 input2 input3 param
 ####################################################################

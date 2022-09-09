@@ -1,0 +1,8 @@
+2c2
+< open /gpfs/dell2/ptmp/$LOGNAME/prcp/pgrads.ctl
+---
+> open /gpfs/dell2/ptmp/yan.luo/prcp/pgrads.ctl
+8c8
+< run /gpfs/dell2/emc/verification/save/$LOGNAME/grads/rgbset.gs
+---
+> run /gpfs/dell2/emc/verification/save/yan.luo/grads/rgbset.gs

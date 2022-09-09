@@ -1,0 +1,16 @@
+SHELL=  /bin/sh
+CMD=	climate_convert.exe                               
+FC=     xlf_r
+FOPTS=  -qsmp=noauto
+LOPTS=
+INCS=
+SRCS=	CLIMATE_convert.f GRANGE.f SORT.f SAMLMR.f PELGEV.f CDFGEV.f PELPE3.f QUAGEV.f QUAPE3.f QUAGAM.f QUASTN.f GAMIND.f SAMLMU.f 
+LIBS=   /nwprod/lib/libbacio_4.a \
+        /nwprod/lib/libw3_4.a \
+        /nwprod/lib/libip_4.a \
+        /nwprod/lib/libsp_4.a \
+        -l essl
+$(CMD): $(SRCS)
+	$(FC) $(FOPTS) $(SRCS) $(LIBS) -o $(CMD)
+vrfy0:	$(SRCS)
+	$(FC) $(FOPTS) $(SRCS) /nwprod/w3lib90/iplib_4_604 $(LIBS) -o vfprob

@@ -5,16 +5,16 @@ if [ $# -lt 1 ]; then
 fi
 
 ptmp=/lfs/h2/emc/ptmp
-home=/lfs/h2/emc/vpppg/save/yan.luo
+home=/lfs/h2/emc/vpppg/save/$LOGNAME
 NGLOBAL=/lfs/h2/emc/vpppg/noscrub
 
-mkdir $ptmp/yan.luo/omap
-cd $ptmp/yan.luo/omap
+mkdir $ptmp/$LOGNAME/omap
+cd $ptmp/$LOGNAME/omap
 
 ndatex=/apps/ops/prod/nco/core/prod_util.v2.0.5/exec/ndate
 CDATE=$1\00
 
-cp $NGLOBAL/yan.luo/evfscores/OUTLIEs.$CDATE .
+cp $NGLOBAL/$LOGNAME/evfscores/OUTLIEs.$CDATE .
 cp $home/grads/rgbset.gs .
 cp $home/grads/cbar.gs .
 
@@ -56,7 +56,7 @@ for fhr in 24 48 72 96 120 144 168 192
 do
  export CDATE=$IYMDH
  #gxgif -r -x 1000 -y 773 -i omap_${CDATE}_$fhr.gr -o omap_${CDATE}_$fhr.gif
- ftpemcrzdm emcrzdm put $RZDMDIR/$CDATE /$ptmp/yan.luo/omap omap_${CDATE}_$fhr.png
+ ftpemcrzdm emcrzdm put $RZDMDIR/$CDATE /$ptmp/$LOGNAME/omap omap_${CDATE}_$fhr.png
 done
 
 sed -e "s/IYMDH/$IYMDH/" \
@@ -76,10 +76,10 @@ grads -cbl "outlier.gs"
 
 export CDATE=$IYMDH
 #gxgif -r -x 1100 -y 850 -i omap_${CDATE}_map1.gr -o omap_${CDATE}_map1.gif
-ftpemcrzdm emcrzdm put $RZDMDIR/$CDATE /$ptmp/yan.luo/omap omap_${CDATE}_map1.png
+ftpemcrzdm emcrzdm put $RZDMDIR/$CDATE /$ptmp/$LOGNAME/omap omap_${CDATE}_map1.png
 export CDATE=$IYMDH
 #gxgif -r -x 1100 -y 850 -i omap_${CDATE}_map2.gr -o omap_${CDATE}_map2.gif
-ftpemcrzdm emcrzdm put $RZDMDIR/$CDATE /$ptmp/yan.luo/omap omap_${CDATE}_map2.png
+ftpemcrzdm emcrzdm put $RZDMDIR/$CDATE /$ptmp/$LOGNAME/omap omap_${CDATE}_map2.png
 
 
 ### create html scripts and ftp to sgi100
@@ -91,5 +91,5 @@ sed -e "s/ens\/moderr\/figs/gmb\/yluo\/omap/" \
 mv moderr.rzdm_html moderr.html
 change_url.sh moderr.html
 RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo/html/opr
-ftpemcrzdm emcrzdm put $RZDMDIR /$ptmp/yan.luo/omap moderr.html
+ftpemcrzdm emcrzdm put $RZDMDIR /$ptmp/$LOGNAME/omap moderr.html
 

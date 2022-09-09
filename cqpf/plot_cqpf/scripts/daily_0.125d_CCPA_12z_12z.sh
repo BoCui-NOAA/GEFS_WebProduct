@@ -2,15 +2,17 @@
 
 ############################################################
 #HISTORY:
-#09/01/2011: Initial script created by yan.luo
+#09/01/2011: Initial script created by $LOGNAME
 ############################################################
 #----------------------------------------------------------
 
-SHOME=/u/yan.luo/save
-COMIN=/lfs/h2/emc/vpppg/noscrub/yan.luo/COM_TAR/0.125d
-COMOUT=/lfs/h2/emc/vpppg/noscrub/yan.luo/daily_0.125d_ccpav4
+#SHOME=/u/$LOGNAME/save
+SHOME=/lfs/h2/emc/vpppg/save/$LOGNAME/cqpf
+COMIN=/lfs/h2/emc/vpppg/noscrub/$LOGNAME/COM_TAR/0.125d
+#COMOUT=/lfs/h2/emc/vpppg/noscrub/$LOGNAME/daily_0.125d_ccpav4
+COMOUT=$SHOME/data/daily_0.125d_ccpav4
 exec_dir=/lfs/h1/ops/para/packages/ccpa.v4.2.0/exec
-tempdir=/lfs/h2/emc/ptmp/yan.luo/daily_ccpa_12z_ccpav4
+tempdir=/lfs/h2/emc/ptmp/$LOGNAME/daily_ccpa_12z_ccpav4
 
 module load prod_util/2.0.5
 module load grib_util/1.2.2

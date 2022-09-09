@@ -3,7 +3,7 @@
 CDATE=$1
 YMD=`echo $CDATE | cut -c1-8`
 cyc=00
-datdir1=/lfs/h2/emc/vpppg/noscrub/yan.luo/ncep_gefs_0.5d
+datdir1=/lfs/h2/emc/vpppg/noscrub/$LOGNAME/ncep_gefs_0.5d
 datdir2=/lfs/h1/ops/prod/com/naefs/v6.1
 export hourlist="006 012 018 024 030 036 042 048 054 060 066 072 078 084 090 096 \
               102 108 114 120 126 132 138 144 150 156 162 168 174 180 186 192\
@@ -44,3 +44,8 @@ done
     $CNVGRIB -g21  pqpf_2.54_cal_gb2   pqpf_2.54_cal
     $CNVGRIB -g21  pqpf_6.35_cal_gb2   pqpf_6.35_cal
     $CNVGRIB -g21  pqpf_12.7_cal_gb2   pqpf_12.7_cal
+
+echo "Bo Cui test"
+ls pqpf_*
+ls pqpf_*opr
+

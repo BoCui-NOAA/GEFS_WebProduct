@@ -102,15 +102,15 @@ COMIN=/com/hourly/prod/nam_pcpn_anal
 export rfc_src=$COMIN
 #export COMOUT=/lfs/h1/ops/canned/com/ccpa/v4.2/${RUN}
 export COMOUT=/lfs/h1/ops/prod/com/ccpa/v4.2/${RUN}
-#export COMOUT=/ensemble2/noscrub/yan.luo/ccpa_30day_para/${RUN}
-export COMTAR=/lfs/h2/emc/vpppg/noscrub/yan.luo/COM_TAR
+#export COMOUT=/ensemble2/noscrub/$LOGNAME/ccpa_30day_para/${RUN}
+export COMTAR=/lfs/h2/emc/vpppg/noscrub/$LOGNAME/COM_TAR
 #export CCPAOUT=$PTM/com/${NET}/${ENVIR}/${RUN}
-export CCPAOUT=/ensemble/noscrub/yan.luo/3hr_ccpa/$grid/${RUN}
+export CCPAOUT=/ensemble/noscrub/$LOGNAME/3hr_ccpa/$grid/${RUN}
 ####################################
 # Specify Execution Areas
 # Switch home_dir to /nwprod for operation
 ####################################
-export home_dir=/lfs/h2/emc/vpppg/save/yan.luo/tskr_prec/3hr_CCPA
+export home_dir=/lfs/h2/emc/vpppg/save/$LOGNAME/ccpa/tskr_prec/3hr_CCPA
 #export home_dir=/nwprod
 export exec_dir=$home_dir/exec
 export script_dir=$home_dir/scripts
@@ -231,7 +231,7 @@ mkdir -p $work_dir/rfc_ST4
   done
 fi
 
-cat $pgmout.*
+#cat $pgmout.*
 msg="JOB COMPLETED NORMALLY"
 postmsg "$jlogfile" "$msg"
 

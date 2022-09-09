@@ -1,11 +1,11 @@
 *
-open /gpfs/dell2/ptmp/yan.luo/prcp/pgrads.ctl
+open /gpfs/dell2/ptmp/$LOGNAME/prcp/pgrads.ctl
 *enable print gmeta
 *** set vpage 0.5 5.5 4.3  8.3 
 *** set vpage 5.5 10.5 4.3  8.3
 *** set vpage 0.5 5.5 0.2 4.2
 *** set vpage 5.5 10.5 0.2 4.2
-run /gpfs/dell2/emc/verification/save/yan.luo/grads/rgbset.gs
+run /gpfs/dell2/emc/verification/save/$LOGNAME/grads/rgbset.gs
 *set lon 230 295
 *set lat 20 55
 set lon 210 310

@@ -5,8 +5,8 @@
 #@ wall_clock_limit=25:40:00
 #@ requirements = Feature == "beta"
 #@ job_type = parallel
-#@ output = /tmp/yan.luo/fits.o$(jobid)
-#@ error = /tmp/yan.luo/fits.e$(jobid)
+#@ output = /tmp/$LOGNAME/fits.o$(jobid)
+#@ error = /tmp/$LOGNAME/fits.e$(jobid)
 #@ total_tasks = 30
 #@ node = 30
 #@ node_usage = shared
@@ -33,7 +33,7 @@ date;pwd
 
 uname=` who am i | awk '{print $1}' `
 
-tmpdir=$stmp/yan.luo/vfens 
+tmpdir=$stmp/$LOGNAME/vfens 
 
 if [ -s $tmpdir ]; then
   rm $tmpdir/*
@@ -255,7 +255,7 @@ cp outlier.dat outlier.z$ilv
 
 done
 
-cp outlier.z500 $NGLOBAL/yan.luo/evfscores/OUTLIEs.$stymd\00
+cp outlier.z500 $NGLOBAL/$LOGNAME/evfscores/OUTLIEs.$stymd\00
 
 $home/evrfy/scripts/OMAP_new.sh $stymd
 #/nfsuser/g01/wx20yz/evrfy/scripts/OMAP.sh $stymd
@@ -266,5 +266,5 @@ stymd=`$nhours +24 $stymd\00 | cut -c1-8`
 rm outlier.dat outlier.z500
 
 done
-rm /$stmp/yan.luo/vfens/*
+rm /$stmp/$LOGNAME/vfens/*
 

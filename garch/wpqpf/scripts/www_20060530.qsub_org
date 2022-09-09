@@ -1,0 +1,369 @@
+### example 1
+#!/bin/sh
+#@ wall_clock_limit=00:10:00
+#@ requirements = Feature == "beta"
+#@ job_type = parallel
+#@ output = /tmp/wx22lu/web.o$(jobid)
+#@ error = /tmp/wx22lu/web.e$(jobid)
+#@ total_tasks = 30
+#@ node = 30
+#@ node_usage = shared
+#@ network.MPI=switch,not_shared,us
+#@ class = dev
+#
+#@ queue
+#
+
+###
+### This is the main script to run PQPF, QPF, CQPF and CPQPF
+### This job is excuted once a day by every morning
+###
+###    --- Yuejian Zhu
+###
+
+set -x
+
+Date=`date '+DATE: %m/%d/%y TIME: %H:%M:%S'`
+echo " The current time is $Date "
+
+if [ "$CDATE" = " " ]; then
+   echo "CDATE = $CDATE "
+   echo "JOB EXIT NOW !!!!!!"
+   exit
+fi
+
+HCYCLE=`echo $CDATE | cut -c9-10`
+
+if [ $HCYCLE -ne 00 ]; then
+   echo "HCYCLE = $HCYCLE is not 00Z cycle"
+   echo "JOB EXIT NOW !!!!!!"
+   exit 12
+fi
+
+ICGLB=0
+ICCPC=0
+
+cmd=$SHOME/$LOGNAME/wpqpf/scripts
+cmd1=$SHOME/$LOGNAME/jif0304/scripts
+cmd1=$SHOME/$LOGNAME/jif0603/ush
+
+ymdh=$CDATE
+ymdhm12=`$nhours -12 $ymdh`
+ymd=`echo $ymdh | cut -c1-8`
+YY=`echo $ymdh | cut -c3-4`
+ymdm1=`echo $ymdhm12 | cut -c1-8`
+
+if [ $ICGLB -eq 0 ]; then
+
+###
+### Global MAPS upto 8 days
+###
+
+tmpdir=$PTMP/$LOGNAME/web
+
+if [ ! -s $tmpdir ]; then
+   mkdir $tmpdir
+fi
+
+cd $tmpdir; rm gmeta_*              
+cp $SHOME/$LOGNAME/grads/rgbset.gs .
+cp $SHOME/$LOGNAME/grads/cbar.gs   .
+
+#$cmd1/prcpcv_20060530.sh /global/ENS/precip.$ymdh tmpi.$ymdh precip.$ymdh   
+$cmd1/global_enscvprcp_20060530.sh $GLOBAL/ENS/precip.$ymdh tmpi.$ymdh precip.$ymdh   
+
+ls -l precip*
+
+$cmd/pgrads_20060530.sh precip.$ymdh precipi.$ymdh precip.$ymdh.new
+
+pwd 
+
+mm=`echo $CDATE | cut -c5-6`
+MM=`grep "$mm" $SHOME/$LOGNAME/bin/mon2mon | cut -c8-10` 
+DD=`echo $CDATE | cut -c7-8`
+
+if [ $DD -le 9 ]; then
+   DD=0$DD
+fi
+
+HHDDMMYY=00Z$DD$MM$YY
+
+FILENAME=precip.$ymdh.new
+
+sed -e "s/FILENAME/$FILENAME/" \
+    -e "s/HHDDMMYY/$HHDDMMYY/"    \
+    $cmd/pgrads_20060530.ctl  >pgrads.ctl
+cat $cmd/pgrads_top.gs          >pgrads.gs   
+cat $cmd/pgrads_top.EXEC        >pgrads_print.exec
+
+STEP=4
+hour2=36
+while [ $STEP -le 32 ]; do   
+
+hour1=`expr $hour2 - 24`
+YMD1=`$nhours +$hour1 $ymdh`
+YMD2=`$nhours +$hour2 $ymdh`
+
+sed -e "s/YMD1/$YMD1/"    \
+    -e "s/YMD2/$YMD2/"    \
+    -e "s/YMDH/$ymdh/"    \
+    -e "s/STEP/$STEP/"    \
+    $cmd/pgrads_loop.gs        >>pgrads.gs   
+
+if [ $STEP -le 10 ]; then
+sed -e "s/YMD1/$YMD1/"    \
+    -e "s/YMD2/$YMD2/"    \
+    -e "s/YMDH/$ymdh/"    \
+    -e "s/STEP/$STEP/"    \
+    $cmd/pgrads_loop_print.EXEC      >>pgrads_print.exec
+fi
+
+hour2=`expr $hour2 + 24`
+STEP=`expr $STEP + 2`
+
+done
+
+sed -e "s/YMDH/$ymdh/"    \
+    $cmd/pgrads_mrf.gs        >>pgrads.gs   
+sed -e "s/YMDH/$ymdh/"    \
+    $cmd/pgrads_FL.gs         >>pgrads.gs  
+sed -e "s/YMDH/$ymdh/"    \
+    $cmd/pgrads_EU.gs         >>pgrads.gs   
+sed -e "s/YMDH/$ymdh/"    \
+    $cmd/pgrads_SAM.gs        >>pgrads.gs   
+sed -e "s/YMDH/$ymdh/"    \
+    $cmd/pgrads_SAF.gs        >>pgrads.gs   
+sed -e "s/YMDH/$ymdh/"    \
+    $cmd/pgrads_SEA.gs        >>pgrads.gs   
+sed -e "s/YMDH/$ymdh/"    \
+    $cmd/pgrads_MNS.gs        >>pgrads.gs   
+sed -e "s/YMDH/$ymdh/"    \
+    $cmd/pgrads_ALA.gs        >>pgrads.gs   
+sed -e "s/YMDH/$ymdh/"    \
+    $cmd/pgrads_BOS.gs        >>pgrads.gs   
+sed -e "s/YMDH/$ymdh/"    \
+    $cmd/pgrads_ME.gs         >>pgrads.gs   
+sed -e "s/YMDH/$ymdh/"    \
+    $cmd/pgrads_HWI.gs         >>pgrads.gs   
+STEP=4
+hour2=36
+while [ $STEP -le 32 ]; do   
+
+hour1=`expr $hour2 - 24`
+YMD1=`$nhours +$hour1 $ymdh`
+YMD2=`$nhours +$hour2 $ymdh`
+
+sed -e "s/YMD1/$YMD1/"    \
+    -e "s/YMD2/$YMD2/"    \
+    -e "s/YMDH/$ymdh/"    \
+    -e "s/STEP/$STEP/"    \
+    $cmd/pgrads_gloop.gs        >>pgrads.gs   
+
+hour2=`expr $hour2 + 24`
+STEP=`expr $STEP + 2`
+
+done
+
+echo "'quit' " >>pgrads.gs
+
+gribmap -i pgrads.ctl
+#xgrads -cl "run  pgrads.gs"
+grads -cbl "run  pgrads.gs"
+
+SGIDIR=/export-1/sgi100/data/WebServer/htdocs/ens/prcp/prcppng
+WWWDIR=/usr/people/emc/htdocs/gmb/yluo/pqpf                          
+RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo/pqpf                          
+
+for file in mrf1 mrf2 mrf3 FL1  FL2  FL3  EU1  EU2  EU3   \
+            SAM1 SAM2 SAM3 SAF1 SAF2 SAF3 SEA1 SEA2 SEA3  \
+            MNS1 MNS2 MNS3 ALA1 ALA2 ALA3 BOS1 BOS2 BOS3  \
+            ME1  ME2  HWI1 HWI2
+do
+
+if [ -s gmeta_$file.png ]; then
+#   gxpng -r -x 695 -y 545 -i gmeta_$file -o p${CDATE}_$file.png
+   mv gmeta_$file.png  p${CDATE}_$file.png
+   ftpemcrzdm emcrzdm   put $RZDMDIR          $tmpdir p${CDATE}_$file.png
+fi
+done
+
+ICNT=4
+while [ $ICNT -le 32 ]; do  
+   ICNTM2=`expr $ICNT - 2`
+   HOURS=`expr $ICNTM2 \* 12 `
+   jdat=$HOURS\hours
+#if [ -s gmeta_print_$ICNT ]; then
+#   gxps -c -i gmeta_print_$ICNT -o p$CDATE\_print_$jdat.ps
+#fi
+if [ -s gmeta_$ICNT.png ]; then
+#   gxpng -r -x 695 -y 545 -i gmeta_$ICNT -o p${CDATE}_$jdat.png
+   mv gmeta_$ICNT.png  p${CDATE}_$jdat.png
+   ftpemcrzdm emcrzdm   put $RZDMDIR          $tmpdir p${CDATE}_$jdat.png
+fi
+
+for amount in a b c d
+do
+   kdat=$amount$jdat
+if [ -s gmeta_g$amount$ICNT.png ]; then
+#   gxpng -r -x 695 -y 545 -i gmeta_g$amount$ICNT -o p${CDATE}_g$kdat.png
+   mv gmeta_g$amount$ICNT.png p${CDATE}_g$kdat.png
+   ftpemcrzdm emcrzdm   put $RZDMDIR          $tmpdir p${CDATE}_g$kdat.png
+fi
+done
+
+ICNT=`expr $ICNT + 2`
+done
+
+rm $tmpdir/precip*
+rm $tmpdir/*.ctl
+rm $tmpdir/gmeta*
+
+fi
+
+if [ $ICCPC -eq 0 ]; then
+
+###
+###   CPC's PQPF maps
+###
+
+tmpdir=$PTMP/$LOGNAME/cpc
+
+if [ ! -s $tmpdir ]; then
+   mkdir $tmpdir
+fi
+
+cd $tmpdir; rm gmeta_*
+cp $SHOME/$LOGNAME/grads/rgbset.gs .
+cp $SHOME/$LOGNAME/grads/cbar.gs   .
+
+echo "cat $ymdhm12 and $ymdh precipitationa files"
+
+$cmd1/global_enscvprcp_20060530.sh $GLOBAL/ENS/precip.$ymdh tmpi.$ymdh precip.$ymdh   
+
+ls -l precip*
+
+$cmd/pgrads_20060530_cpc.sh precip.$ymdh precipi.$ymdh precip.$ymdh.new
+
+pwd
+
+mm=`echo $CDATE | cut -c5-6`
+MM=`grep "$mm" $SHOME/$LOGNAME/bin/mon2mon | cut -c8-10`
+DD=`echo $CDATE | cut -c7-8`
+
+if [ $DD -le 9 ]; then
+   DD=0$DD
+fi
+
+HHDDMMYY=00Z$DD$MM$YY
+
+FILENAME=precip.$ymdh.new
+
+
+sed -e "s/FILENAME/$FILENAME/"      \
+    -e "s/HHDDMMYY/$HHDDMMYY/"      \
+    $cmd/pgrads_cpc.ctl             >pgrads_cpc.ctl
+cat $cmd/pgrads_cpc_top.gs          >pgrads_cpc.gs
+
+### 1-5 days forecasts
+STEP=13
+YMD1=12
+YMD2=132
+
+sed -e "s/YMD1/$YMD1/"    \
+    -e "s/YMD2/$YMD2/"    \
+    -e "s/YMDH/$ymdh/"    \
+    -e "s/STEP/$STEP/"    \
+    $cmd/pgrads_cpc.gs        >>pgrads_cpc.gs
+
+### 5-10 days forecasts
+STEP=23
+YMD1=132
+YMD2=252
+
+sed -e "s/YMD1/$YMD1/"    \
+    -e "s/YMD2/$YMD2/"    \
+    -e "s/YMDH/$ymdh/"    \
+    -e "s/STEP/$STEP/"    \
+    $cmd/pgrads_cpc.gs        >>pgrads_cpc.gs
+
+### 8-14 ( week 2 ) days forecasts
+STEP=31
+YMD1=180
+YMD2=348
+
+sed -e "s/YMD1/$YMD1/"    \
+    -e "s/YMD2/$YMD2/"    \
+    -e "s/YMDH/$ymdh/"    \
+    -e "s/STEP/$STEP/"    \
+    $cmd/pgrads_cpc.gs        >>pgrads_cpc.gs
+
+### 4-5 days forecasts
+### for trues, STEP=13,
+###  but fortran program set 21-33 (step 12 = 33 ) on purpose.
+###  because it comflict with 1-5 days which is assign step 13
+###  actual calculation and YMD1,YMD2 are corrected.
+STEP=12
+YMD1=84 
+YMD2=132
+
+sed -e "s/YMD1/$YMD1/"    \
+    -e "s/YMD2/$YMD2/"    \
+    -e "s/YMDH/$ymdh/"    \
+    -e "s/STEP/$STEP/"    \
+    $cmd/pgrads_med.gs        >>pgrads_cpc.gs
+
+echo "'quit' " >>pgrads_cpc.gs
+
+gribmap -i pgrads_cpc.ctl
+#xgrads -cl "run  pgrads_cpc.gs"
+grads -cbl "run  pgrads_cpc.gs"
+
+#SGIDIR=/export/sgi62/data/wd23ja/WebServer/htdocs/ens/prcp/prcppng
+SGIDIR=/export-1/sgi100/data/WebServer/htdocs/ens/prcp/prcppng    
+WWWDIR=/disk066/emc/htdocs/gmb/yluo/pqpf                          
+RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo/pqpf                          
+
+if [ -s gmeta_cpc_13.png ]; then
+#  gxpng -r -x 695 -y 545 -i gmeta_cpc_13 -o p${CDATE}_1-5.png
+  mv gmeta_cpc_13.png p${CDATE}_1-5.png
+  ftpemcrzdm emcrzdm   put $RZDMDIR $tmpdir p${CDATE}_1-5.png
+fi
+if [ -s gmeta_cpc_23.png ]; then
+#  gxpng -r -x 695 -y 545 -i gmeta_cpc_23 -o p${CDATE}_6-10.png
+  mv gmeta_cpc_23.png  p${CDATE}_6-10.png  
+  ftpemcrzdm emcrzdm   put $RZDMDIR $tmpdir p${CDATE}_6-10.png
+fi
+if [ -s gmeta_cpc_31.png ]; then
+#  gxpng -r -x 695 -y 545 -i gmeta_cpc_31 -o p${CDATE}_week2.png
+  mv gmeta_cpc_31.png  p${CDATE}_week2.png
+  ftpemcrzdm emcrzdm   put $RZDMDIR $tmpdir p${CDATE}_week2.png
+fi
+if [ -s gmeta_med_12.png ]; then
+#  gxpng -r -x 695 -y 545 -i gmeta_med_12 -o p${CDATE}_4-5.png
+  mv gmeta_med_12.png p${CDATE}_4-5.png
+  ftpemcrzdm emcrzdm   put $RZDMDIR $tmpdir p${CDATE}_4-5.png
+fi
+
+rm $tmpdir/precip*
+rm $tmpdir/*.ctl
+rm $tmpdir/gmeta*
+
+fi
+
+export CDATE=$CDATE
+
+cd $SHOME/$LOGNAME/wpqpf/scripts;pwd
+
+## moved next job to $HOME/jif_cqpf/scripts/CQPF.sh   
+##  08/13/2003 -Yuejian Zhu
+#/nfsuser/g01/wx22lu/wpqpf/scripts/www_cmrf.qsub
+
+## moved next job to $HOME/jif_cqpf/scripts/CQPF.sh   
+##  08/13/2003 -Yuejian Zhu
+#/nfsuser/g01/wx22lu/wpqpf/scripts/ens_23m_case.qsub
+
+###/nfsuser/g01/wx22lu/wpqpf/scripts/ens_23m_case_lmp30.qsub
+## moved next job to $HOME/jif_cqpf/scripts/CQPF.sh   
+##  08/13/2003 -Yuejian Zhu
+#/nfsuser/g01/wx22lu/wpqpf/scripts/ens_23m_case_lmp50_bias.qsub
+

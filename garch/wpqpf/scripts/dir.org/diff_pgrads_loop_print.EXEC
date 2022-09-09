@@ -1,0 +1,16 @@
+20c20
+< run $SHOME/$LOGNAME/grads/cbar.gs
+---
+> run $SHOME/yan.luo/grads/cbar.gs
+34c34
+< run $SHOME/$LOGNAME/grads/cbar.gs
+---
+> run $SHOME/yan.luo/grads/cbar.gs
+48c48
+< run $SHOME/$LOGNAME/grads/cbar.gs
+---
+> run $SHOME/yan.luo/grads/cbar.gs
+62c62
+< run $SHOME/$LOGNAME/grads/cbar.gs
+---
+> run $SHOME/yan.luo/grads/cbar.gs

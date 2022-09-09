@@ -11,7 +11,7 @@
 // imgScr  is an array of Image objects
 //    the src property of imgSrc, imgSrc[i].src, is assigned the URL's from imgFile[i]
 imgFile = new Array()
-map_id="https://www.emc.ncep.noaa.gov/gmb/yluo/cpqpf_24h/YYYYMMDD/AMAP_YYYYMMDDHH_F";first_hour=12;fhr_incr=24;last_hour=372;millisec=250;
+map_id="https://www.emc.ncep.noaa.gov/gmb/wx20cb/cpqpf_24h/YYYYMMDD/AMAP_YYYYMMDDHH_F";first_hour=12;fhr_incr=24;last_hour=372;millisec=250;
 i=-1
 for(fhr=first_hour;fhr<=last_hour;fhr+=fhr_incr) {
         i++
@@ -65,7 +65,7 @@ function checkTimer(){
 <form name="Timer">
 <input type="checkbox" name="timerBox" onClick="checkTimer()"> Click to animate
 </form>
-<img name="image1" src="https://www.emc.ncep.noaa.gov/gmb/yluo/cpqpf_24h/YYYYMMDD/AMAP_YYYYMMDDHH_F12-36.png" height=750 width=1000 >
+<img name="image1" src="https://www.emc.ncep.noaa.gov/gmb/wx20cb/cpqpf_24h/YYYYMMDD/AMAP_YYYYMMDDHH_F12-36.png" height=750 width=1000 >
 
 <h4>
 <a href="#picture" onmouseover=document.image1.src=imgSrc[00].src>f36</a>

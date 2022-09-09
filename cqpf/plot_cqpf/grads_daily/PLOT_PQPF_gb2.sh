@@ -1,9 +1,11 @@
 #set -x
 
-export SHOME=/lfs/h2/emc/vpppg/save/yan.luo
-export COMIN=/lfs/h2/emc/vpppg/noscrub/yan.luo/daily_hrap_ccpav4
-export tmpdir=/lfs/h2/emc/ptmp/yan.luo/pqpf_tmp
-export scripts=/u/yan.luo/save/plot_cqpf/grads_daily
+export SHOME=/lfs/h2/emc/vpppg/save/$LOGNAME/cqpf
+#export COMIN=/lfs/h2/emc/vpppg/noscrub/$LOGNAME/daily_hrap_ccpav4
+export COMIN=$SHOME/data/daily_hrap_ccpav4
+export tmpdir=/lfs/h2/emc/ptmp/$LOGNAME/pqpf_tmp
+#export scripts=/u/$LOGNAME/save/plot_cqpf/grads_daily
+export scripts=$SHOME/plot_cqpf/grads_daily
 export nhours=/apps/ops/prod/nco/core/prod_util.v2.0.5/exec/ndate
 
 if [ -s $tmpdir ]; then
@@ -47,8 +49,8 @@ for nfhrs in $hourlist; do
     infile=$COMIN/$file
     outfile=$tmpdir/obs/obs_${CDATE}_${grptime}
     cp $infile $outfile
-    grib2ctl -verf obs_${CDATE}_${grptime}   > obs_$nfhrs.ctl
-    gribmap -i  obs_$nfhrs.ctl
+    $SHOME/xbin/grib2ctl -verf obs_${CDATE}_${grptime}   > obs_$nfhrs.ctl
+    $SHOME/xbin/gribmap -i  obs_$nfhrs.ctl
 done
 cd  $tmpdir
 HHDDMMYY=00Z$DD$CMM$YY
@@ -57,19 +59,19 @@ for AMOUNT in 1.00 6.35 12.7 25.4 50.8
 do
 
 FILENAME=pqpf_$AMOUNT\_opr
-grib2ctl -verf pqpf_$AMOUNT\_opr  > opr_$AMOUNT\_ctl
-gribmap -i opr_$AMOUNT\_ctl
+$SHOME/xbin/grib2ctl -verf pqpf_$AMOUNT\_opr  > opr_$AMOUNT\_ctl
+$SHOME/xbin/gribmap -i opr_$AMOUNT\_ctl
 
 FILENAME=pqpf_$AMOUNT\_cal
-grib2ctl -verf pqpf_$AMOUNT\_cal > cal_$AMOUNT\_ctl
-gribmap -i cal_$AMOUNT\_ctl
+$SHOME/xbin/grib2ctl -verf pqpf_$AMOUNT\_cal > cal_$AMOUNT\_ctl
+$SHOME/xbin/gribmap -i cal_$AMOUNT\_ctl
 
 FILENAME=pqpf_$AMOUNT\_dsc
-grib2ctl -verf pqpf_$AMOUNT\_dsc > 4.ctl
+$SHOME/xbin/grib2ctl -verf pqpf_$AMOUNT\_dsc > 4.ctl
 sed -e "s/xdef 2145 linear -121.554 0.0245932917324725/xdef 2814 linear -130.100275 0.0245932917324725/"  \
     -e "s/ydef 1377 linear 20.192000 0.0230818181818182/ydef 1413 linear 20.196426 0.0230818181818182/" \
     4.ctl  > dsc_$AMOUNT\_ctl
-gribmap -i dsc_$AMOUNT\_ctl
+$SHOME/xbin/gribmap -i dsc_$AMOUNT\_ctl
 
 fname1=opr_$AMOUNT\_ctl
 fname2=cal_$AMOUNT\_ctl
@@ -121,10 +123,10 @@ grads -cbl "run pgrads_pqpf.gs"
 done
 done
    
-export RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo/cpqpf_24h
-ftpemcrzdmmkdir emcrzdm $RZDMDIR $YY$MM$DD
+export RZDMDIR=/home/people/emc/www/htdocs/gmb/wx20cb/cpqpf_24h
+$SHOME/xbin/ftpemcrzdmmkdir emcrzdm $RZDMDIR $YY$MM$DD
 
-scp *.png   wd20yl@emcrzdm:$RZDMDIR/$YY$MM$DD
+scp *.png   bocui@emcrzdm:$RZDMDIR/$YY$MM$DD
 
 ###
 ### to generate html scripts
@@ -138,7 +140,7 @@ sed -e "s/YYYYMMDDHH/$YY$MM$DD$HH/"  \
     -e "s/AMAP/$amap/"                  \
     $scripts/today.HTML >$amap.t00z.html
 
-ftpemcrzdm emcrzdm put $RZDMDIR/$YY$MM$DD $tmpdir $amap.t00z.html
+$SHOME/xbin/ftpemcrzdm emcrzdm put $RZDMDIR/$YY$MM$DD $tmpdir $amap.t00z.html
 
 done
 
@@ -158,6 +160,6 @@ done
 
 cat $scripts/CPQPF_24h_E.HTML   >>CPQPF_24h.html
 
-RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo/GEFS_VRFY
-ftpemcrzdm emcrzdm put $RZDMDIR $tmpdir CPQPF_24h.html
+RZDMDIR=/home/people/emc/www/htdocs/gmb/wx20cb/GEFS_VRFY
+$SHOME/xbin/ftpemcrzdm emcrzdm put $RZDMDIR $tmpdir CPQPF_24h.html
                              

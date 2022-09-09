@@ -4,8 +4,8 @@
 #@ wall_clock_limit=29:00:00
 #@ requirements = Feature == "beta"
 #@ job_type = parallel
-#@ output = /tmp/yan.luo/fits.o$(jobid)
-#@ error = /tmp/yan.luo/fits.e$(jobid)
+#@ output = /tmp/$LOGNAME/fits.o$(jobid)
+#@ error = /tmp/$LOGNAME/fits.e$(jobid)
 #@ total_tasks = 30
 #@ node = 30
 #@ node_usage = shared
@@ -31,7 +31,7 @@
 #set -x
 date;pwd
 
-tmpdir=$GTMP/yan.luo/evrfy_cmc16m_a
+tmpdir=$GTMP/$LOGNAME/evrfy_cmc16m_a
 
 if [ -s $tmpdir ]; then
   rm $tmpdir/*
@@ -45,7 +45,7 @@ fi
 ### 2. Set up the climate data entry, grib utility entry.
 ###
 
-dat=$SHOME/yan.luo/gvrfy/data
+dat=$SHOME/$LOGNAME/gvrfy/data
 
 ########################################################################
 #   
@@ -236,13 +236,13 @@ fi
 pwd
 
 #/nfsuser/g01/wx20yz/evrfy/exec/vrfy_cmc_20060530  <input0
-$SHOME/yan.luo/evrfy/exec/VRFY_cmc16m_a20060530  <input0
+$SHOME/$LOGNAME/evrfy/exec/VRFY_cmc16m_a20060530  <input0
 
 cp scores.ens scores.z$ilv
 
 done
 
-cp  scores.z500 $NGLOBAL/yan.luo/evrfy/SCORESm.$stymd\00
+cp  scores.z500 $NGLOBAL/$LOGNAME/evrfy/SCORESm.$stymd\00
        
 stymd=`$nhours +24 $stymd\00 | cut -c1-8`      
 

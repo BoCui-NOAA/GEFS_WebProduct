@@ -1,0 +1,8 @@
+32c32
+< #export CDATE=$CDATE;$SHOME/$LOGNAME/arch/ADD_ANL.sh
+---
+> #export CDATE=$CDATE;$SHOME/yan.luo/arch/ADD_ANL.sh
+34c34
+< cd $SHOME/$LOGNAME/eprob/scripts
+---
+> cd $SHOME/yan.luo/eprob/scripts

@@ -1,8 +1,9 @@
 #set -x
 
-SHOME=/lfs/h2/emc/vpppg/save/yan.luo
-COMIN=/lfs/h2/emc/vpppg/noscrub/yan.luo/daily_hrap_ccpav4
-export tmpdir=/lfs/h2/emc/ptmp/yan.luo/qpf_tmp
+SHOME=/lfs/h2/emc/vpppg/save/$LOGNAME/cqpf
+#COMIN=/lfs/h2/emc/vpppg/noscrub/$LOGNAME/daily_hrap_ccpav4
+COMIN=$SHOME/data/daily_hrap_ccpav4
+export tmpdir=/lfs/h2/emc/ptmp/$LOGNAME/qpf_tmp
 
 export nhours=/apps/ops/prod/nco/core/prod_util.v2.0.5/exec/ndate
 
@@ -31,7 +32,8 @@ CDATE=$1
 #export CDATE=$CDATE
 #CDATE=`$nhours -192 $CDATE `
 
-scripts=/u/yan.luo/save/plot_cqpf/grads_daily
+#scripts=/u/$LOGNAME/save/plot_cqpf/grads_daily
+scripts=$SHOME/plot_cqpf/grads_daily
 
 
 YY=`echo $CDATE | cut -c1-4`
@@ -65,8 +67,8 @@ for nfhrs in $hourlist; do
     infile=$COMIN/$file
     outfile=$tmpdir/obs/obs_${CDATE}_${grptime}
     cp $infile $outfile
-    grib2ctl -verf obs_${CDATE}_${grptime}   > obs_$nfhrs.ctl
-    gribmap -i  obs_$nfhrs.ctl
+    $SHOME/xbin/grib2ctl -verf obs_${CDATE}_${grptime}   > obs_$nfhrs.ctl
+    $SHOME/xbin/gribmap -i  obs_$nfhrs.ctl
 done
 
 cd  $tmpdir
@@ -90,7 +92,7 @@ grads -cbl "run pgrads_qpf.gs"
 
 done
 
-export RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo/cpqpf_24h
-ftpemcrzdmmkdir emcrzdm $RZDMDIR $YY$MM$DD
+export RZDMDIR=/home/people/emc/www/htdocs/gmb/wx20cb/cpqpf_24h
+$SHOME/xbin/ftpemcrzdmmkdir emcrzdm $RZDMDIR $YY$MM$DD
 
-scp *.png   wd20yl@emcrzdm:$RZDMDIR/$YY$MM$DD
+scp *.png   bocui@emcrzdm:$RZDMDIR/$YY$MM$DD

@@ -36,8 +36,8 @@ cd $tmpdir/dsc
       # export err=8; err_chk
   fi     
      $CNVGRIB -g21  $outfile3_tmp $outfile3
-     grib2ctl -verf $outfile3   > dsc_$ndhrs.ctl
-     gribmap -i  dsc_$ndhrs.ctl
+     $SHOME/xbin/grib2ctl -verf $outfile3   > dsc_$ndhrs.ctl
+     $SHOME/xbin/gribmap -i  dsc_$ndhrs.ctl
 
 done
 

@@ -4,8 +4,9 @@ set -xa
 ###
 
 export nhours=/apps/ops/prod/nco/core/prod_util.v2.0.5/exec/ndate
-export SSUB=/u/yan.luo/save/xbin/sub_wcoss2
-mkdir -p /$ptmp/yan.luo/CCPA/
+#export SSUB=/u/$LOGNAME/save/xbin/sub_wcoss2
+export SSUB=/lfs/h2/emc/vpppg/save/$LOGNAME/ccpa/xbin
+mkdir -p /$ptmp/$LOGNAME/CCPA/
 ###
 ### get real time from GDIT Cray computer system
 ###
@@ -23,8 +24,8 @@ CUE=dev_transfer
 
 echo "++++++ Submit the CCPA data archive job ++++++"
 export CDATE=$CDATE
-out=$ptmp/yan.luo/output/ccpa_$CDATE
-job=/lfs/h2/emc/vpppg/save/yan.luo/tskr_prec/3hr_CCPA/jobs/JCCPA_CONUS.sms.prod.archiveonly_cactus           
+out=$ptmp/$LOGNAME/output/ccpa_$CDATE
+job=/lfs/h2/emc/vpppg/save/$LOGNAME/ccpa/tskr_prec/3hr_CCPA/jobs/JCCPA_CONUS.sms.prod.archiveonly_cactus           
 $SSUB -a CCPA-DEV -q $CUE -p 1/1/S -r 512/1 -w +0000 -t 3:00:00 -j CCPA -o $out $job
 
 eval primary=`cat  /lfs/h1/ops/prod/config/prodmachinefile | grep primary`
@@ -43,8 +44,8 @@ else
 
 echo "++++++ Submit the CCPA image web job ++++++"
 export CDATE=$CDATE
-out=$ptmp/yan.luo/output/ccpaplot_$CDATE
-job=/lfs/h2/emc/vpppg/save/yan.luo/plot_ccpa/grads/plot.sh                
+out=$ptmp/$LOGNAME/output/ccpaplot_$CDATE
+job=/lfs/h2/emc/vpppg/save/$LOGNAME/ccpa/plot_ccpa/grads/plot.sh                
 $SSUB -a CCPA-DEV -q $CUE -p 1/1/S -r 512/1 -w +0120 -t 3:00:00 -j CCPA -o $out $job
 
 fi
@@ -68,7 +69,7 @@ echo $NEXT_JOB_TIME
 ###
 
 echo "++++++ Submit the GARCH job ++++++"
-out=$ptmp/yan.luo/CCPA/ccpa_schedule
-job=/lfs/h2/emc/vpppg/save/yan.luo/tskr_prec/3hr_CCPA/run/CCPA_archive_cactus
+out=$ptmp/$LOGNAME/CCPA/ccpa_schedule
+job=/lfs/h2/emc/vpppg/save/$LOGNAME/ccpa/tskr_prec/3hr_CCPA/run/CCPA_archive_cactus
 $SSUB -a CCPA-DEV -q $CUE -p 1/1/S -r 512/1 -w ${NEXT_JOB_TIME} -t 3:00:00 -j CCPA_archive_cactus -o $out $job
 

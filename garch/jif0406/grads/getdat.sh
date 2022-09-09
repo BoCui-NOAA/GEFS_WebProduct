@@ -1,0 +1,55 @@
+#set -x
+YMD=`echo $CDATE | cut -c1-8`
+#datdir1=/com/mrf/prod/ens.$YMD        
+#datdir2=/com/mrf/prod/cmcens.$YMD        
+#datdir1=$HOME/jif0406/data_$YMD        
+#datdir1=$HOME/jif0406/data    
+datdir1=/lfs/h1/ops/prod/com/gefs/v12.2/gefs.$YMD/00/atmos/ensstat        
+#datdir2=/com2/gens/prod/cmce.$YMD/00/ensstat        
+datdir2=/lfs/h1/ops/prod/com/naefs/v6.1/cmce.$YMD/00/ensstat
+gbindex=/apps/ops/prod/libs/intel/19.1.3.304/grib_util/1.2.2/bin/grbindex
+#prcpcvx=$SHOME/$LOGNAME/xbin/prcpcv.sh
+prcpcvx=$SHOME/yan.luo/jif0603/ush/global_enscvprcp_20060530.sh
+
+#$home/jif0406/scripts/global_enspqpf_24h_cmc.sh $datdir2/enspostc.t00z.prcphr ensstatc.t00z.pqpfhr_24h
+
+ls -l ensstatc.t00z.pqpfhr_24h
+
+file1=$datdir1/ensstat.t00z.pqpf_24h
+wgrib $file1 | grep "APCP>1.000000" | wgrib -i $file1 -grib -o pqpf_1.00_nmc
+wgrib $file1 | grep "APCP>6.350000" | wgrib -i $file1 -grib -o pqpf_6.35_nmc
+wgrib $file1 | grep "APCP>12.70000" | wgrib -i $file1 -grib -o pqpf_12.7_nmc
+wgrib $file1 | grep "APCP>25.39999" | wgrib -i $file1 -grib -o pqpf_25.4_nmc
+file2=$datdir2/ensstatc.t00z.pqpfhr_24h 
+#file2=ensstatc.t00z.pqpfhr_24h 
+
+$WGRIB2  -match "prob >1" $file2  -grib pqpf_1.00_cmc_bk0
+$WGRIB2  pqpf_1.00_cmc_bk0 -for "1:87:3" -grib pqpf_1.00_cmc_bk1
+
+$WGRIB2  -match "prob >6.35" $file2  -grib pqpf_6.35_cmc_bk1
+$WGRIB2  -match "prob >12.7" $file2  -grib pqpf_12.7_cmc_bk1
+$WGRIB2  -match "prob >25.4" $file2  -grib pqpf_25.4_cmc_bk1
+
+$CNVGRIB -g21 pqpf_1.00_cmc_bk1 pqpf_1.00_cmc_bk
+$CNVGRIB -g21 pqpf_6.35_cmc_bk1 pqpf_6.35_cmc_bk
+$CNVGRIB -g21 pqpf_12.7_cmc_bk1 pqpf_12.7_cmc_bk
+$CNVGRIB -g21 pqpf_25.4_cmc_bk1 pqpf_25.4_cmc_bk
+
+
+$COPYGB -g2 -x pqpf_1.00_cmc_bk pqpf_1.00_cmc
+$COPYGB -g2 -x pqpf_6.35_cmc_bk pqpf_6.35_cmc
+$COPYGB -g2 -x pqpf_12.7_cmc_bk pqpf_12.7_cmc
+$COPYGB -g2 -x pqpf_25.4_cmc_bk pqpf_25.4_cmc
+
+file1=$datdir1/enspost.t00z.prcp
+$gbindex $file1 precipi.nmc 
+$prcpcvx $file1 precipi.nmc precip.nmc
+$WGRIB precip.nmc | grep "ens-0" | wgrib -i precip.nmc -grib -o prcp_gfs_nmc
+
+$WGRIB2  -match "low-res ctl" $datdir2/enspostc.t00z.prcphr -grib enspostc.t00z.prcphr_tmp
+$CNVGRIB -g21 enspostc.t00z.prcphr_tmp enspostc.t00z.prcphr
+$COPYGB -g2 -x enspostc.t00z.prcphr enspostc.t00z.prcp
+file2=enspostc.t00z.prcp
+$WGRIB -ncep_ens $file2 | grep "ens-0" | wgrib -i $file2 -grib -o prcp_gfs_cmc
+
+

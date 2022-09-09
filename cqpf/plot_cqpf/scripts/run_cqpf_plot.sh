@@ -28,10 +28,17 @@ echo " Send web plots through cactus "
 
 echo "++++++ Submite the cqpf plotting job ++++++"
 
-cd /u/yan.luo/save/plot_cqpf/scripts
+#SHOME=/lfs/h2/emc/vpppg/save/$LOGNAME/cqpf
+cd $SHOME/plot_cqpf/scripts
+
 ./run_ccpa.sh $CDATEm240 $CDATE
+echo " Job run_ccpa.sh complete "
+
 ./plot_cqpf_6hr_gb2.sh $CDATEm96 5
+echo " Job plot_cqpf_6hr_gb2.sh complete "
+
 ./plot_cqpf_24hr_gb2.sh $CDATEm96 5
+echo " Job plot_cqpf_24hr_gb2.sh complete "
 
 fi
 

@@ -103,8 +103,8 @@ grads -cbl "mmap.gs"
 #SGIDIR=/export/sgi62/data/wd23ja/WebServer/htdocs/ens/relpred/figs
 SGIDIR=/export-1/sgi100/data/WebServer/htdocs/ens/relpred/figs    
 #WWWDIR=/disk066/emc/htdocs/gmb/yzhu/mmap                             
-WWWDIR=/usr/people/emc/htdocs/gmb/yluo/mmap                             
-RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo/mmap                             
+WWWDIR=/usr/people/emc/htdocs/gmb/wx20cb/mmap                             
+RZDMDIR=/home/people/emc/www/htdocs/gmb/wx20cb/mmap                             
  
 #ftpsgimkdir sgi100 $SGIDIR $CDATE
 #ftpwwwmkdir www    $WWWDIR $CDATE
@@ -155,12 +155,12 @@ sed -e "s/YYYYMMDD01/$KYMD01/g" \
     -e "s/YYYYMMDD16/$KYMD16/g" \
     $SHOME/Yan.Luo/save/eprob/scripts/relpred.html >relpred.html
 
-SGIDIR=/export-1/sgi100/data/WebServer/htdocs/ens/yluo            
+SGIDIR=/export-1/sgi100/data/WebServer/htdocs/ens/wx20cb            
 #ftpsgi sgi100 put $SGIDIR /ptmp/wx20yz/mmap relpred.html
 
-sed -e "s/ens\/relpred\/figs/gmb\/yluo\/mmap/" \
+sed -e "s/ens\/relpred\/figs/gmb\/wx20cb\/mmap/" \
        relpred.html >relpred.rzdm_html
 mv relpred.rzdm_html relpred.html
-RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo/html/opr
+RZDMDIR=/home/people/emc/www/htdocs/gmb/wx20cb/html/opr
 ftpemcrzdm emcrzdm put $RZDMDIR $PTMP/Yan.Luo/mmap relpred.html
 

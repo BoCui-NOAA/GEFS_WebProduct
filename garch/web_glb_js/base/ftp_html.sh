@@ -1,7 +1,7 @@
 #!/bin/ksh
 
-cd $SHOME/yan.luo/web_glb_js/html
-scp *.html wd20yl@emcrzdm:/home/people/emc/www/htdocs/gmb/yluo/html_pqpf
-cd $SHOME/yan.luo/web_glb_js/js
-scp *.* wd20yl@emcrzdm:/home/people/emc/www/htdocs/gmb/yluo/js 
+cd $SHOME/$LOGNAME/web_glb_js/html
+scp *.html bocui@emcrzdm:/home/people/emc/www/htdocs/gmb/wx20cb/html_pqpf
+cd $SHOME/$LOGNAME/web_glb_js/js
+scp *.* bocui@emcrzdm:/home/people/emc/www/htdocs/gmb/wx20cb/js 
                                                                                                                                

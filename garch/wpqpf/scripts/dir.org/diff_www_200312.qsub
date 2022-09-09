@@ -1,0 +1,46 @@
+44c44
+< #   export CDATE=$CDATE; $SHOME/$LOGNAME/jif_cqpf/grads/PLOT.sh
+---
+> #   export CDATE=$CDATE; $SHOME/yan.luo/jif_cqpf/grads/PLOT.sh
+53c53
+< cmd=$SHOME/$LOGNAME/wpqpf/scripts
+---
+> cmd=$SHOME/yan.luo/wpqpf/scripts
+67c67
+< tmpdir=$PTMP/$LOGNAME/web
+---
+> tmpdir=$PTMP/yan.luo/web
+87c87
+< MM=`grep "$mm" $SHOME/$LOGNAME/bin/mon2mon | cut -c8-10` 
+---
+> MM=`grep "$mm" $SHOME/yan.luo/bin/mon2mon | cut -c8-10` 
+229c229
+< tmpdir=$PTMP/$LOGNAME/cpc
+---
+> tmpdir=$PTMP/yan.luo/cpc
+249c249
+< MM=`grep "$mm" $SHOME/$LOGNAME/bin/mon2mon | cut -c8-10`
+---
+> MM=`grep "$mm" $SHOME/yan.luo/bin/mon2mon | cut -c8-10`
+351c351
+< cd $SHOME/$LOGNAME/wpqpf/scripts;pwd
+---
+> cd $SHOME/yan.luo/wpqpf/scripts;pwd
+359c359
+< tmpdir=$PTMP/$LOGNAME/6hr_$HCYCLE
+---
+> tmpdir=$PTMP/yan.luo/6hr_$HCYCLE
+363,364c363,364
+< cp $SHOME/$LOGNAME/grads/rgbset.gs .
+< cp $SHOME/$LOGNAME/grads/cbar.gs .
+---
+> cp $SHOME/yan.luo/grads/rgbset.gs .
+> cp $SHOME/yan.luo/grads/cbar.gs .
+371c371
+< MON=`grep "$mm" $SHOME/$LOGNAME/bin/mon2mon | cut -c8-10` 
+---
+> MON=`grep "$mm" $SHOME/yan.luo/bin/mon2mon | cut -c8-10` 
+450c450
+<  ifile=/lfs/h2/emc/vpppg/noscrub/$LOGNAME/ecmwf_gefs/noscrub/ENS/$file.${ymd}${IC} 
+---
+>  ifile=/lfs/h2/emc/vpppg/noscrub/yan.luo/ecmwf_gefs/noscrub/ENS/$file.${ymd}${IC} 

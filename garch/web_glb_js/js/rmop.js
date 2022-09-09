@@ -75,7 +75,7 @@ function load_image(frm){
      for(k=0; k<total; k++){
        kk=24+k*24;
        data=kk+frm.reg.options[frm.reg.selectedIndex].value+'.png';
-       filename="https://www.emc.ncep.noaa.gov/gmb/yluo/mmap/"+frm.dy.options[frm.dy.selectedIndex].value+frm.tz.options[frm.tz.selectedIndex].value+"/mmap_"+frm.dy.options[frm.dy.selectedIndex].value+frm.tz.options[frm.tz.selectedIndex].value+"_"+data;
+       filename="https://www.emc.ncep.noaa.gov/gmb/wx20cb/mmap/"+frm.dy.options[frm.dy.selectedIndex].value+frm.tz.options[frm.tz.selectedIndex].value+"/mmap_"+frm.dy.options[frm.dy.selectedIndex].value+frm.tz.options[frm.tz.selectedIndex].value+"_"+data;
        preload(filename);
      }
   show(0);

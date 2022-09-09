@@ -1,0 +1,38 @@
+SHELL=  /bin/bash
+CMD=	global_enspqpf_24h_cmc
+#FC=     ncepxlf
+FC=     ${FCMP}
+#FOPTS=  -qsmp=noauto
+FFLAGS=  -list -traceback
+LDFLAGS=
+INCS=
+SRCS=	ENSPQPF_24h_CMC.f 
+OBJS=   $(SRCS:.f=.o)
+#LIBS    = -l essl -L/nwprod/lib -lbacio_4 -lw3_4 -lip_4 -lsp_4 
+#LIBS    = -L/nwprod/lib -lbacio_4 -lw3nco_4
+
+#$(CMD): $(SRCS)
+#	$(FC) $(FOPTS) $(SRCS) $(LIBS) -o $(CMD)
+#ensppf:	$(SRCS)
+#	$(FC) $(FOPTS) $(SRCS) $(LIBS) -o ensppf
+
+# Lines from here on down should not need to be changed.  They are the
+# actual rules which make uses to build a.out.
+#
+all:    $(CMD)
+
+$(CMD): $(OBJS)
+	$(FC) $(LDFLAGS) $(FFLAGS) -o $(@) $(OBJS) $(LIBS)
+
+$(OBJS):        $(SRCS)
+	$(FC) $(FFLAGS) -c $(SRCS)
+
+$(OBJS):        makefile
+
+allclean:       clean all
+
+clean:
+	-rm -f $(OBJS)
+
+clobber:        clean
+	-rm -f $(CMD)

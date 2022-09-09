@@ -92,7 +92,7 @@ echo "$var" >> input3
 YMDH=`$nhours -12 $YMDH`
 infile=$GLOBAL/ENS/z500.$YMDH
 ifrs=`expr $kcnt \* 12 `
-wgrib $infile | grep ":${ifrs}hr fcst" | wgrib -i $infile -grib -append -o z500_fst.$ymdh
+$wgrib $infile | grep ":${ifrs}hr fcst" | wgrib -i $infile -grib -append -o z500_fst.$ymdh
 
 kcnt=`expr $kcnt + 1`
 ymdhm12=`$nhours -12 $ymdhm12 `

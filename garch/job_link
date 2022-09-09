@@ -1,0 +1,18 @@
+dirlist=" 
+bin        earch_00  evrfy    global  gvrfy    jif0603   naefs.v6.0.1  sbin  web_glb_js  xbin
+data eprob grads     jif0406  reanl   updated_cqpf_new  wpqpf"
+
+com=/lfs/h2/emc/vpppg/save/bo.cui
+
+for dir in $dirlist; do
+cd $com
+rm -rf $dir
+mkdir $dir
+cd $dir
+ln -fs $com/garch/$dir/* .
+done
+
+cd /lfs/h2/emc/vpppg/noscrub/$LOGNAME
+mkdir CDAS
+cd CDAS
+ln -fd /lfs/h2/emc/vpppg/save/$LOGNAME/garch/CDAS/* .

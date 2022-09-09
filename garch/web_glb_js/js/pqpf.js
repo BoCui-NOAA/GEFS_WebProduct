@@ -77,7 +77,7 @@ function load_image(frm){
 //       kk=120+k*24;
        kk=24+k*24;
        data=kk+'hours.png';
-       filename="https://www.emc.ncep.noaa.gov/gmb/yluo/pqpf/p"+frm.dy.options[frm.dy.selectedIndex].value+frm.tz.options[frm.tz.selectedIndex].value+"_"+data;
+       filename="https://www.emc.ncep.noaa.gov/gmb/wx20cb/pqpf/p"+frm.dy.options[frm.dy.selectedIndex].value+frm.tz.options[frm.tz.selectedIndex].value+"_"+data;
        preload(filename);
      }
    }
@@ -87,18 +87,18 @@ function load_image(frm){
      for(k=0; k<total; k++){
        kk=24+k*24
        data=kk+'hours.png';
-       filename="https://www.emc.ncep.noaa.gov/gmb/yluo/pqpf/p"+frm.dy.options[frm.dy.selectedIndex].value+frm.tz.options[frm.tz.selectedIndex].value+frm.thrsh.options[frm.thrsh.selectedIndex].value+data;
+       filename="https://www.emc.ncep.noaa.gov/gmb/wx20cb/pqpf/p"+frm.dy.options[frm.dy.selectedIndex].value+frm.tz.options[frm.tz.selectedIndex].value+frm.thrsh.options[frm.thrsh.selectedIndex].value+data;
        preload(filename); 
      }
    }
    else if (frm.elements["scale"].selectedIndex == 1 ) {
     count=0;
-    filename="https://www.emc.ncep.noaa.gov/gmb/yluo/pqpf/p"+frm.dy.options[frm.dy.selectedIndex].value+frm.tz.options[frm.tz.selectedIndex].value+frm.thrsh.options[frm.thrsh.selectedIndex].value+".png";
+    filename="https://www.emc.ncep.noaa.gov/gmb/wx20cb/pqpf/p"+frm.dy.options[frm.dy.selectedIndex].value+frm.tz.options[frm.tz.selectedIndex].value+frm.thrsh.options[frm.thrsh.selectedIndex].value+".png";
     preload(filename);
    }
    else if (frm.elements["scale"].selectedIndex == 2 ) {
     count=0;
-    filename="https://www.emc.ncep.noaa.gov/gmb/yluo/pqpf/p"+frm.dy.options[frm.dy.selectedIndex].value+frm.tz.options[frm.tz.selectedIndex].value+frm.reg.options[frm.reg.selectedIndex].value+frm.thrsh.options[frm.thrsh.selectedIndex].value+".png";
+    filename="https://www.emc.ncep.noaa.gov/gmb/wx20cb/pqpf/p"+frm.dy.options[frm.dy.selectedIndex].value+frm.tz.options[frm.tz.selectedIndex].value+frm.reg.options[frm.reg.selectedIndex].value+frm.thrsh.options[frm.thrsh.selectedIndex].value+".png";
     preload(filename);
    }
   show(0);

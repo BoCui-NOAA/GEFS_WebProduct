@@ -1,0 +1,609 @@
+Page 1           Source Listing                  PRCPCV
+2013-12-06 16:20                                 CVPRCP.f
+
+      1 C$$$  MAIN PROGRAM DOCUMENTATION BLOCK
+      2 C
+      3 C MAIN PROGRAM: PRCPCV
+      4 C   PRGMMR: ZHU              ORG: NP23        DATE: 1999-08-31
+      5 C
+      6 C ABSTRACT: THIS PROGRAM WILL CONVERT 6 HOURS PERIOD PRECIP.  
+      7 C           TO 12/24 HOURS ACCUMULATION, CONVERT PRECIP. RATE
+      8 C           TO ACCUMULATION PRECIPITATION AND ETC.
+      9 C
+     10 C PROGRAM HISTORY LOG:
+     11 C   97-03-17   YUEJIAN ZHU (WD20YZ)
+     12 C   99-07-27   YUEJIAN ZHU (WX20YZ) MODIFY TO IBM-SP
+     13 C   00-10-30   YUEJIAN ZHU (WX20YZ) MODIFY TO MATCH AVN PROCESS
+     14 C   00-12-12   YUEJIAN ZHU (WX20YZ) MODIFY TO MATCH T12Z AVN PROCESS
+     15 C   03-08-29   YUEJIAN ZHU (WX20YZ) MODIFY TO MATCH NEW IMPLEMENTATION
+     16 C   06-02-06   YUEJIAN ZHU (WX20YZ) MODIFY TO MATCH NEW IMPLEMENTATION
+     17 C   09-18-06   YUEJIAN ZHU (WX20YZ) MODIFY TO CORRECT THE PROBLEM AFTER
+     18 C              FORECAST LEAD TIME EXCEEDING 252 HOURS.
+     19 C
+     20 C USAGE:
+     21 C
+     22 C   INPUT FILES:
+     23 C     UNIT  11  PRECIPITATION GRIB FILE ( 144*73 )
+     24 C     UNIT  21  PRECIPITATION GRIB INDEX FILE
+     25 C
+     26 C   OUTPUT FILES:
+     27 C     UNIT  51  PRECIPITATION GRIB FILE ( 144*73 )
+     28 C
+     29 C   SUBPROGRAMS CALLED:
+     30 C     GETGBE -- W3LIB ROUTINE
+     31 C     PUTGBE -- W3LIB ROUTINE
+     32 C     CHECK1 -- LOCAL ROUTINE ( included after main program )
+     33 C     GRANGE -- LOCAL ROUTINE ( included after main program )
+     34 C
+     35 C   EXIT STATES:
+     36 C     COND =  0 - SUCCESSFUL RUN
+     37 C
+     38 C ATTRIBUTES:
+     39 C   LANGUAGE: FORTRAN
+     40 C
+     41 C$$$
+     42       program prcpcv                                            
+     43       parameter(jf=10512,iensem=16)
+     44       dimension f(jf),ff(jf),pp(jf)
+     45       dimension itind(20)
+     46       dimension jpds(25),jgds(22),jens(5)             
+     47       dimension kpds(25),kgds(22),kens(5)
+     48       dimension jens2(iensem),jens3(iensem)
+     49       character*80 cpgb,cpgi,cpge
+     50       logical*1 lb(jf)
+     51       namelist /namin/ cpgb,cpgi,cpge,ini,ipr,isp,itu
+     52 C     ini-intial time
+     53 C     ipr-average period
+     54 C     isp-avaerage step
+     55 C     itu-output time unit
+     56 C     data jens2/1,1,2,3,2,3,2,3,2,3,2,3/
+     57 C     data jens3/1,2,1,1,2,2,3,3,4,4,5,5/
+
+Page 2           Source Listing                  PRCPCV
+2013-12-06 16:20                                 CVPRCP.f
+
+     58       data jens2/1,1,3,3,3,3,3,3,3,3,3, 3, 3, 3, 3, 3/
+     59       data jens3/1,2,1,2,3,4,5,6,7,8,9,10,11,12,13,14/
+     60 c
+     61       CALL W3TAGB('PRCPCV',2003,0243,0069,'NP23')
+     62 c
+     63       read (5,namin,end=1000)
+     64       write(6,namin)
+     65  1000 continue
+     66 
+     67       itind     = 0
+     68       itind(1)  = 1      ! pds(13) = 1,  unit=hour
+     69       itind(2)  = 24     ! pds(13) = 2,  unit=day
+     70       itind(12) = 12     ! pds(13) = 12, unit=12 hrs
+     71       itind(11) = 6      ! pds(13) = 11, unit=6 hrs
+     72       itind(10) = 3      ! pds(13) = 10, unit=3 hrs
+     73       lpgb=len_trim(cpgb)
+     74       lpgi=len_trim(cpgi)
+     75       lpge=len_trim(cpge)
+     76       print *, cpgb(1:lpgb+1),cpgi(1:lpgi+1),cpge(1:lpge+1)
+     77       call baopenr(11,cpgb(1:lpgb),iretb)
+     78       call baopenr(21,cpgi(1:lpgi),ireti)
+     79       call baopen (51,cpge(1:lpge),irete)
+     80 
+     81       do jj = 1, iensem ! total ensemble members
+     82        jpds15=0
+     83        do ii = 1, 31   ! need to set up
+     84         print *, "jj=",jj,",ii=",ii
+     85         icnt=0
+     86         ncnt=0
+     87         ff=0.0
+     88         pp=0.0
+     89         f =0.0
+     90         ip2m1=0
+     91         do n = 1, 100
+     92          j=-1
+     93          jpds=-1
+     94          jgds=-1
+     95          jens=-1
+     96          jpds(23) = 2
+     97          jens(2)=jens2(jj)
+     98          jens(3)=jens3(jj)
+     99          if (jj.eq.1) then
+    100           if (n.eq.1) then
+    101            if (ii.le.15) then
+    102             jpds(14)=(ii-1)*12
+    103             jpds(15)=jpds(14)+6
+    104            elseif (ii.gt.15.and.ii.le.21) then
+    105             jpds(14)=(ii-1)*12
+    106             jpds(15)=jpds(14)+12
+    107            else
+    108             jpds(14)=(ii-1)
+    109             jpds(15)=jpds(14)+1
+    110            endif
+    111           else
+    112            if (jpds15.lt.180) then
+    113             jpds(14)=jpds15
+    114             jpds(15)=jpds15+6
+
+Page 3           Source Listing                  PRCPCV
+2013-12-06 16:20                                 CVPRCP.f
+
+    115            elseif (jpds15.ge.180.and.jpds15.lt.252) then
+    116             jpds(14)=jpds15
+    117             jpds(15)=jpds15+12   
+    118            else
+    119             jpds(14)=jpds15/12
+    120             jpds(15)=jpds15/12+1
+    121            endif
+    122           endif
+    123          else
+    124           if (n.eq.1) then
+    125            if (ii.le.21) then
+    126             jpds(14)=(ii-1)*12
+    127             jpds(15)=jpds(14)+6
+    128            else
+    129             jpds(14)=(ii-1)*2
+    130             jpds(15)=jpds(14)+1
+    131            endif
+    132           else
+    133            if (jpds15.lt.252) then
+    134             jpds(14)=jpds15
+    135             jpds(15)=jpds15+6
+    136            else
+    137             jpds(14)=jpds15/6
+    138             jpds(15)=jpds15/6+1
+    139            endif
+    140           endif
+    141          endif
+    142          call getgbe(11,21,jf,j,jpds,jgds,jens,
+    143      &               kf,k,kpds,kgds,kens,lb,f,iret)
+    144          if(iret.eq.0) then
+    145           icnt = icnt + 1
+    146           call grange(kf,lb,f,dmin,dmax)
+    147           print '(i4,i3,2i3,4i3,i3,2i4,2i2,i6,2g12.4)',
+    148      &           n,(kpds(i),i=5,11),(kpds(i),i=13,15),
+    149      &           kens(2),kens(3),kf,dmin,dmax
+    150           ip1=kpds(14)*itind(kpds(13))
+    151           ip2=kpds(15)*itind(kpds(13))
+    152           if (icnt.eq.1) ip1st=ip1
+    153           ip2m1=ip2m1 + (ip2-ip1)
+    154           do ij=1, 10512
+    155            ff(ij)=ff(ij) + f(ij)
+    156           enddo
+    157           jpds15=kpds(15)*itind(kpds(13))
+    158           if (ip2m1.eq.ipr) goto 101
+    159          else
+    160           ncnt=ncnt+1
+    161           if ( ncnt.le.1 ) then
+    162            print *,' n=',n,' iret=',iret
+    163           endif
+    164          endif
+    165         enddo
+    166  101    continue
+    167         if (ncnt.ne.0) goto 102
+    168 c       kpds(13) = 12
+    169 c       kpds(14) = jpds15/12 - 2
+    170         kpds(13) = itu
+    171         kpds(14) = jpds15/12 - 24/itind(kpds(13))
+
+Page 4           Source Listing                  PRCPCV
+2013-12-06 16:20                                 CVPRCP.f
+
+    172         kpds(15) = jpds15/12     
+    173         do ij=1, 10512
+    174          if (ff(ij).lt.0.0000001) then
+    175           ff(ij)=0.0                  
+    176          endif
+    177         enddo
+    178         call grange(kf,lb,ff,dmin,dmax)
+    179         print *, "=== write out ==="
+    180         print '(i4,i3,2i3,4i3,i3,2i4,2i2,i6,2g12.4)',
+    181      &         n,(kpds(i),i=5,11),(kpds(i),i=13,15),
+    182      &         kens(2),kens(3),kf,dmin,dmax
+    183         call putgbe(51,kf,kpds,kgds,kens,lb,ff,iret)
+    184        enddo
+    185  102   continue
+    186       enddo 
+    187 c
+    188       call baclose(11,iretb)
+    189       call baclose(21,ireti)
+    190       call baclose(51,irete)
+    191 
+    192       CALL W3TAGE('PRCPCV')
+    193 
+    194       stop    
+    195       end
+
+
+ENTRY POINTS
+
+  Name              
+                    
+ MAIN__             
+
+Page 5           Source Listing                  PRCPCV
+2013-12-06 16:20 Symbol Table                    CVPRCP.f
+
+
+
+SYMBOL CROSS REFERENCE
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ 1000                       Label  65                                                             63                                
+ 101                        Label  166                                                            158                               
+ 102                        Label  185                                                            167                               
+ BACLOSE                    Subr   188                                                            188,189,190                       
+ BAOPEN                     Subr   79                                                             79                                
+ BAOPENR                    Subr   77                                                             77,78                             
+ CPGB                       Local  49       CHAR            80          scalar                    51,73,76,77                       
+ CPGE                       Local  49       CHAR            80          scalar                    51,75,76,79                       
+ CPGI                       Local  49       CHAR            80          scalar                    51,74,76,78                       
+ DMAX                       Local  146      R(4)            4           scalar                    146,149,178,182                   
+ DMIN                       Local  146      R(4)            4           scalar                    146,149,178,182                   
+ F                          Local  44       R(4)            4     1     10512                     89,143,146,155                    
+ FF                         Local  44       R(4)            4     1     10512                     87,155,174,175,178,183            
+ GETGBE                     Subr   142                                                            142                               
+ GRANGE                     Subr   146                                                            146,178                           
+ I                          Local  148      I(4)            4           scalar                    148,181                           
+ ICNT                       Local  85       I(4)            4           scalar                    85,145,152                        
+ IENSEM                     Param  43       I(4)            4           scalar                    48,81                             
+ II                         Local  83       I(4)            4           scalar                    83,84,101,102,104,105,108,125,126,
+                                                                                                  129                               
+ IJ                         Local  154      I(4)            4           scalar                    154,155,173,174,175               
+ INI                        Local  51       I(4)            4           scalar                    51                                
+ IP1                        Local  150      I(4)            4           scalar                    150,152,153                       
+ IP1ST                      Local  152      I(4)            4           scalar                    152                               
+ IP2                        Local  151      I(4)            4           scalar                    151,153                           
+ IP2M1                      Local  90       I(4)            4           scalar                    90,153,158                        
+ IPR                        Local  51       I(4)            4           scalar                    51,158                            
+ IRET                       Local  143      I(4)            4           scalar                    143,144,162,183                   
+ IRETB                      Local  77       I(4)            4           scalar                    77,188                            
+ IRETE                      Local  79       I(4)            4           scalar                    79,190                            
+ IRETI                      Local  78       I(4)            4           scalar                    78,189                            
+ ISP                        Local  51       I(4)            4           scalar                    51                                
+ ITIND                      Local  45       I(4)            4     1     20                        67,68,69,70,71,72,150,151,157,171 
+ ITU                        Local  51       I(4)            4           scalar                    51,170                            
+ J                          Local  92       I(4)            4           scalar                    92,142                            
+ JENS                       Local  46       I(4)            4     1     5                         95,97,98,142                      
+ JENS2                      Local  48       I(4)            4     1     16                        58,97                             
+ JENS3                      Local  48       I(4)            4     1     16                        59,98                             
+ JF                         Param  43       I(4)            4           scalar                    44,50,142                         
+ JGDS                       Local  46       I(4)            4     1     22                        94,142                            
+ JJ                         Local  81       I(4)            4           scalar                    81,84,97,98,99                    
+ JPDS                       Local  46       I(4)            4     1     25                        93,96,102,103,105,106,108,109,113,
+                                                                                                  114,116,117,119,120,126,127,129,13
+                                                                                                  0,134,135,137,138,142             
+ JPDS15                     Local  82       I(4)            4           scalar                    82,112,113,114,115,116,117,119,120
+                                                                                                  ,133,134,135,137,138,157,171,172  
+ K                          Local  143      I(4)            4           scalar                    143                               
+ KENS                       Local  47       I(4)            4     1     5                         143,149,182,183                   
+ KF                         Local  143      I(4)            4           scalar                    143,146,149,178,182,183           
+ KGDS                       Local  47       I(4)            4     1     22                        143,183                           
+ KPDS                       Local  47       I(4)            4     1     25                        143,148,150,151,157,170,171,172,18
+
+Page 6           Source Listing                  PRCPCV
+2013-12-06 16:20 Symbol Table                    CVPRCP.f
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+                                                                                                  1,183                             
+ LB                         Local  50       L(1)            1     1     10512                     143,146,178,183                   
+ LEN_TRIM                   Func   73                                   scalar                    73,74,75                          
+ LPGB                       Local  73       I(4)            4           scalar                    73,76,77                          
+ LPGE                       Local  75       I(4)            4           scalar                    75,76,79                          
+ LPGI                       Local  74       I(4)            4           scalar                    74,76,78                          
+ N                          Local  91       I(4)            4           scalar                    91,100,124,148,162,181            
+ NAMIN                      Local  51                                   scalar                    63,64                             
+ NCNT                       Local  86       I(4)            4           scalar                    86,160,161,167                    
+ PP                         Local  44       R(4)            4     1     10512                     88                                
+ PRCPCV                     Prog   42                                                                                               
+ PUTGBE                     Subr   183                                                            183                               
+ W3TAGB                     Subr   61                                                             61                                
+ W3TAGE                     Subr   192                                                            192                               
+
+Page 7           Source Listing                  GRANGE
+2013-12-06 16:20                                 CVPRCP.f
+
+    196       subroutine grange(n,ld,d,dmin,dmax)
+    197 C$$$  SUBPROGRAM DOCUMENTATION BLOCK
+    198 C
+    199 C SUBPROGRAM: GRANGE(N,LD,D,DMIN,DMAX)          
+    200 C   PRGMMR: YUEJIAN ZHU       ORG:NP23           DATE: 97-03-17
+    201 C
+    202 C ABSTRACT: THIS SUBROUTINE WILL ALCULATE THE MAXIMUM AND      
+    203 C           MINIMUM OF A ARRAY
+    204 C
+    205 C PROGRAM HISTORY LOG:
+    206 C   97-03-17   YUEJIAN ZHU (WD20YZ)
+    207 C
+    208 C USAGE:
+    209 C
+    210 C   INPUT ARGUMENTS:
+    211 C     N        -- INTEGER              
+    212 C     LD(N)    -- LOGICAL OF DIMENSION N
+    213 C     D(N)     -- REAL ARRAY OF DIMENSION N
+    214 C
+    215 C   OUTPUT ARGUMENTS:
+    216 C     DMIN     -- REAL NUMBER ( MINIMUM )
+    217 C     DMAX     -- REAL NUMBER ( MAXIMUM )
+    218 C
+    219 C ATTRIBUTES:
+    220 C   LANGUAGE: FORTRAN
+    221 C
+    222 C$$$
+    223       logical*1 ld
+    224       dimension ld(n),d(n)
+    225       dmin=1.e30
+    226       dmax=-1.e30
+    227       do i=1,n
+    228         if(ld(i)) then
+    229           dmin=min(dmin,d(i))
+    230           dmax=max(dmax,d(i))
+    231         endif
+    232       enddo
+    233       return
+    234       end
+
+Page 8           Source Listing                  GRANGE
+2013-12-06 16:20 Entry Points                    CVPRCP.f
+
+
+
+ENTRY POINTS
+
+  Name               
+                     
+ grange_             
+
+
+SYMBOL CROSS REFERENCE
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ D                          Dummy  196      R(4)            4     1     0        ARG,INOUT        229,230                           
+ DMAX                       Dummy  196      R(4)            4           scalar   ARG,INOUT        226,230                           
+ DMIN                       Dummy  196      R(4)            4           scalar   ARG,INOUT        225,229                           
+ GRANGE                     Subr   196                                                                                              
+ I                          Local  227      I(4)            4           scalar                    227,228,229,230                   
+ LD                         Dummy  196      L(1)            1     1     0        ARG,INOUT        228                               
+ MAX                        Func   230                                  scalar                    230                               
+ MIN                        Func   229                                  scalar                    229                               
+ N                          Dummy  196      I(4)            4           scalar   ARG,INOUT        224,227                           
+
+Page 9           Source Listing                  CHECK1
+2013-12-06 16:20                                 CVPRCP.f
+
+    235       subroutine check1(kpds,kens,kkf,f1,f2,ictl)
+    236 C$$$  SUBPROGRAM DOCUMENTATION BLOCK
+    237 C
+    238 C SUBPROGRAM: CHECK1(KPDS,KENS,KKF,F1,F2,ICT)          
+    239 C   PRGMMR: YUEJIAN ZHU       ORG:NP23           DATE: 97-03-17
+    240 C
+    241 C ABSTRACT: THIS SUBROUTINE WILL CHECK THE PRECIPITATION FIELDS
+    242 C           ARRANGEMENT AND CONVERT TO 12 HOURS PERIOD, OR 
+    243 C           CONVERT PRATE TO ACCUMULATION AMOUNT.
+    244 C
+    245 C PROGRAM HISTORY LOG:
+    246 C   97-03-17   YUEJIAN ZHU (WD20YZ)
+    247 C   98-05-13   YUEJIAN ZHU (WD20YZ) -- REMOVE 24 HOURS CONVERSION
+    248 C   00-10-30   YUEJIAN ZHU (WX20YZ) -- MODIFIED TO MATCH AVN PROCESS
+    249 C   00-12-12   YUEJIAN ZHU (WX20YZ) -- MODIFIED TO MATCH T12Z AVN PROCESS
+    250 C
+    251 C USAGE:
+    252 C   SUBROUTINE CHECK1(KPDS,KENS,KKF,F1,F2,ICT)
+    253 C
+    254 C   INPUT ARGUMENTS:
+    255 C     KPDS(25) -- GRIB PDS MESSGAE
+    256 C     KENS(5)  -- GRIB ENSEMBLE MESSAGE 
+    257 C     F1(KKF)  -- FIELD OF DIMENSION KKF
+    258 C     F2(KKF)  -- FIELD OF DIMENSION KKF
+    259 C     KKF      -- INTEGER NUMBER
+    260 C
+    261 C   OUTPUT ARGUMENTS:
+    262 C     F2(KKF)  -- FIELD OF DIMENSION KKF
+    263 C     ICTL     -- INTEGER TO CONTROL CONVERSION
+    264 C
+    265 C ATTRIBUTES:
+    266 C   LANGUAGE: FORTRAN
+    267 C
+    268 C$$$
+    269       dimension f1(kkf),f2(kkf)
+    270       dimension kpds(25),kens(5)        
+    271 ccc
+    272       ictl=1
+    273       if (kpds(13).eq.1)  ifact=1 
+    274       if (kpds(13).eq.11) ifact=6 
+    275       if (kpds(13).eq.12) ifact=12
+    276       
+    277       ifs=kpds(14)*ifact
+    278       ife=kpds(15)*ifact
+    279       idiff=ife-ifs
+    280 
+    281       if (kens(2).eq.1.and.kens(3).eq.1) then
+    282 ccc....
+    283 ccc   ###for T12Z forecasting up to 72 hours  ( AVN running )
+    284 ccc   ###for T12Z forecasting up to 84 hours  ( AVN running )
+    285 ccc   ###for T12Z forecasting up to 120 hours  ( AVN running )
+    286 ccc   ###for T12Z forecasting up to 180 hours  ( AVN running )
+    287 ccc   ###for GFS forecasting up to 180 hours  ( AVN running )
+    288 ccc....
+    289 c      if (kpds(14).le.66) then
+    290 c      if (kpds(14).le.78) then
+    291 c      if (kpds(14).le.114) then
+
+Page 10          Source Listing                  CHECK1
+2013-12-06 16:20                                 CVPRCP.f
+
+    292        if (kpds(14).le.174) then
+    293         if (mod(kpds(15),12).eq.0) then
+    294          do i=1,kkf
+    295           f2(i) = f2(i) + f1(i)
+    296           if (f2(i).lt.0.0) then
+    297            f2(i) = 0.0
+    298           endif
+    299          enddo
+    300          kpds(14) = kpds(14) - 6
+    301          kpds(5)  = 61
+    302          kpds(14) = kpds(14)
+    303          kpds(15) = kpds(14)+12 
+    304          kpds(13) = 1
+    305          kpds(16) = 4
+    306         elseif (idiff.ne.12) then
+    307          ictl=0
+    308         endif
+    309        endif
+    310       elseif (idiff.ne.12) then
+    311        ictl=0
+    312       endif
+    313 c
+    314       if (kpds(13).eq.1) then
+    315        kpds(13) = 12
+    316        kpds(14) = kpds(14)/12
+    317        kpds(15) = kpds(15)/12
+    318       endif
+    319 c     print *, 'diff=',idiff,' ictl=',ictl
+    320 c
+    321       return
+    322       end
+
+Page 11          Source Listing                  CHECK1
+2013-12-06 16:20 Entry Points                    CVPRCP.f
+
+
+
+ENTRY POINTS
+
+  Name               
+                     
+ check1_             
+
+
+SYMBOL CROSS REFERENCE
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ CHECK1                     Subr   235                                                                                              
+ F1                         Dummy  235      R(4)            4     1     0        ARG,INOUT        295                               
+ F2                         Dummy  235      R(4)            4     1     0        ARG,INOUT        295,296,297                       
+ I                          Local  294      I(4)            4           scalar                    294,295,296,297                   
+ ICTL                       Dummy  235      I(4)            4           scalar   ARG,INOUT        272,307,311                       
+ IDIFF                      Local  279      I(4)            4           scalar                    279,306,310                       
+ IFACT                      Local  273      I(4)            4           scalar                    273,274,275,277,278               
+ IFE                        Local  278      I(4)            4           scalar                    278,279                           
+ IFS                        Local  277      I(4)            4           scalar                    277,279                           
+ KENS                       Dummy  235      I(4)            4     1     5        ARG,INOUT        281                               
+ KKF                        Dummy  235      I(4)            4           scalar   ARG,INOUT        269,294                           
+ KPDS                       Dummy  235      I(4)            4     1     25       ARG,INOUT        273,274,275,277,278,292,293,300,30
+                                                                                                  1,302,303,304,305,314,315,316,317 
+ MOD                        Func   293                                  scalar                    293                               
+
+Page 12          Source Listing                  CHECK1
+2013-12-06 16:20 Subprograms/Common Blocks       CVPRCP.f
+
+
+
+SUBPROGRAMS/COMMON BLOCKS
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ CHECK1                     Subr   235                                                                                              
+ GRANGE                     Subr   196                                                                                              
+ PRCPCV                     Prog   42                                                                                               
+
+COMPILER OPTIONS BEING USED
+
+       -align nocommons                      -align nodcommons
+       -align noqcommons                     -align records
+       -align nosequence                     -align norec1byte
+       -align norec2byte                     -align norec4byte
+       -align norec8byte                     -align norec16byte
+       -altparam                             -assume accuracy_sensitive
+       -assume nobscc                        -assume nobuffered_io
+       -assume byterecl                      -assume nocc_omp
+       -assume nocstring                     -assume nodummy_aliases
+       -assume nofpe_summary                 -assume noieee_fpe_flags
+       -assume nominus0                      -assume noold_boz
+       -assume old_unit_star                 -assume old_ldout_format
+       -assume noold_logical_ldio            -assume old_maxminloc
+       -assume old_xor                       -assume protect_constants
+       -assume noprotect_parens              -assume split_common
+       -assume source_include                -assume nostd_intent_in
+       -assume nostd_mod_proc_name           -assume norealloc_lhs
+       -assume underscore                    -assume no2underscores
+  no   -auto                                 -auto_scalar
+  no   -bintext                              -ccdefault default
+       -check noargs                         -check noarg_temp_created
+       -check nobounds                       -check noformat
+       -check nooutput_conversion            -check nooverflow
+       -check nopointers                     -check power
+       -check noshape                        -check nounderflow
+       -check nouninitialized                -coarray-num-procs 0
+  no   -coarray-config-file                  -convert big_endian
+       -cross_reference                      -D __INTEL_COMPILER=1210
+       -D __unix__                           -D __unix
+       -D __linux__                          -D __linux
+       -D __gnu_linux__                      -D unix
+       -D linux                              -D __ELF__
+       -D __x86_64                           -D __x86_64__
+       -D _MT                                -D __INTEL_COMPILER_BUILD_DATE=20120612
+       -D __i686                             -D __i686__
+       -D __pentiumpro                       -D __pentiumpro__
+       -D __pentium4                         -D __pentium4__
+       -D __tune_pentium4__                  -D __SSE2__
+       -D __SSE__                            -D __MMX__
+       -double_size 64                  no   -d_lines
+  no   -Qdyncom                              -error_limit 30
+  no   -f66                             no   -f77rtl
+  no   -fast                                 -fpscomp nofilesfromcmd
+       -fpscomp nogeneral                    -fpscomp noioformat
+       -fpscomp noldio_spacing               -fpscomp nologicals
+
+Page 13          Source Listing                  CHECK1
+2013-12-06 16:20                                 CVPRCP.f
+
+       -fixed                           no   -fpconstant
+       -fpe3                                 -fprm nearest
+  no   -ftz                                  -fp_model noprecise
+       -fp_model fast                        -fp_model nostrict
+       -fp_model nosource                    -fp_model nodouble
+       -fp_model noextended                  -fp_model novery_fast
+       -fp_model noexcept                    -fp_model nono_except
+       -fp_modbits nofp_contract             -fp_modbits nono_fp_contract
+       -fp_modbits nofenv_access             -fp_modbits nono_fenv_access
+       -fp_modbits nocx_limited_range        -fp_modbits nono_cx_limited_range
+       -fp_modbits noprec_div                -fp_modbits nono_prec_div
+       -fp_modbits noprec_sqrt               -fp_modbits nono_prec_sqrt
+       -fp_modbits noftz                     -fp_modbits nono_ftz
+       -fp_modbits nointrin_limited_range       -fp_modbits nono_intrin_limited_range
+       -fp_modbits notrunc_compares          -fp_modbits nono_trunc_compares
+       -fp_modbits noieee_nan_compares       -fp_modbits nono_ieee_nan_compares
+       -fp_modbits honor_f32_conversion       -fp_modbits nono_honor_f32_conversion
+       -fp_modbits honor_f64_conversion       -fp_modbits nono_honor_f64_conversion
+       -fp_modbits nono_x87_copy             -fp_modbits nono_no_x87_copy
+       -fp_modbits noexception_semantics       -fp_modbits nono_exception_semantics
+       -fp_modbits noprecise_libm_functions       -fp_modbits nono_precise_libm_functions
+       -heap_arrays 0                   no   -threadprivate_compat
+       -g2                                   -iface nomixed_str_len_arg
+       -iface nono_mixed_str_len_arg    no   -intconstant
+       -integer_size 32                 no   -mixed_str_len_arg
+  no   -module                               -names lowercase
+  no   -noinclude                            -O0
+  no   -pad_source                           -real_size 32
+  no   -recursive                            -reentrancy none
+  no   -sharable_localsaves                  -vec=simd
+       -show noinclude                       -show map
+       -show options                    no   -syntax_only
+  no   -threadcom                       no   -U
+  no   -vms                                  -w noall
+       -w nonone                             -w alignments
+       -w noargument_checking                -w nodeclarations
+       -w general                            -w noignore_bounds
+       -w noignore_loc                       -w nointerfaces
+       -w notruncated_source                 -w uncalled
+       -w uninitialized                      -w nounused
+       -w usage
+
+       -includepath : /gpfs/tp1/usrx/local/intel/composer_xe_2011_sp1.11.339/compiler/include/,.f,./.f,/usrx/local/intel/composerxe/mkl/include/.f,
+           /usrx/local/intel/composerxe/tbb/include/.f,/gpfs/tp1/usrx/local/intel/composer_xe_2011_sp1.11.339/compiler/include/intel64/.f,
+           /gpfs/tp1/usrx/local/intel/composer_xe_2011_sp1.11.339/compiler/include/.f,/usr/local/include/.f,/usr/lib/gcc/x86_64-redhat-linux/4.4.6/include/.f,
+           /usr/include/.f,/usr/include/.f
+       -list filename : CVPRCP.lst
+       -o    filename : none
+
+COMPILER: Intel(R) Fortran 12.1-2100

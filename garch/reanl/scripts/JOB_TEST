@@ -1,0 +1,29 @@
+### example 1
+#!/bin/sh
+#@ wall_clock_limit=00:15:00
+#@ requirements = Feature == "beta"
+#@ job_type = parallel
+#@ output = /ptmp/wx20yz/test.o$(jobid)
+#@ error = /ptmp/wx20yz/test.e$(jobid)
+#@ total_tasks = 30
+#@ node = 30
+#@ node_usage = not_shared
+#@ network.MPI=switch,not_shared,us
+#@ class = dev
+#
+#@ queue
+#
+
+#set -x
+
+cd /nfsuser/g01/wx20yz/reanl/scripts
+
+#time CLIMATE_ANOMALY_1d.sh 2005120300 24
+
+#time CLIMATE_ANOMALY.sh
+
+
+cd /dcom/us007003/20060103/wgrbbul/cmc
+time copygb -xg3 /dcom/us007003/20060103/wgrbbul/cmc/cmcens_20060103016f240 /ptmp/wx20yz/output
+time copygb -xg3 -i1 /dcom/us007003/20060103/wgrbbul/cmc/cmcens_20060103016f240 /ptmp/wx20yz/output
+time copygb -xg3 -i2 /dcom/us007003/20060103/wgrbbul/cmc/cmcens_20060103016f240 /ptmp/wx20yz/output

@@ -43,9 +43,9 @@ fi
 ICGLB=0
 ICCPC=0
 
-cmd=$SHOME/yan.luo/wpqpf/scripts
-cmd1=$SHOME/yan.luo/jif0304/scripts
-cmd1=$SHOME/yan.luo/jif0603/ush
+cmd=$SHOME/$LOGNAME/wpqpf/scripts
+cmd1=$SHOME/$LOGNAME/jif0304/scripts
+cmd1=$SHOME/$LOGNAME/jif0603/ush
 
 ymdh=$CDATE
 ymdhm12=`$nhours -12 $ymdh`
@@ -59,15 +59,15 @@ if [ $ICGLB -eq 0 ]; then
 ### Global MAPS upto 8 days
 ###
 
-tmpdir=$PTMP/yan.luo/web
+tmpdir=$PTMP/$LOGNAME/web
 
 if [ ! -s $tmpdir ]; then
    mkdir $tmpdir
 fi
 
 cd $tmpdir; rm gmeta_*              
-cp $SHOME/yan.luo/grads/rgbset.gs .
-cp $SHOME/yan.luo/grads/cbar.gs   .
+cp $SHOME/$LOGNAME/grads/rgbset.gs .
+cp $SHOME/$LOGNAME/grads/cbar.gs   .
 
 #$cmd1/prcpcv_20060530.sh /global/ENS/precip.$ymdh tmpi.$ymdh precip.$ymdh   
 $cmd1/global_enscvprcp_20060530.sh $GLOBAL/ENS/precip.$ymdh tmpi.$ymdh precip.$ymdh   
@@ -79,7 +79,7 @@ $cmd/pgrads_20060530.sh precip.$ymdh precipi.$ymdh precip.$ymdh.new
 pwd 
 
 mm=`echo $CDATE | cut -c5-6`
-MM=`grep "$mm" $SHOME/yan.luo/bin/mon2mon | cut -c8-10` 
+MM=`grep "$mm" $SHOME/$LOGNAME/bin/mon2mon | cut -c8-10` 
 DD=`echo $CDATE | cut -c7-8`
 
 if [ $DD -le 9 ]; then
@@ -166,13 +166,13 @@ done
 
 echo "'quit' " >>pgrads.gs
 
-gribmap -i pgrads.ctl
+$SHOME/$LOGNAME/xbin/gribmap -i pgrads.ctl
 #xgrads -cl "run  pgrads.gs"
 grads -cbl "run  pgrads.gs"
 
 SGIDIR=/export-1/sgi100/data/WebServer/htdocs/ens/prcp/prcppng
-WWWDIR=/usr/people/emc/htdocs/gmb/yluo/pqpf                          
-RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo/pqpf                          
+WWWDIR=/usr/people/emc/htdocs/gmb/wx20cb/pqpf                          
+RZDMDIR=/home/people/emc/www/htdocs/gmb/wx20cb/pqpf                          
 
 for file in mrf1 mrf2 mrf3 FL1  FL2  FL3  EU1  EU2  EU3   \
             SAM1 SAM2 SAM3 SAF1 SAF2 SAF3 SEA1 SEA2 SEA3  \
@@ -183,7 +183,7 @@ do
 if [ -s gmeta_$file.png ]; then
 #   gxpng -r -x 695 -y 545 -i gmeta_$file -o p${CDATE}_$file.png
    mv gmeta_$file.png  p${CDATE}_$file.png
-   ftpemcrzdm emcrzdm   put $RZDMDIR          $tmpdir p${CDATE}_$file.png
+   $SHOME/$LOGNAME/xbin/ftpemcrzdm emcrzdm   put $RZDMDIR          $tmpdir p${CDATE}_$file.png
 fi
 done
 
@@ -198,7 +198,7 @@ while [ $ICNT -le 32 ]; do
 if [ -s gmeta_$ICNT.png ]; then
 #   gxpng -r -x 695 -y 545 -i gmeta_$ICNT -o p${CDATE}_$jdat.png
    mv gmeta_$ICNT.png  p${CDATE}_$jdat.png
-   ftpemcrzdm emcrzdm   put $RZDMDIR          $tmpdir p${CDATE}_$jdat.png
+   $SHOME/$LOGNAME/xbin/ftpemcrzdm emcrzdm   put $RZDMDIR          $tmpdir p${CDATE}_$jdat.png
 fi
 
 for amount in a b c d
@@ -207,7 +207,7 @@ do
 if [ -s gmeta_g$amount$ICNT.png ]; then
 #   gxpng -r -x 695 -y 545 -i gmeta_g$amount$ICNT -o p${CDATE}_g$kdat.png
    mv gmeta_g$amount$ICNT.png p${CDATE}_g$kdat.png
-   ftpemcrzdm emcrzdm   put $RZDMDIR          $tmpdir p${CDATE}_g$kdat.png
+   $SHOME/$LOGNAME/xbin/ftpemcrzdm emcrzdm   put $RZDMDIR          $tmpdir p${CDATE}_g$kdat.png
 fi
 done
 
@@ -226,15 +226,15 @@ if [ $ICCPC -eq 0 ]; then
 ###   CPC's PQPF maps
 ###
 
-tmpdir=$PTMP/yan.luo/cpc
+tmpdir=$PTMP/$LOGNAME/cpc
 
 if [ ! -s $tmpdir ]; then
    mkdir $tmpdir
 fi
 
 cd $tmpdir; rm gmeta_*
-cp $SHOME/yan.luo/grads/rgbset.gs .
-cp $SHOME/yan.luo/grads/cbar.gs   .
+cp $SHOME/$LOGNAME/grads/rgbset.gs .
+cp $SHOME/$LOGNAME/grads/cbar.gs   .
 
 echo "cat $ymdhm12 and $ymdh precipitationa files"
 
@@ -247,7 +247,7 @@ $cmd/pgrads_20060530_cpc.sh precip.$ymdh precipi.$ymdh precip.$ymdh.new
 pwd
 
 mm=`echo $CDATE | cut -c5-6`
-MM=`grep "$mm" $SHOME/yan.luo/bin/mon2mon | cut -c8-10`
+MM=`grep "$mm" $SHOME/$LOGNAME/bin/mon2mon | cut -c8-10`
 DD=`echo $CDATE | cut -c7-8`
 
 if [ $DD -le 9 ]; then
@@ -314,34 +314,34 @@ sed -e "s/YMD1/$YMD1/"    \
 
 echo "'quit' " >>pgrads_cpc.gs
 
-gribmap -i pgrads_cpc.ctl
+$SHOME/$LOGNAME/xbin/gribmap -i pgrads_cpc.ctl
 #xgrads -cl "run  pgrads_cpc.gs"
 grads -cbl "run  pgrads_cpc.gs"
 
 #SGIDIR=/export/sgi62/data/wd23ja/WebServer/htdocs/ens/prcp/prcppng
 SGIDIR=/export-1/sgi100/data/WebServer/htdocs/ens/prcp/prcppng    
-WWWDIR=/disk066/emc/htdocs/gmb/yluo/pqpf                          
-RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo/pqpf                          
+WWWDIR=/disk066/emc/htdocs/gmb/wx20cb/pqpf                          
+RZDMDIR=/home/people/emc/www/htdocs/gmb/wx20cb/pqpf                          
 
 if [ -s gmeta_cpc_13.png ]; then
 #  gxpng -r -x 695 -y 545 -i gmeta_cpc_13 -o p${CDATE}_1-5.png
   mv gmeta_cpc_13.png p${CDATE}_1-5.png
-  ftpemcrzdm emcrzdm   put $RZDMDIR $tmpdir p${CDATE}_1-5.png
+  $SHOME/$LOGNAME/xbin/ftpemcrzdm emcrzdm   put $RZDMDIR $tmpdir p${CDATE}_1-5.png
 fi
 if [ -s gmeta_cpc_23.png ]; then
 #  gxpng -r -x 695 -y 545 -i gmeta_cpc_23 -o p${CDATE}_6-10.png
   mv gmeta_cpc_23.png  p${CDATE}_6-10.png  
-  ftpemcrzdm emcrzdm   put $RZDMDIR $tmpdir p${CDATE}_6-10.png
+  $SHOME/$LOGNAME/xbin/ftpemcrzdm emcrzdm   put $RZDMDIR $tmpdir p${CDATE}_6-10.png
 fi
 if [ -s gmeta_cpc_31.png ]; then
 #  gxpng -r -x 695 -y 545 -i gmeta_cpc_31 -o p${CDATE}_week2.png
   mv gmeta_cpc_31.png  p${CDATE}_week2.png
-  ftpemcrzdm emcrzdm   put $RZDMDIR $tmpdir p${CDATE}_week2.png
+  $SHOME/$LOGNAME/xbin/ftpemcrzdm emcrzdm   put $RZDMDIR $tmpdir p${CDATE}_week2.png
 fi
 if [ -s gmeta_med_12.png ]; then
 #  gxpng -r -x 695 -y 545 -i gmeta_med_12 -o p${CDATE}_4-5.png
   mv gmeta_med_12.png p${CDATE}_4-5.png
-  ftpemcrzdm emcrzdm   put $RZDMDIR $tmpdir p${CDATE}_4-5.png
+  $SHOME/$LOGNAME/xbin/ftpemcrzdm emcrzdm   put $RZDMDIR $tmpdir p${CDATE}_4-5.png
 fi
 
 rm $tmpdir/precip*
@@ -352,7 +352,7 @@ fi
 
 export CDATE=$CDATE
 
-cd $SHOME/yan.luo/wpqpf/scripts;pwd
+cd $SHOME/$LOGNAME/wpqpf/scripts;pwd
 
 ## moved next job to $HOME/jif_cqpf/scripts/CQPF.sh   
 ##  08/13/2003 -Yuejian Zhu

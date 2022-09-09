@@ -7,25 +7,25 @@ fi
 GTMP=/lfs/h2/emc/ptmp
 PTMP=/lfs/h2/emc/ptmp
 SHOME=/lfs/h2/emc/vpppg/save
-home=$SHOME/yan.luo
+home=$SHOME/$LOGNAME
 
-tmpdir=$PTMP/yan.luo/mmap_nh
+tmpdir=$PTMP/$LOGNAME/mmap_nh
 mkdir $tmpdir              
 cd $tmpdir                   
 rm $tmpdir/*                   
 
-datdir=$SHOME/yan.luo/eprob/data
+datdir=$SHOME/$LOGNAME/eprob/data
 CDATE=$1\00
 
 cp $home/grads/*.gs .
 cp $home/eprob/scripts/*.gs .
-cp $GTMP/yan.luo/vfprob/prob.grads   .
-cp $GTMP/yan.luo/vfprob/tmp.dat      .
+cp $GTMP/$LOGNAME/vfprob/prob.grads   .
+cp $GTMP/$LOGNAME/vfprob/tmp.dat      .
 cp $datdir/dis_avg.dat .
 
-$SHOME/yan.luo/bin/grib2ctl_sp.sh prob.grads >mmap.ctl
+$SHOME/$LOGNAME/bin/grib2ctl_sp.sh prob.grads >mmap.ctl
 
-gribmap -i mmap.ctl
+$SHOME/$LOGNAME/bin/gribmap -i mmap.ctl
 
 IYMDH=`$nhours +24   $CDATE`
 VYMDP0=`$nhours +00  $CDATE`
@@ -96,22 +96,22 @@ sed -e "s/IYMDH/$CDATE/" \
     -e "s/VYMD30/$VYMD30/" \
     -e "s/VYMD31/$VYMD31/" \
     -e "s/VYMD32/$VYMD32/" \
-    $SHOME/yan.luo/eprob/scripts/mmap_nh.gs >mmap.gs
+    $SHOME/$LOGNAME/eprob/scripts/mmap_nh.gs >mmap.gs
 
 pwd
 
 grads -cbl "mmap.gs"
 
-RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo/mmap                             
+RZDMDIR=/home/people/emc/www/htdocs/gmb/wx20cb/mmap                             
  
-ftpemcrzdmmkdir emcrzdm $RZDMDIR $CDATE
+$SHOME/$LOGNAME/xbin/ftpemcrzdmmkdir emcrzdm $RZDMDIR $CDATE
 
 for fhr in 24 48 72 96 120 144 168 192 216 240 264 288 312 336 360 
 do
  export CDATE=$CDATE
  #gxgif -r -x 1100 -y 850 -i mmap_${CDATE}_$fhr.gr -o mmap_${CDATE}_${fhr}_nh.gif
  #gxgif -r -x 695 -y 545 -i mmap_${CDATE}_$fhr.gr -o mmap_${CDATE}_${fhr}_nh.gif
- ftpemcrzdm emcrzdm put $RZDMDIR/$CDATE $tmpdir mmap_${CDATE}_${fhr}_nh.png
+ $SHOME/$LOGNAME/xbin/ftpemcrzdm emcrzdm put $RZDMDIR/$CDATE $tmpdir mmap_${CDATE}_${fhr}_nh.png
 done
 
 KYMD01=`$nhours -00  $CDATE`
@@ -147,11 +147,11 @@ sed -e "s/YYYYMMDD01/$KYMD01/g" \
     -e "s/YYYYMMDD14/$KYMD14/g" \
     -e "s/YYYYMMDD15/$KYMD15/g" \
     -e "s/YYYYMMDD16/$KYMD16/g" \
-    $SHOME/yan.luo/eprob/scripts/relpred_nh.html >relpred.html
+    $SHOME/$LOGNAME/eprob/scripts/relpred_nh.html >relpred.html
 
-SGIDIR=/export-1/sgi100/data/WebServer/htdocs/ens/yluo            
+SGIDIR=/export-1/sgi100/data/WebServer/htdocs/ens/wx20cb            
 
-sed -e "s/ens\/relpred\/figs/gmb\/yluo\/mmap/" \
+sed -e "s/ens\/relpred\/figs/gmb\/wx20cb\/mmap/" \
        relpred.html >relpred_nh.html
-RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo/html/opr
-ftpemcrzdm emcrzdm put $RZDMDIR $tmpdir relpred_nh.html
+RZDMDIR=/home/people/emc/www/htdocs/gmb/wx20cb/html/opr
+$SHOME/$LOGNAME/xbin/ftpemcrzdm emcrzdm put $RZDMDIR $tmpdir relpred_nh.html

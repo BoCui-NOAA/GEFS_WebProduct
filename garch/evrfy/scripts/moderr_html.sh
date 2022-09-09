@@ -4,7 +4,7 @@ if [ $# -lt 1 ]; then
   exit 8
 fi
 
-HOME=/lfs/h2/emc/vpppg/save/yan.luo
+HOME=/lfs/h2/emc/vpppg/save/$LOGNAME
 ndatex=/apps/ops/prod/nco/core/prod_util.v2.0.5/exec/ndate
 CDATE=$1
 

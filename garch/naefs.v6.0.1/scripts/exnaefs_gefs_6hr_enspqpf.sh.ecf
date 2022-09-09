@@ -1,0 +1,95 @@
+###########################################################################
+# This script generates the 6-hourly pqpf
+###########################################################################
+
+set +x
+echo " "
+echo " Entering sub script exnaefs_gefs_6hr_enspqpf.sh"
+echo " job input forecast interval is: $HRINTER   "
+echo " "
+set -x
+
+#################################
+# set input parameters 
+# PDY    : forecast initial time
+# cyc    : initial cycle
+# HRINTER: forecast hour interval
+#################################
+
+cd $DATA
+
+hourlist="    006 012 018 024 030 036 042 048 054 060 066 072 078 084 090 096 \
+          102 108 114 120 126 132 138 144 150 156 162 168 174 180 186 192 198 \
+          204 210 216 222 228 234 240 246 252 258 264 270 276 282 288 294 300 \
+          306 312 318 324 330 336 342 348 354 360 366 372 378 384"
+
+outfile_prcp=enspost.t${cyc}z.prcp                      
+                      
+>$outfile_prcp
+
+for nfhrs in $hourlist; do
+    infile=$COMIN/pgrb2ap5/geprcp.t${cyc}z.pgrb2a.0p50.f${nfhrs}                  
+    $WGRIB2 -match ":APCP:" $infile  -append -grib  $outfile_prcp
+done
+
+# Specify the input/output file names for 6hr pqpf:
+
+pgm=gefs_pgrb_enspqpf_30m
+pgmout=output
+
+export CPGB=enspost.t${cyc}z.prcp
+export CPGO=pqpf   
+
+rm inputpqpf
+
+echo "&namin"                           >inputpqpf
+echo "icyc=$cyc"                       >>inputpqpf
+echo "hrinter=$HRINTER"                 >>inputpqpf
+echo "cpgb='$CPGB',cpge='$CPGO'"        >>inputpqpf
+echo "/"                                >>inputpqpf
+
+cat inputpqpf
+
+rm $CPGO 
+
+. prep_step
+startmsg
+$EXECgefs/$pgm  <inputpqpf  >$pgmout
+export err=$?;err_chk
+
+  hourlist="    006 012 018 024 030 036 042 048 054 060 066 072 078 084 090 096 \
+           102 108 114 120 126 132 138 144 150 156 162 168 174 180 186 192 198 \
+           204 210 216 222 228 234 240 "
+
+  var=pqpf
+  for nfhrs in $hourlist; do
+    hb=`expr $nfhrs - 6`
+    hd=`expr $nfhrs - 0`
+    infile=pqpf
+    outfile=ge${var}.t${cyc}z.pgrb2a.0p50.f$nfhrs
+    outfile_gb1=ge${var}.t${cyc}z.pgrba.0p50.f$nfhrs
+    $WGRIB2 -match ":${hb}-${hd} hour" $infile -grib $outfile
+    if [ ! -s $outfile ]; then
+      hb=`expr $hb / 6`
+      hd=`expr $nfhrs / 6`
+      $WGRIB2 -match ":${hb}-${hd} day" $infile -grib $outfile
+    fi
+    if [ ! -s $outfile ]; then
+      echo "*********** Warning!!! Warning!!! ************"
+      echo "**** There is empty file for $outfile ********"
+    else
+      cp $outfile $COMOUT/
+#      $CNVGRIB -g21 -p40 $COMOUT/$outfile $COMOUT_GB1/${outfile_gb1}
+      if [ "$SENDDBN" = "YES" ]; then
+         $DBNROOT/bin/dbn_alert MODEL ENS_6HR_PQPF_GB2 $job $COMOUT/${outfile}
+      fi
+    fi
+  done
+
+set +x
+echo " "
+echo "Leaving sub script exgefs_6hr_enspqpf.sh"
+echo " "
+set -x
+
+

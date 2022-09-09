@@ -102,7 +102,7 @@ pwd
 
 grads -cbl "mmap.gs"
 
-RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo/mmap                             
+RZDMDIR=/home/people/emc/www/htdocs/gmb/wx20cb/mmap                             
  
 ftpemcrzdmmkdir emcrzdm $RZDMDIR $CDATE
 
@@ -149,9 +149,9 @@ sed -e "s/YYYYMMDD01/$KYMD01/g" \
     -e "s/YYYYMMDD16/$KYMD16/g" \
     $SHOME/Yan.Luo/save/eprob/scripts/relpred_nh.html >relpred.html
 
-SGIDIR=/export-1/sgi100/data/WebServer/htdocs/ens/yluo            
+SGIDIR=/export-1/sgi100/data/WebServer/htdocs/ens/wx20cb            
 
-sed -e "s/ens\/relpred\/figs/gmb\/yluo\/mmap/" \
+sed -e "s/ens\/relpred\/figs/gmb\/wx20cb\/mmap/" \
        relpred.html >relpred_nh.html
-RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo/html/opr
+RZDMDIR=/home/people/emc/www/htdocs/gmb/wx20cb/html/opr
 ftpemcrzdm emcrzdm put $RZDMDIR $tmpdir relpred_nh.html

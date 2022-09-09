@@ -1,0 +1,54 @@
+
+### example to submit gridtobs job
+#!/bin/sh
+#@ wall_clock_limit=29:00:00
+#@ requirements = Feature == "beta"
+#@ group = devonprod
+#@ job_type = parallel
+#@ output = /tmp/wx22lu/fits.o$(jobid)
+#@ error = /tmp/wx22lu/fits.e$(jobid)
+#@ total_tasks = 30
+#@ node = 30
+#@ node_usage = shared
+#@ network.MPI=switch,not_shared,us
+#@ class = dev
+#@ account_no = GEN-MTN
+#
+#@ queue
+#
+
+export SHOME=/gpfs/dell2/emc/verification/noscrub
+export nhours=/gpfs/dell1/nco/ops/nwprod/prod_util.v1.1.0/exec/ips/ndate
+export windex=/gpfs/dell1/nco/ops/nwprod/grib_util.v1.0.6/exec/grbindex
+
+### to verify one initial forecast (back to 16 days ago)
+
+CDATE=$CDATE
+STYMD=`$nhours -384 $CDATE | cut -c1-8`
+STYMDP=`$nhours -240 $CDATE | cut -c1-8`
+EDYMDP=`$nhours -48 $CDATE | cut -c1-8`
+YMDHP00=$CDATE
+
+#export CDATE=$CDATE;$SHOME/Yan.Luo/arch/ADD_ANL.sh
+
+cd $SHOME/Yan.Luo/save/eprob/scripts
+### this scripts is updated to run 10 member ensemble RMOP.
+#export CDATE=$CDATE;PROB_NCEP_opr_20060530.sh
+export CDATE=$CDATE; sh PROB_NCEP_20m.sh
+
+### stopped by 07/19/2006
+#export CDATE=$STYMD\00;PROB_NCEP_10m.sh
+#export CDATE=$STYMD\00;PROB_NCEP_17m.sh
+#export CDATE=$STYMD\00;PROB_NCEP_23m.sh
+### Started from 07/20/2006
+export CDATE=$STYMD\00;sh PROB_NCEP_10m_f20060530.sh
+export CDATE=$STYMD\00;sh PROB_NCEP_14m_f20060530.sh
+
+### adding CMC ensemble verification since 02/01/2002
+export CDATE=$STYMD\00;sh PROB_CMC_10m_f20060530.sh
+export CDATE=$STYMD\00;sh PROB_CMC_14m_f20060530.sh
+
+### adding ECM ensemble verification since 03/01/2002
+export CDATE=$STYMD\12;sh PROB_ECM_10m.sh
+export CDATE=$STYMD\12;sh PROB_ECM_14m_f20060530.sh
+export CDATE=$STYMD\12;sh PROB_ECM_20m_f20060530.sh

@@ -1,0 +1,77 @@
+set -xa
+
+export ptmp=/lfs/h2/emc/ptmp
+
+### define the directory and utility
+###
+
+export nhours=/apps/ops/prod/nco/core/prod_util.v2.0.5/exec/ndate
+#export SSUB=/u/$LOGNAME/save/xbin/sub_wcoss2
+export SSUB=/lfs/h2/emc/vpppg/save/$LOGNAME/ccpa/xbin/sub_wcoss2 
+mkdir -p /$ptmp/$LOGNAME/CCPA/ 
+###
+### get real time from GDIT Cray computer system
+###
+
+DYMDH=`date -u +%y%m%d%H`
+HH=` echo $DYMDH | cut -c7-8 `
+Date=` echo $DYMDH | cut -c1-6 `
+CDATE=20$Date$HH
+echo "CDATE=$CDATE"
+
+CUE=dev_transfer
+###
+### Submit the CCPA job
+###
+
+echo "++++++ Submit the CCPA data archive job ++++++"
+export CDATE=$CDATE
+out=$ptmp/$LOGNAME/output/ccpa_$CDATE
+job=/lfs/h2/emc/vpppg/save/$LOGNAME/ccpa/tskr_prec/3hr_CCPA/jobs/JCCPA_CONUS.sms.prod.archiveonly_cactus           
+$SSUB -a CCPA-DEV -q $CUE -p 1/1/S -r 512/1 -w +0000 -t 3:00:00 -j CCPA -o $out $job
+
+eval primary=`cat  /lfs/h1/ops/prod/config/prodmachinefile | grep primary`
+eval backup=`cat  /lfs/h1/ops/prod/config/prodmachinefile | grep backup`
+
+echo $primary "and " $backup
+
+isdogwood=primary:dogwood
+
+if [ $primary != $isdogwood ]; then
+
+   echo  " Check Web jobs on dogwood!"
+else
+   echo " cactus is the production machine! "
+   echo " Send web plots through cactus "
+
+echo "++++++ Submit the CCPA image web job ++++++"
+export CDATE=$CDATE
+out=$ptmp/$LOGNAME/output/ccpaplot_$CDATE
+job=/lfs/h2/emc/vpppg/save/$LOGNAME/ccpa/plot_ccpa/grads/plot.sh                
+$SSUB -a CCPA-DEV -q $CUE -p 1/1/S -r 512/1 -w +0120 -t 3:00:00 -j CCPA -o $out $job
+
+fi
+
+if [ $HH -gt 23 ]; then
+ echo HH= $HH , NOT VALID
+ exit
+fi
+
+if [ $HH -le 17 ]; then
+ (( ADDHR=18-HH ))
+else
+ (( ADDHR=26-HH ))
+fi
+echo $HH $ADDHR $CDATE
+NEXT_JOB_TIME=`$nhours +$ADDHR $CDATE`\10
+echo $NEXT_JOB_TIME
+
+###
+### Submit the schedual job itself   
+###
+
+echo "++++++ Submit the GARCH job ++++++"
+out=$ptmp/$LOGNAME/CCPA/ccpa_schedule
+job=/lfs/h2/emc/vpppg/save/$LOGNAME/ccpa/tskr_prec/3hr_CCPA/run/CCPA_archive_cactus
+$SSUB -a CCPA-DEV -q $CUE -p 1/1/S -r 512/1 -w ${NEXT_JOB_TIME} -t 3:00:00 -j CCPA_archive_cactus -o $out $job
+

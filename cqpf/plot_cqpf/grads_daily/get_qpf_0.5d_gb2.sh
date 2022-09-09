@@ -9,7 +9,7 @@ RUNID=$2
 
 YMD=`echo $CDATE | cut -c1-8`
 cyc=00
-datdir1=/lfs/h2/emc/vpppg/noscrub/yan.luo/ncep_gefs_0.5d
+datdir1=/lfs/h2/emc/vpppg/noscrub/$LOGNAME/ncep_gefs_0.5d
 datdir2=/lfs/h1/ops/prod/com/naefs/v6.1
 
 export hourlist=" 036 060 084 108 132 156 180 204 228 252 276 300 324 348 372 "
@@ -37,8 +37,8 @@ cd $tmpdir/opr
       # export err=8; err_chk
   fi     
      $CNVGRIB -g21 $outfile1_tmp $outfile1
-     grib2ctl -verf $outfile1   > opr_$ndhrs.ctl
-     gribmap -i  opr_$ndhrs.ctl
+     $SHOME/xbin/grib2ctl -verf $outfile1   > opr_$ndhrs.ctl
+     $SHOME/xbin/gribmap -i  opr_$ndhrs.ctl
 
 cd  $tmpdir/cal
     file2=geprcp.t${cyc}z.pgrb2a.0p50.bc_24hf${nfhrs}
@@ -54,7 +54,7 @@ cd  $tmpdir/cal
       # export err=8; err_chk
   fi     
      $CNVGRIB -g21 $outfile2_tmp $outfile2
-     grib2ctl -verf  $outfile2  > cal_$ndhrs.ctl
-     gribmap -i  cal_$ndhrs.ctl
+     $SHOME/xbin/grib2ctl -verf  $outfile2  > cal_$ndhrs.ctl
+     $SHOME/xbin/gribmap -i  cal_$ndhrs.ctl
 done
 

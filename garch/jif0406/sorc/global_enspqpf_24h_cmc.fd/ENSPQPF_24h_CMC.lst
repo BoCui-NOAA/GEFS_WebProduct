@@ -1,0 +1,516 @@
+Page 1           Source Listing                  ENSPQPF
+2021-12-01 03:44                                 ENSPQPF_24h_CMC.f
+
+      1 C$$$  MAIN PROGRAM DOCUMENTATION BLOCK
+      2 C
+      3 C MAIN PROGRAM: ENSPQPF       ENNSEMBLE BASED PQPF FOR 24 HOURS PERIOD
+      4 C   PRGMMR: YUEJIAN ZHU       ORG:NP23           DATE: 04-05-21
+      5 C
+      6 C ABSTRACT: THIS PROGRAM WILL CALCULATE ENSEMBLE BASED PROBABILISTIC
+      7 C           QUANTITATIVE PRECIPITATION FORECAST (PQPF)
+      8 C
+      9 C PROGRAM HISTORY LOG:
+     10 C   04-04-28   YUEJIAN ZHU (WX20YZ) WROTE THIS PROGRAM TO APPLY CMC'S
+     11 C              ENSEMBLE FORECAST ( 16 MEMBERS AT 1x1 degree resoution )
+     12 C   05-12-22   Bo Cui (WX20CB) MODIFY THIS PROGRAM TO READ CMC NEW
+     13 C              ENSEMBLE FORECAST (384 h forecast with 6 h interval)
+     14 C   06-03-28   Bo Cui (WX20CB) MODIFY THIS PROGRAM TO READ CMC 
+     15 C              ENSEMBLE FORECAST WITH NEW KENS2 and KENS3 MESSAGE
+     16 C
+     17 C USAGE:
+     18 C
+     19 C   INPUT FILES:
+     20 C     UNIT  11  PRECIPITATION GRIB FILE ( 360*181)
+     21 C     UNIT  21  PRECIPITATION GRIB INDEX FILE
+     22 C
+     23 C   OUTPUT FILES:
+     24 C     UNIT  51  PQPF GRIB FILE ( 360*181 )
+     25 C
+     26 C   SUBPROGRAMS CALLED:
+     27 C     GETGBE -- W3LIB ROUTINE
+     28 C     PUTGBEX-- W3LIB ROUTINE
+     29 C     GRANGE -- LOCAL ROUTINE ( included after main program )
+     30 C
+     31 C ATTRIBUTES:
+     32 C   LANGUAGE: FORTRAN
+     33 C
+     34 C$$$
+     35       program enspqpf                                           
+     36       parameter(jf=65160,len=64,mem=17)
+     37       dimension f(jf),ff(jf,mem),pp(jf,mem),aa(jf)
+     38       dimension pp1(jf,mem),pp2(jf,mem),pp3(jf,mem)
+     39       dimension rk(9),xprob(2),imembr(80)
+     40       dimension ipds(200),igds(200),iens(200),iprob(2),iclust(16)             
+     41       dimension jpds(200),jgds(200),jens(200)             
+     42       dimension kpds(200),kgds(200),kens(200)
+     43       dimension kens2(mem),kens3(mem)
+     44       logical*1 lb(jf)
+     45       character*255 cpgb,cpge
+     46       namelist /namin/ cpgb,cpge
+     47       data kens2/1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3/
+     48       data kens3/2,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16/
+     49       data rk/0.254,1.00,2.54,5.00,6.35,10.00,12.7,25.4,50.8/
+     50 ccc
+     51 c     CALL W3LOG('$S97118.73','ENSPPF')
+     52       CALL W3TAGB('ENSPPF',2004,0428,0073,'NP20   ')
+     53 
+     54       read (5,namin)
+     55       lpgb=len_trim(cpgb)
+     56       lpge=len_trim(cpge)
+     57       print *, cpgb(1:lpgb)
+
+Page 2           Source Listing                  ENSPQPF
+2021-12-01 03:44                                 ENSPQPF_24h_CMC.f
+
+     58       print *, cpge(1:lpge)
+     59       call baopenr(11,cpgb(1:lpgb),iretb)
+     60       call baopen (51,cpge(1:lpge),irete)
+     61 
+     62       pp1=0.0
+     63       pp2=0.0
+     64       pp3=0.0
+     65 
+     66       ncnt=0
+     67       iprob=0
+     68       xprob=0.0
+     69       iclust=0
+     70       imembr=0
+     71       do n=1,len !### len=steps
+     72 ccc
+     73 CCC Part I: get 17 ensemble members precipitation data
+     74 ccc
+     75        icnt=0
+     76        ff=0.0
+     77 
+     78        do m=1,mem
+     79         j=n-1
+     80         jpds=-1
+     81         jgds=-1
+     82         jens=-1
+     83         jpds(23)=2
+     84 c        jpds(13)=1
+     85 c        jpds(14)=(n-1)*6
+     86 c        jpds(15)=(n+0)*6
+     87 c        if (n.ge.43) then
+     88    	 jpds(13)=11
+     89          jpds(14)=n-1
+     90 	 jpds(15)=n  
+     91 c        endif
+     92         jens(2)=kens2(m)
+     93         jens(3)=kens3(m)
+     94         call getgbe(11,0,jf,j,jpds,jgds,jens,
+     95      &              kf,k,kpds,kgds,kens,lb,f,iret)
+     96 	if(iret.ne.0) then
+     97 	  print*, 'member is',m, ' hour is', jpds(14), jpds(15)
+     98         endif
+     99         if(iret.eq.0) then
+    100          icnt=icnt + 1
+    101          call grange(kf,lb,f,dmin,dmax)
+    102          print '(i4,i3,2i5,4i3,2i4,4i2,i4,i7,2g12.4)',
+    103      &    n,(kpds(i),i=5,11),kpds(14),kpds(15),(kens(i),i=1,5),
+    104      &    kf,dmin,dmax
+    105          do ii=1,jf
+    106           ff(ii,icnt)=f(ii)
+    107          enddo
+    108 ccc
+    109          if (icnt.eq.1) then
+    110           do ii = 1, 25
+    111            ipds(ii)=kpds(ii)
+    112           enddo
+    113           do ii = 1, 22
+    114            igds(ii)=kgds(ii)
+
+Page 3           Source Listing                  ENSPQPF
+2021-12-01 03:44                                 ENSPQPF_24h_CMC.f
+
+    115           enddo
+    116           do ii = 1, 5 
+    117            iens(ii)=kens(ii)
+    118           enddo 
+    119          endif
+    120         else
+    121          ncnt=ncnt+1
+    122          if ( ncnt.le.1 ) then
+    123           print *,' n=',n,' iret=',iret
+    124          endif
+    125         endif
+    126        enddo
+    127 ccc
+    128 CCC PART II: to calculate the probabilistic quatitative precipitation forecast
+    129 ccc
+    130 ccc to calculate poosible 24 hrs interval PQPF
+    131 ccc    such as 00-24 hrs
+    132 ccc            12-36 hrs
+    133 ccc            24-48 hrs
+    134 ccc            ......       
+    135 ccc            360-384 hrs
+    136        if (n.ge.4.and.mod(n,2).eq.0) then
+    137         do k = 1, 9
+    138          aa=0.0
+    139          do ii = 1, jf
+    140           do m = 1, icnt
+    141            bb=(ff(ii,m)+pp1(ii,m)+pp2(ii,m)+pp3(ii,m))
+    142            if (bb.ge.rk(k)) then
+    143             aa(ii) = aa(ii) + 1.0
+    144            endif
+    145           enddo
+    146          enddo
+    147          do ii = 1, jf 
+    148           aa(ii) = aa(ii)*100.0/float(icnt)
+    149           if (aa(ii).ge.99.0) then
+    150            aa(ii) = 100.0
+    151           endif
+    152          enddo
+    153 CCC 
+    154 CCC     testing print
+    155 CCC
+    156 c        if (n.eq.2.and.k.eq.2) then 
+    157 c         write(*,999) (aa(ii),ii=1001,1100)
+    158 c        endif
+    159 c999     format (10f8.1)
+    160 c
+    161          ipds(5)=191         !: OCT 9
+    162          ipds(13)=11
+    163          ipds(14)=n-4
+    164          ipds(15)=n
+    165          iens(2)=5           !: OCT 42
+    166          iens(3)=0           !: OCT 43
+    167          iens(4)=0           !: OCT 44
+    168          iprob(1)=61         !: OCT 46
+    169          iprob(2)=2          !: OCT 47
+    170          xprob(1)=0.0        !: OCT 48-51
+    171          xprob(2)=rk(k)      !: OCT 52-55
+
+Page 4           Source Listing                  ENSPQPF
+2021-12-01 03:44                                 ENSPQPF_24h_CMC.f
+
+    172          iclust(1)=icnt      !: OCT 61
+    173          call putgbex(51,jf,ipds,igds,iens,iprob,xprob,
+    174      &                iclust,imembr,lb,aa,iret)
+    175         enddo
+    176        endif
+    177        if (icnt.gt.0) then
+    178         do ii = 1, jf
+    179          do jj = 1, mem
+    180 	  if(n.eq.1) pp1(ii,jj)=ff(ii,jj)
+    181 	  if(n.eq.2) pp2(ii,jj)=ff(ii,jj)
+    182 	  if(n.eq.3) pp3(ii,jj)=ff(ii,jj)
+    183 	  if(n.ge.4) then
+    184 	   pp1(ii,jj)=pp2(ii,jj)
+    185 	   pp2(ii,jj)=pp3(ii,jj)
+    186 	   pp3(ii,jj)=ff(ii,jj)
+    187 	  endif
+    188          enddo
+    189         enddo
+    190        endif
+    191       enddo
+    192 
+    193       call baclose(11,iretb)
+    194       call baclose(21,ireti)
+    195       call baclose(51,irete)
+    196 
+    197 c     CALL W3LOG('$E')
+    198       CALL W3TAGE('ENSPQPF')
+    199 
+    200 c
+    201       stop    
+    202       end
+
+Page 5           Source Listing                  ENSPQPF
+2021-12-01 03:44 Entry Points                    ENSPQPF_24h_CMC.f
+
+
+
+ENTRY POINTS
+
+  Name              
+                    
+ MAIN__             
+
+
+SYMBOL CROSS REFERENCE
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ AA                         Local  37       R(4)            4     1     65160                     138,143,148,149,150,174           
+ BACLOSE                    Subr   193                                                            193,194,195                       
+ BAOPEN                     Subr   60                                                             60                                
+ BAOPENR                    Subr   59                                                             59                                
+ BB                         Local  141      R(4)            4           scalar                    141,142                           
+ CPGB                       Local  45       CHAR            255         scalar                    46,55,57,59                       
+ CPGE                       Local  45       CHAR            255         scalar                    46,56,58,60                       
+ DMAX                       Local  101      R(4)            4           scalar                    101,104                           
+ DMIN                       Local  101      R(4)            4           scalar                    101,104                           
+ ENSPQPF                    Prog   35                                                                                               
+ F                          Local  37       R(4)            4     1     65160                     95,101,106                        
+ FF                         Local  37       R(4)            4     2     1107720                   76,106,141,180,181,182,186        
+ FLOAT                      Func   148                                  scalar                    148                               
+ GETGBE                     Subr   94                                                             94                                
+ GRANGE                     Subr   101                                                            101                               
+ I                          Local  103      I(4)            4           scalar                    103                               
+ ICLUST                     Local  40       I(4)            4     1     16                        69,172,174                        
+ ICNT                       Local  75       I(4)            4           scalar                    75,100,106,109,140,148,172,177    
+ IENS                       Local  40       I(4)            4     1     200                       117,165,166,167,173               
+ IGDS                       Local  40       I(4)            4     1     200                       114,173                           
+ II                         Local  105      I(4)            4           scalar                    105,106,110,111,113,114,116,117,13
+                                                                                                  9,141,143,147,148,149,150,178,180,
+                                                                                                  181,182,184,185,186               
+ IMEMBR                     Local  39       I(4)            4     1     80                        70,174                            
+ IPDS                       Local  40       I(4)            4     1     200                       111,161,162,163,164,173           
+ IPROB                      Local  40       I(4)            4     1     2                         67,168,169,173                    
+ IRET                       Local  95       I(4)            4           scalar                    95,96,99,123,174                  
+ IRETB                      Local  59       I(4)            4           scalar                    59,193                            
+ IRETE                      Local  60       I(4)            4           scalar                    60,195                            
+ IRETI                      Local  194      I(4)            4           scalar                    194                               
+ J                          Local  79       I(4)            4           scalar                    79,94                             
+ JENS                       Local  41       I(4)            4     1     200                       82,92,93,94                       
+ JF                         Param  36       I(4)            4           scalar                    37,38,44,94,105,139,147,173,178   
+ JGDS                       Local  41       I(4)            4     1     200                       81,94                             
+ JJ                         Local  179      I(4)            4           scalar                    179,180,181,182,184,185,186       
+ JPDS                       Local  41       I(4)            4     1     200                       80,83,88,89,90,94,97              
+ K                          Local  95       I(4)            4           scalar                    95,137,142,171                    
+ KENS                       Local  42       I(4)            4     1     200                       95,103,117                        
+ KENS2                      Local  43       I(4)            4     1     17                        47,92                             
+ KENS3                      Local  43       I(4)            4     1     17                        48,93                             
+ KF                         Local  95       I(4)            4           scalar                    95,101,104                        
+ KGDS                       Local  42       I(4)            4     1     200                       95,114                            
+ KPDS                       Local  42       I(4)            4     1     200                       95,103,111                        
+ LB                         Local  44       L(1)            1     1     65160                     95,101,174                        
+
+Page 6           Source Listing                  ENSPQPF
+2021-12-01 03:44 Symbol Table                    ENSPQPF_24h_CMC.f
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ LEN                        Param  36       I(4)            4           scalar                    71                                
+ LEN_TRIM                   Func   55                                   scalar                    55,56                             
+ LPGB                       Local  55       I(4)            4           scalar                    55,57,59                          
+ LPGE                       Local  56       I(4)            4           scalar                    56,58,60                          
+ M                          Local  78       I(4)            4           scalar                    78,92,93,97,140,141               
+ MEM                        Param  36       I(4)            4           scalar                    37,38,43,78,179                   
+ MOD                        Func   136                                  scalar                    136                               
+ N                          Local  71       I(4)            4           scalar                    71,79,89,90,103,123,136,163,164,18
+                                                                                                  0,181,182,183                     
+ NAMIN                      Local  46                                   scalar                    54                                
+ NCNT                       Local  66       I(4)            4           scalar                    66,121,122                        
+ PP                         Local  37       R(4)            4     2     1107720                                                     
+ PP1                        Local  38       R(4)            4     2     1107720                   62,141,180,184                    
+ PP2                        Local  38       R(4)            4     2     1107720                   63,141,181,184,185                
+ PP3                        Local  38       R(4)            4     2     1107720                   64,141,182,185,186                
+ PUTGBEX                    Subr   173                                                            173                               
+ RK                         Local  39       R(4)            4     1     9                         49,142,171                        
+ W3TAGB                     Subr   52                                                             52                                
+ W3TAGE                     Subr   198                                                            198                               
+ XPROB                      Local  39       R(4)            4     1     2                         68,170,171,173                    
+
+Page 7           Source Listing                  ENSPQPF
+2021-12-01 03:44                                 ENSPQPF_24h_CMC.f
+
+    203 
+    204       subroutine grange(n,ld,d,dmin,dmax)
+    205 C$$$  SUBPROGRAM DOCUMENTATION BLOCK
+    206 C
+    207 C SUBPROGRAM: GRANGE(N,LD,D,DMIN,DMAX)
+    208 C   PRGMMR: YUEJIAN ZHU       ORG:NP23           DATE: 97-03-17
+    209 C
+    210 C ABSTRACT: THIS SUBROUTINE WILL ALCULATE THE MAXIMUM AND
+    211 C           MINIMUM OF A ARRAY
+    212 C
+    213 C PROGRAM HISTORY LOG:
+    214 C   97-03-17   YUEJIAN ZHU (WD20YZ)
+    215 C
+    216 C USAGE:
+    217 C
+    218 C   INPUT ARGUMENTS:
+    219 C     N        -- INTEGER
+    220 C     LD(N)    -- LOGICAL OF DIMENSION N
+    221 C     D(N)     -- REAL ARRAY OF DIMENSION N
+    222 C
+    223 C   OUTPUT ARGUMENTS:
+    224 C     DMIN     -- REAL NUMBER ( MINIMUM )
+    225 C     DMAX     -- REAL NUMBER ( MAXIMUM )
+    226 C
+    227 C ATTRIBUTES:
+    228 C   LANGUAGE: FORTRAN
+    229 C
+    230 C$$$
+    231       logical*1 ld
+    232       dimension ld(n),d(n)
+    233       dmin=1.e30
+    234       dmax=-1.e30
+    235       do i=1,n
+    236         if(ld(i)) then
+    237           dmin=min(dmin,d(i))
+    238           dmax=max(dmax,d(i))
+    239         endif
+    240       enddo
+    241       return
+    242       end
+
+Page 8           Source Listing                  GRANGE
+2021-12-01 03:44 Entry Points                    ENSPQPF_24h_CMC.f
+
+
+
+ENTRY POINTS
+
+  Name               
+                     
+ grange_             
+
+
+SYMBOL CROSS REFERENCE
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ D                          Dummy  204      R(4)            4     1     0        ARG,INOUT        237,238                           
+ DMAX                       Dummy  204      R(4)            4           scalar   ARG,INOUT        234,238                           
+ DMIN                       Dummy  204      R(4)            4           scalar   ARG,INOUT        233,237                           
+ GRANGE                     Subr   204                                                                                              
+ I                          Local  235      I(4)            4           scalar                    235,236,237,238                   
+ LD                         Dummy  204      L(1)            1     1     0        ARG,INOUT        236                               
+ MAX                        Func   238                                  scalar                    238                               
+ MIN                        Func   237                                  scalar                    237                               
+ N                          Dummy  204      I(4)            4           scalar   ARG,INOUT        232,235                           
+
+Page 9           Source Listing                  GRANGE
+2021-12-01 03:44                                 ENSPQPF_24h_CMC.f
+
+    243 
+
+Page 10          Source Listing                  GRANGE
+2021-12-01 03:44 Subprograms/Common Blocks       ENSPQPF_24h_CMC.f
+
+
+
+SUBPROGRAMS/COMMON BLOCKS
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ ENSPQPF                    Prog   35                                                                                               
+ GRANGE                     Subr   204                                                                                              
+
+COMPILER OPTIONS BEING USED
+
+       -align noall                          -align nonone
+       -align nocommons                      -align nodcommons
+       -align noqcommons                     -align nozcommons
+       -align records                        -align nosequence
+       -align norec1byte                     -align norec2byte
+       -align norec4byte                     -align norec8byte
+       -align norec16byte                    -align norec32byte
+       -align norec64byte                    -align noarray8byte
+       -align noarray16byte                  -align noarray32byte
+       -align noarray64byte                  -align noarray128byte
+       -align noarray256byte                 -altparam
+       -assume accuracy_sensitive            -assume nobscc
+       -assume nobuffered_io                 -assume nobuffered_stdout
+       -assume nobyterecl                    -assume nocontiguous_assumed_shape
+       -assume nocontiguous_pointer          -assume nocc_omp
+       -assume nocstring                     -assume nodummy_aliases
+       -assume nofpe_summary                 -assume noieee_fpe_flags
+       -assume nominus0                      -assume noold_boz
+       -assume old_complex_align             -assume old_unit_star
+       -assume old_inquire_recl              -assume old_ldout_format
+       -assume old_ldout_zero                -assume noold_logical_assign
+       -assume noold_logical_ldio            -assume old_maxminloc
+       -assume old_xor                       -assume noprotect_allocates
+       -assume protect_constants             -assume noprotect_parens
+       -assume split_common                  -assume source_include
+       -assume nostd_intent_in               -assume std_minus0_rounding
+       -assume nostd_mod_proc_name           -assume std_value
+       -assume realloc_lhs                   -assume underscore
+       -assume no2underscores                -assume norecursion
+  no   -auto                                 -auto_scalar
+  no   -bintext                              -ccdefault default
+       -check noarg_temp_created             -check noassume
+       -check nobounds                       -check nocontiguous
+       -check noformat                       -check nooutput_conversion
+       -check nooverflow                     -check nopointers
+       -check noshape                        -check nostack
+       -check nouninitialized                -check noudio_iostat
+       -coarray-num-procs 0             no   -coarray-config-file
+       -convert native                       -cross_reference
+       -D __INTEL_COMPILER=1910              -D __INTEL_COMPILER_UPDATE=3
+       -D __unix__                           -D __unix
+       -D __linux__                          -D __linux
+       -D __gnu_linux__                      -D unix
+       -D linux                              -D __ELF__
+       -D __x86_64                           -D __x86_64__
+       -D __amd64                            -D __amd64__
+
+Page 11          Source Listing                  GRANGE
+2021-12-01 03:44                                 ENSPQPF_24h_CMC.f
+
+       -D __INTEL_COMPILER_BUILD_DATE=20200925       -D __INTEL_OFFLOAD
+       -D __MMX__                            -D __SSE__
+       -D __SSE_MATH__                       -D __SSE2__
+       -D __SSE2_MATH__                      -D __SSE3__
+       -D __SSSE3__                          -D __SSE4_1__
+       -D __SSE4_2__                         -D __POPCNT__
+       -D __PCLMUL__                         -D __AES__
+       -D __AVX__                            -D __F16C__
+       -D __AVX_I__                          -D __RDRND__
+       -D __FMA__                            -D __FP_FAST_FMA
+       -D __FP_FAST_FMAF                     -D __BMI__
+       -D __LZCNT__                          -D __AVX2__
+       -D __haswell                          -D __haswell__
+       -D __tune_haswell__                   -D __core_avx2
+       -D __core_avx2__                      -D __tune_core_avx2__
+       -D __CRAY_X86_ROME                    -D __CRAYXT_COMPUTE_LINUX_TARGET
+       -double_size 64                  no   -d_lines
+  no   -Qdyncom                              -error_limit 30
+  no   -f66                             no   -f77rtl
+  no   -fast                                 -fpscomp nofilesfromcmd
+       -fpscomp nogeneral                    -fpscomp noioformat
+       -fpscomp noldio_spacing               -fpscomp nologicals
+       -fixed                           no   -fpconstant
+       -fpe3                                 -fprm nearest
+  no   -ftz                                  -fp_model noprecise
+       -fp_model fast                        -fp_model nostrict
+       -fp_model nosource                    -fp_model nodouble
+       -fp_model noextended                  -fp_model novery_fast
+       -fp_model noexcept                    -fp_model nono_except
+       -heap_arrays 0                   no   -threadprivate_compat
+       -g0                                   -iface nomixed_str_len_arg
+       -iface nono_mixed_str_len_arg         -init noarrays
+       -init nohuge                          -init noinfinity
+       -init nominus_huge                    -init nominus_infinity
+       -init nominus_tiny                    -init nonan
+       -init nosnan                          -init notiny
+       -init nozero                     no   -intconstant
+       -integer_size 32                 no   -mixed_str_len_arg
+  no   -module                               -names lowercase
+  no   -noinclude                       no   -o
+       -offload-build=host                   -openmp-simd
+       -O2                              no   -pad_source
+       -real_size 32                    no   -recursive
+       -reentrancy threaded                  -vec=simd
+       -show nofullpath                      -show noinclude
+       -show map                             -show options
+  no   -syntax_only                     no   -threadcom
+  no   -U                               no   -vms
+       -w noall                              -w nonone
+       -w alignments                         -w nodeclarations
+       -w noexternals                        -w general
+       -w noignore_bounds                    -w noignore_loc
+       -w nointerfaces                       -w noshape
+       -w notruncated_source                 -w uncalled
+       -w uninitialized                      -w nounused
+       -w usage                         no   -wrap-margins
+
+
+Page 12          Source Listing                  GRANGE
+2021-12-01 03:44                                 ENSPQPF_24h_CMC.f
+
+       -includepath : /pe/intel/compilers_and_libraries_2020.4.304/linux/pstl/stdlib/,/usr/lib64/gcc/x86_64-suse-linux/7/include/,
+           .f,./.f,/pe/intel/compilers_and_libraries_2020.4.304/linux/ipp/include/.f,/pe/intel/compilers_and_libraries_2020.4.304/linux/mkl/include/.f,
+           /pe/intel/compilers_and_libraries_2020.4.304/linux/pstl/include/.f,/pe/intel/compilers_and_libraries_2020.4.304/linux/pstl/stdlib/.f,
+           /pe/intel/compilers_and_libraries_2020.4.304/linux/tbb/include/.f,/pe/intel/compilers_and_libraries_2020.4.304/linux/compiler/include/intel64/.f,
+           /pe/intel/compilers_and_libraries_2020.4.304/linux/compiler/include/icc/.f,/pe/intel/compilers_and_libraries_2020.4.304/linux/compiler/include/.f,
+           /usr/lib64/gcc/x86_64-suse-linux/7/include/.f,/usr/lib64/gcc/x86_64-suse-linux/7/include-fixed/.f,/usr/include/.f,
+           /usr/include/.f,/usr/include/.f
+       -list filename : ENSPQPF_24h_CMC.lst
+  no   -o
+
+COMPILER: Intel(R) Fortran 19.1-1655

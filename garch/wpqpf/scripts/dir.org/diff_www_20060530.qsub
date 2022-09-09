@@ -1,0 +1,40 @@
+46,48c46,48
+< cmd=$SHOME/$LOGNAME/wpqpf/scripts
+< cmd1=$SHOME/$LOGNAME/jif0304/scripts
+< cmd1=$SHOME/$LOGNAME/jif0603/ush
+---
+> cmd=$SHOME/yan.luo/wpqpf/scripts
+> cmd1=$SHOME/yan.luo/jif0304/scripts
+> cmd1=$SHOME/yan.luo/jif0603/ush
+62c62
+< tmpdir=$PTMP/$LOGNAME/web
+---
+> tmpdir=$PTMP/yan.luo/web
+69,70c69,70
+< cp $SHOME/$LOGNAME/grads/rgbset.gs .
+< cp $SHOME/$LOGNAME/grads/cbar.gs   .
+---
+> cp $SHOME/yan.luo/grads/rgbset.gs .
+> cp $SHOME/yan.luo/grads/cbar.gs   .
+82c82
+< MM=`grep "$mm" $SHOME/$LOGNAME/bin/mon2mon | cut -c8-10` 
+---
+> MM=`grep "$mm" $SHOME/yan.luo/bin/mon2mon | cut -c8-10` 
+229c229
+< tmpdir=$PTMP/$LOGNAME/cpc
+---
+> tmpdir=$PTMP/yan.luo/cpc
+236,237c236,237
+< cp $SHOME/$LOGNAME/grads/rgbset.gs .
+< cp $SHOME/$LOGNAME/grads/cbar.gs   .
+---
+> cp $SHOME/yan.luo/grads/rgbset.gs .
+> cp $SHOME/yan.luo/grads/cbar.gs   .
+250c250
+< MM=`grep "$mm" $SHOME/$LOGNAME/bin/mon2mon | cut -c8-10`
+---
+> MM=`grep "$mm" $SHOME/yan.luo/bin/mon2mon | cut -c8-10`
+355c355
+< cd $SHOME/$LOGNAME/wpqpf/scripts;pwd
+---
+> cd $SHOME/yan.luo/wpqpf/scripts;pwd

@@ -8,6 +8,8 @@
 set -x
 date;pwd
 
+wgrib=/apps/ops/prod/libs/intel/19.1.3.304/grib_util/1.2.3/bin/wgrib
+
 tmpdir=$GTMP/$LOGNAME/eprob_14mb_a
 
 if [ -s $tmpdir ]; then
@@ -92,7 +94,7 @@ echo "$var" >> input3
 YMDH=`$nhours -12 $YMDH`
 infile=$GLOBAL/ENS_bc/z500.$YMDH
 ifrs=`expr $kcnt \* 12 `
-wgrib $infile | grep ":${ifrs}hr fcst" | wgrib -i $infile -grib -append -o z500_fst.$ymdh
+$wgrib $infile | grep ":${ifrs}hr fcst" | wgrib -i $infile -grib -append -o z500_fst.$ymdh
 
 kcnt=`expr $kcnt + 1`
 ymdhm12=`$nhours -12 $ymdhm12 `

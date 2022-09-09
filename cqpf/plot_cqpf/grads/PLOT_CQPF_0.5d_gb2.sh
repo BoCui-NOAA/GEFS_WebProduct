@@ -1,8 +1,8 @@
 #set -x
 
-SHOME=/lfs/h2/emc/vpppg/save/yan.luo
+SHOME=/lfs/h2/emc/vpppg/save/$LOGNAME/cqpf
 COMIN=/lfs/h1/ops/prod/com/ccpa/v4.2
-export tmpdir=/lfs/h2/emc/ptmp/yan.luo/cqpf_tmp
+export tmpdir=/lfs/h2/emc/ptmp/$LOGNAME/cqpf_tmp
 
 export nhours=/apps/ops/prod/nco/core/prod_util.v2.0.5/exec/ndate
 
@@ -31,7 +31,8 @@ CDATE=$1
 #export CDATE=$CDATE
 #CDATE=`$nhours -192 $CDATE `
 
-scripts=/u/yan.luo/save/plot_cqpf/grads
+#scripts=/u/$LOGNAME/save/plot_cqpf/grads
+scripts=$SHOME/plot_cqpf/grads
 
 
 YY=`echo $CDATE | cut -c1-4`
@@ -78,8 +79,8 @@ for nfhrs in $hourlist; do
     infile=$COMIN/ccpa.$fymd/${fcyc}/$file
     outfile=$tmpdir/obs/obs_${CDATE}_${grptime}
     cp $infile $outfile
-    grib2ctl -verf obs_${CDATE}_${grptime}   > obs_$nfhrs.ctl
-    gribmap -i  obs_$nfhrs.ctl
+    $SHOME/xbin/grib2ctl -verf obs_${CDATE}_${grptime}   > obs_$nfhrs.ctl
+    $SHOME/xbin/gribmap -i  obs_$nfhrs.ctl
 done
 
 
@@ -121,8 +122,8 @@ cp  ${amap}_${CDATE}_F00-06.png ${amap}_${CDATE}_F0-6.png
 cp  ${amap}_${CDATE}_F06-12.png ${amap}_${CDATE}_F6-12.png
 done
 
-export RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo/cpqpf_6h
-ftpemcrzdmmkdir emcrzdm $RZDMDIR $YY$MM$DD
+export RZDMDIR=/home/people/emc/www/htdocs/gmb/wx20cb/cpqpf_6h
+$SHOME/xbin/ftpemcrzdmmkdir emcrzdm $RZDMDIR $YY$MM$DD
 
-scp *.png   wd20yl@emcrzdm:$RZDMDIR/$YY$MM$DD
+scp *.png   bocui@emcrzdm:$RZDMDIR/$YY$MM$DD
 

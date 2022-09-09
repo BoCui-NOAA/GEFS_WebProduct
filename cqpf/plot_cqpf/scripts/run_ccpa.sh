@@ -5,7 +5,9 @@ eddate=$2
 
 module load prod_util/2.0.5
 
-cd /u/yan.luo/save/plot_cqpf/scripts
+SHOME=/lfs/h2/emc/vpppg/save/$LOGNAME/cqpf
+
+cd $SHOME/plot_cqpf/scripts
 
 while [ $stdate -le $eddate ]; do
 
@@ -17,10 +19,15 @@ daily_0.125d_CCPA_00z_00z.sh $stdate
 
   stdate=`$NDATE +24 $stdate`
 
+echo "stdate=" $stdate 
 done
 
-cd /lfs/h2/emc/vpppg/noscrub/yan.luo/daily_0.125d_ccpav4
-gribmap -i ccpa_conus_0.125d_00z_all.ctl
-gribmap -i ccpa_conus_0.125d_12z_all.ctl
+cd $SHOME/data/daily_0.125d_ccpav4
+$SHOME/xbin/gribmap -i ccpa_conus_0.125d_00z_all.ctl
+$SHOME/xbin/gribmap -i ccpa_conus_0.125d_12z_all.ctl
+
+ls  *ctl
+pwd
+echo "script run_ccpa.sh complete ! " 
 
 exit

@@ -3,7 +3,7 @@
 CDATE=$1
 YMD=`echo $CDATE | cut -c1-8`
 cyc=00
-datdir1=/lfs/h2/emc/vpppg/noscrub/yan.luo/ncep_gefs_0.5d
+datdir1=/lfs/h2/emc/vpppg/noscrub/$LOGNAME/ncep_gefs_0.5d
 datdir2=/lfs/h1/ops/prod/com/naefs/v6.1
 
 export hourlist=" 036 060 084 108 132 156 180 204 228 252 276 300 324 348 372 "

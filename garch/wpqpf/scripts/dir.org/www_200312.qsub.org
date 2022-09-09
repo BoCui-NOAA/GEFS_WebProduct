@@ -1,0 +1,615 @@
+### example 1
+#!/bin/sh
+#@ wall_clock_limit=00:10:00
+#@ requirements = Feature == "beta"
+#@ job_type = parallel
+#@ output = /tmp/wx22lu/web.o$(jobid)
+#@ error = /tmp/wx22lu/web.e$(jobid)
+#@ total_tasks = 30
+#@ node = 30
+#@ node_usage = shared
+#@ network.MPI=switch,not_shared,us
+#@ class = dev
+#
+#@ queue
+#
+
+###
+### This is the main script to run PQPF, QPF, CQPF and CPQPF
+### This job is excuted once a day by every morning
+###
+###    --- Yuejian Zhu  (Dec. 2003)
+###
+
+set -x
+
+Date=`date '+DATE: %m/%d/%y TIME: %H:%M:%S'`
+echo " The current time is $Date "
+
+if [ "$CDATE" = " " ]; then
+   echo "CDATE = $CDATE "
+   echo "JOB EXIT NOW !!!!!!"
+   exit
+fi
+
+HCYCLE=`echo $CDATE | cut -c9-10`
+
+if [ $HCYCLE -eq 00 ]; then
+   ### control plots for global, cpc and 6-hour cycle
+   ###  0=run, 1=not run
+   ICGLB=1
+   ICCPC=1
+   IC6HR=0
+   #### new job has been added to make comparison of QPF & CQPF, PQPF & CPQPF
+#   export CDATE=$CDATE; $SHOME/yan.luo/jif_cqpf/grads/PLOT.sh
+else
+   ### control plots for global, cpc and 6-hour cycle
+   ###  0=run, 1=not run
+   ICGLB=1
+   ICCPC=1
+   IC6HR=0
+fi
+
+cmd=$SHOME/yan.luo/wpqpf/scripts
+
+ymdh=$CDATE
+ymdhm12=`$nhours -12 $ymdh`
+ymd=`echo $ymdh | cut -c1-8`
+YY=`echo $ymdh | cut -c3-4`
+ymdm1=`echo $ymdhm12 | cut -c1-8`
+
+if [ $ICGLB -eq 0 ]; then
+
+###
+### Global MAPS upto 8 days
+###
+
+tmpdir=$PTMP/yan.luo/web
+
+if [ ! -s $tmpdir ]; then
+   mkdir $tmpdir
+fi
+
+cd $tmpdir; rm gmeta_*              
+
+echo "cat $ymdhm12 and $ymdh precipitationa files"
+
+cat $GLOBAL/ENS/precip.$ymdhm12 >precip.$ymdh
+cat $GLOBAL/ENS/precip.$ymdh   >>precip.$ymdh
+
+ls -l precip*
+
+$cmd/pgrads_23m.sh precip.$ymdh precipi.$ymdh precip.$ymdh.new
+
+pwd 
+
+mm=`echo $CDATE | cut -c5-6`
+MM=`grep "$mm" $SHOME/yan.luo/bin/mon2mon | cut -c8-10` 
+DD=`echo $CDATE | cut -c7-8`
+
+if [ $DD -le 9 ]; then
+   DD=0$DD
+fi
+
+HHDDMMYY=00Z$DD$MM$YY
+
+FILENAME=precip.$ymdh.new
+
+sed -e "s/FILENAME/$FILENAME/" \
+    -e "s/HHDDMMYY/$HHDDMMYY/"    \
+    $cmd/pgrads_23m.ctl  >pgrads.ctl
+cat $cmd/pgrads_top.gs          >pgrads.gs   
+cat $cmd/pgrads_top.EXEC        >pgrads_print.exec
+
+STEP=4
+hour2=36
+while [ $STEP -le 32 ]; do   
+
+hour1=`expr $hour2 - 24`
+YMD1=`$nhours +$hour1 $ymdh`
+YMD2=`$nhours +$hour2 $ymdh`
+
+sed -e "s/YMD1/$YMD1/"    \
+    -e "s/YMD2/$YMD2/"    \
+    -e "s/YMDH/$ymdh/"    \
+    -e "s/STEP/$STEP/"    \
+    $cmd/pgrads_loop.gs        >>pgrads.gs   
+
+if [ $STEP -le 10 ]; then
+sed -e "s/YMD1/$YMD1/"    \
+    -e "s/YMD2/$YMD2/"    \
+    -e "s/YMDH/$ymdh/"    \
+    -e "s/STEP/$STEP/"    \
+    $cmd/pgrads_loop_print.EXEC      >>pgrads_print.exec
+fi
+
+hour2=`expr $hour2 + 24`
+STEP=`expr $STEP + 2`
+
+done
+
+sed -e "s/YMDH/$ymdh/"    \
+    $cmd/pgrads_mrf.gs        >>pgrads.gs   
+sed -e "s/YMDH/$ymdh/"    \
+    $cmd/pgrads_FL.gs         >>pgrads.gs  
+sed -e "s/YMDH/$ymdh/"    \
+    $cmd/pgrads_EU.gs         >>pgrads.gs   
+sed -e "s/YMDH/$ymdh/"    \
+    $cmd/pgrads_SAM.gs        >>pgrads.gs   
+sed -e "s/YMDH/$ymdh/"    \
+    $cmd/pgrads_SAF.gs        >>pgrads.gs   
+sed -e "s/YMDH/$ymdh/"    \
+    $cmd/pgrads_SEA.gs        >>pgrads.gs   
+sed -e "s/YMDH/$ymdh/"    \
+    $cmd/pgrads_MNS.gs        >>pgrads.gs   
+sed -e "s/YMDH/$ymdh/"    \
+    $cmd/pgrads_ALA.gs        >>pgrads.gs   
+sed -e "s/YMDH/$ymdh/"    \
+    $cmd/pgrads_BOS.gs        >>pgrads.gs   
+sed -e "s/YMDH/$ymdh/"    \
+    $cmd/pgrads_ME.gs         >>pgrads.gs   
+sed -e "s/YMDH/$ymdh/"    \
+    $cmd/pgrads_HWI.gs         >>pgrads.gs   
+STEP=4
+hour2=36
+while [ $STEP -le 32 ]; do   
+
+hour1=`expr $hour2 - 24`
+YMD1=`$nhours +$hour1 $ymdh`
+YMD2=`$nhours +$hour2 $ymdh`
+
+sed -e "s/YMD1/$YMD1/"    \
+    -e "s/YMD2/$YMD2/"    \
+    -e "s/YMDH/$ymdh/"    \
+    -e "s/STEP/$STEP/"    \
+    $cmd/pgrads_gloop.gs        >>pgrads.gs   
+
+hour2=`expr $hour2 + 24`
+STEP=`expr $STEP + 2`
+
+done
+
+echo "'quit' " >>pgrads.gs
+gribmap -i pgrads.ctl
+#xgrads -cl "run  pgrads.gs"
+grads -cbl "run  pgrads.gs"
+
+SGIDIR=/export-1/sgi100/data/WebServer/htdocs/ens/prcp/prcppng
+RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo/pqpf                          
+
+for file in mrf1 mrf2 mrf3 FL1  FL2  FL3  EU1  EU2  EU3   \
+            SAM1 SAM2 SAM3 SAF1 SAF2 SAF3 SEA1 SEA2 SEA3  \
+            MNS1 MNS2 MNS3 ALA1 ALA2 ALA3 BOS1 BOS2 BOS3  \
+            ME1  ME2  HWI1 HWI2
+do
+
+if [ -s gmeta_$file.png ]; then
+#   gxpng -r -x 695 -y 545 -i gmeta_$file -o p${CDATE}_$file.png
+   mv  gmeta_$file.png p${CDATE}_$file.png
+   ftpemcrzdm emcrzdm   put $RZDMDIR          $tmpdir p${CDATE}_$file.png
+fi
+done
+
+ICNT=4
+while [ $ICNT -le 32 ]; do  
+   ICNTM2=`expr $ICNT - 2`
+   HOURS=`expr $ICNTM2 \* 12 `
+   jdat=$HOURS\hours
+if [ -s gmeta_$ICNT.png ]; then
+#   gxpng -r -x 695 -y 545 -i gmeta_$ICNT -o p${CDATE}_$jdat.png
+   mv gmeta_$ICNT.png p${CDATE}_$jdat.png
+   ftpemcrzdm emcrzdm   put $RZDMDIR          $tmpdir p${CDATE}_$jdat.png
+fi
+
+for amount in a b c d
+do
+   kdat=$amount$jdat
+if [ -s gmeta_g$amount$ICNT.png ]; then
+#   gxpng -r -x 695 -y 545 -i gmeta_g$amount$ICNT -o p${CDATE}_g$kdat.png
+   mv gmeta_g$amount$ICNT.png p${CDATE}_g$kdat.png
+   ftpemcrzdm emcrzdm   put $RZDMDIR          $tmpdir p${CDATE}_g$kdat.png
+fi
+done
+
+ICNT=`expr $ICNT + 2`
+done
+
+rm $tmpdir/precip*
+rm $tmpfir/*.ctl
+rm $tmpdir/gmeta*
+
+fi
+
+if [ $ICCPC -eq 0 ]; then
+
+###
+###   CPC's PQPF maps
+###
+
+tmpdir=$PTMP/yan.luo/cpc
+
+if [ ! -s $tmpdir ]; then
+   mkdir $tmpdir
+fi
+
+cd $tmpdir; rm gmeta_*
+
+echo "cat $ymdhm12 and $ymdh precipitationa files"
+
+cat $GLOBAL/ENS/precip.$ymdhm12 >precip.$ymdh
+cat $GLOBAL/ENS/precip.$ymdh   >>precip.$ymdh
+
+ls -l precip*
+
+$cmd/pgrads_23m_cpc.sh precip.$ymdh precipi.$ymdh precip.$ymdh.new
+
+pwd
+
+mm=`echo $CDATE | cut -c5-6`
+MM=`grep "$mm" $SHOME/yan.luo/bin/mon2mon | cut -c8-10`
+DD=`echo $CDATE | cut -c7-8`
+
+if [ $DD -le 9 ]; then
+   DD=0$DD
+fi
+
+HHDDMMYY=00Z$DD$MM$YY
+
+FILENAME=precip.$ymdh.new
+
+sed -e "s/FILENAME/$FILENAME/"      \
+    -e "s/HHDDMMYY/$HHDDMMYY/"      \
+    $cmd/pgrads_cpc.ctl             >pgrads_cpc.ctl
+cat $cmd/pgrads_cpc_top.gs          >pgrads_cpc.gs
+
+### 1-5 days forecasts
+STEP=13
+YMD1=12
+YMD2=132
+
+sed -e "s/YMD1/$YMD1/"    \
+    -e "s/YMD2/$YMD2/"    \
+    -e "s/YMDH/$ymdh/"    \
+    -e "s/STEP/$STEP/"    \
+    $cmd/pgrads_cpc.gs        >>pgrads_cpc.gs
+
+### 5-10 days forecasts
+STEP=23
+YMD1=132
+YMD2=252
+
+sed -e "s/YMD1/$YMD1/"    \
+    -e "s/YMD2/$YMD2/"    \
+    -e "s/YMDH/$ymdh/"    \
+    -e "s/STEP/$STEP/"    \
+    $cmd/pgrads_cpc.gs        >>pgrads_cpc.gs
+
+### 8-14 ( week 2 ) days forecasts
+STEP=31
+YMD1=180
+YMD2=348
+
+sed -e "s/YMD1/$YMD1/"    \
+    -e "s/YMD2/$YMD2/"    \
+    -e "s/YMDH/$ymdh/"    \
+    -e "s/STEP/$STEP/"    \
+    $cmd/pgrads_cpc.gs        >>pgrads_cpc.gs
+
+### 4-5 days forecasts
+### for trues, STEP=13,
+###  but fortran program set 21-33 (step 12 = 33 ) on purpose.
+###  because it comflict with 1-5 days which is assign step 13
+###  actual calculation and YMD1,YMD2 are corrected.
+STEP=12
+YMD1=84 
+YMD2=132
+
+sed -e "s/YMD1/$YMD1/"    \
+    -e "s/YMD2/$YMD2/"    \
+    -e "s/YMDH/$ymdh/"    \
+    -e "s/STEP/$STEP/"    \
+    $cmd/pgrads_med.gs        >>pgrads_cpc.gs
+
+echo "'quit' " >>pgrads_cpc.gs
+
+gribmap -i pgrads_cpc.ctl
+#xgrads -cl "run  pgrads_cpc.gs"
+grads -cbl "run  pgrads_cpc.gs"
+
+SGIDIR=/export-1/sgi100/data/WebServer/htdocs/ens/prcp/prcppng    
+RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo/pqpf                          
+
+if [ -s gmeta_cpc_13.png ]; then
+#  gxpng -r -x 695 -y 545 -i gmeta_cpc_13 -o p${CDATE}_1-5.png
+  mv gmeta_cpc_13.png p${CDATE}_1-5.png
+  ftpemcrzdm emcrzdm   put $RZDMDIR $tmpdir p${CDATE}_1-5.png
+fi
+if [ -s gmeta_cpc_23.png ]; then
+#  gxpng -r -x 695 -y 545 -i gmeta_cpc_23 -o p${CDATE}_6-10.png
+  mv gmeta_cpc_23.png  p${CDATE}_6-10.png
+  ftpemcrzdm emcrzdm   put $RZDMDIR $tmpdir p${CDATE}_6-10.png
+fi
+if [ -s gmeta_cpc_31.png ]; then
+#  gxpng -r -x 695 -y 545 -i gmeta_cpc_31 -o p${CDATE}_week2.png
+  mv gmeta_cpc_31.png  p${CDATE}_week2.png
+  ftpemcrzdm emcrzdm   put $RZDMDIR $tmpdir p${CDATE}_week2.png
+fi
+if [ -s gmeta_med_12.png ]; then
+#  gxpng -r -x 695 -y 545 -i gmeta_med_12 -o p${CDATE}_4-5.png
+  mv gmeta_med_12.png p${CDATE}_4-5.png
+  ftpemcrzdm emcrzdm   put $RZDMDIR $tmpdir p${CDATE}_4-5.png
+fi
+
+rm $tmpdir/precip*
+rm $tmpdir/*.ctl
+rm $tmpdir/gmeta*
+
+fi
+
+export CDATE=$CDATE
+
+cd $SHOME/yan.luo/wpqpf/scripts;pwd
+
+if [ $IC6HR -eq 0 ]; then
+
+###
+###   6-hour cycle include PQPS PQRF PQSP PQIF+PQFF
+###
+
+tmpdir=$PTMP/yan.luo/6hr_$HCYCLE
+mkdir $tmpdir
+cd $tmpdir
+rm $tmpdir/*
+cp $SHOME/yan.luo/grads/rgbset.gs .
+cp $SHOME/yan.luo/grads/cbar.gs .
+IC=$HCYCLE
+YYYY=`echo $CDATE | cut -c1-4`
+ymd=`echo $CDATE | cut -c1-8`
+mm=`echo $CDATE | cut -c5-6`
+DD=`echo $CDATE | cut -c7-8`
+HH=`echo $CDATE | cut -c9-10`
+MON=`grep "$mm" $SHOME/yan.luo/bin/mon2mon | cut -c8-10` 
+RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo/pqpf_6h                          
+ftpemcrzdmmkdir emcrzdm $RZDMDIR $ymd 
+
+YMDM30=`$nhours -720 $CDATE | cut -c1-8`
+
+YMDH0=`$nhours +0 $CDATE`
+YMDH6=`$nhours +6 $CDATE`
+YMDH12=`$nhours +12 $CDATE`
+YMDH18=`$nhours +18 $CDATE`
+YMDH24=`$nhours +24 $CDATE`
+YMDH30=`$nhours +30 $CDATE`
+YMDH36=`$nhours +36 $CDATE`
+YMDH42=`$nhours +42 $CDATE`
+YMDH48=`$nhours +48 $CDATE`
+YMDH54=`$nhours +54 $CDATE`
+YMDH60=`$nhours +60 $CDATE`
+
+YMDH66=`$nhours +66 $CDATE`
+YMDH72=`$nhours +72 $CDATE`
+YMDH78=`$nhours +78 $CDATE`
+YMDH84=`$nhours +84 $CDATE`
+YMDH90=`$nhours +90 $CDATE`
+YMDH96=`$nhours +96 $CDATE`
+YMDH102=`$nhours +102 $CDATE`
+YMDH108=`$nhours +108 $CDATE`
+YMDH114=`$nhours +114 $CDATE`
+YMDH120=`$nhours +120 $CDATE`
+
+YMDH126=`$nhours +126 $CDATE`
+YMDH132=`$nhours +132 $CDATE`
+YMDH138=`$nhours +138 $CDATE`
+YMDH144=`$nhours +144 $CDATE`
+YMDH150=`$nhours +150 $CDATE`
+YMDH156=`$nhours +156 $CDATE`
+YMDH162=`$nhours +162 $CDATE`
+YMDH168=`$nhours +168 $CDATE`
+YMDH174=`$nhours +174 $CDATE`
+YMDH180=`$nhours +180 $CDATE`
+
+YMDH186=`$nhours +186 $CDATE`
+YMDH192=`$nhours +192 $CDATE`
+YMDH198=`$nhours +198 $CDATE`
+YMDH204=`$nhours +204 $CDATE`
+YMDH210=`$nhours +210 $CDATE`
+YMDH216=`$nhours +216 $CDATE`
+YMDH222=`$nhours +222 $CDATE`
+YMDH228=`$nhours +228 $CDATE`
+YMDH234=`$nhours +234 $CDATE`
+YMDH240=`$nhours +240 $CDATE`
+
+YMDH246=`$nhours +246 $CDATE`
+YMDH252=`$nhours +252 $CDATE`
+YMDH258=`$nhours +258 $CDATE`
+YMDH264=`$nhours +264 $CDATE`
+YMDH270=`$nhours +270 $CDATE`
+YMDH276=`$nhours +276 $CDATE`
+YMDH282=`$nhours +282 $CDATE`
+YMDH288=`$nhours +288 $CDATE`
+YMDH294=`$nhours +294 $CDATE`
+YMDH300=`$nhours +300 $CDATE`
+
+YMDH306=`$nhours +306 $CDATE`
+YMDH312=`$nhours +312 $CDATE`
+YMDH318=`$nhours +318 $CDATE`
+YMDH324=`$nhours +324 $CDATE`
+YMDH330=`$nhours +330 $CDATE`
+YMDH336=`$nhours +336 $CDATE`
+YMDH342=`$nhours +342 $CDATE`
+YMDH348=`$nhours +348 $CDATE`
+YMDH354=`$nhours +354 $CDATE`
+YMDH360=`$nhours +360 $CDATE`
+
+ftpemcrzdmrmdir emcrzdm $RZDMDIR $YMDM30
+
+for file in pqpf pqrf pqsf pqif pqff
+do
+ #ifile=/com/mrf/prod/ens.$ymd/ensstat.t${IC}z.$file
+ #ifile=/gpfs/dell2/nco/ops/com/gens/prod/gefs.$ymd/${IC}/ensstat/ensstat.t${IC}z.$file
+ ifile=/lfs/h2/emc/vpppg/noscrub/yan.luo/ecmwf_gefs/noscrub/ENS/$file.${ymd}${IC} 
+jfile=ensstat.t${IC}z.$file\_$ymd
+ if [ ! -s $ifile ]; then
+  rcp wx22lu@white:$ifile $jfile
+ wgrib $jfile | grep "APCP>0.254" | wgrib -i $jfile -grib -o a0254.t${IC}z.$file
+ wgrib $jfile | grep "APCP>1.000" | wgrib -i $jfile -grib -o a1000.t${IC}z.$file
+ wgrib $jfile | grep "APCP>2.540" | wgrib -i $jfile -grib -o a2540.t${IC}z.$file
+ wgrib $jfile | grep "APCP>5.000" | wgrib -i $jfile -grib -o a5000.t${IC}z.$file
+ else
+ wgrib $ifile | grep "APCP>0.254" | wgrib -i $ifile -grib -o a0254.t${IC}z.$file
+ wgrib $ifile | grep "APCP>1.000" | wgrib -i $ifile -grib -o a1000.t${IC}z.$file
+ wgrib $ifile | grep "APCP>2.540" | wgrib -i $ifile -grib -o a2540.t${IC}z.$file
+ wgrib $ifile | grep "APCP>5.000" | wgrib -i $ifile -grib -o a5000.t${IC}z.$file
+ fi
+done
+
+for amt in 0254 1000 2540 5000
+do
+
+for file in pqpf pqrf pqsf pqif pqff
+do
+
+sed -e "s/_AMOUNT/$amt/"    \
+    -e "s/_IC/$IC/"         \
+    -e "s/_PQPF/$file/"     \
+    -e "s/_DD/$DD/"         \
+    -e "s/_MON/$MON/"       \
+    -e "s/_YEAR/$YYYY/"     \
+    $cmd/PQPF.CTL             >A$amt.t${IC}z.$file.ctl
+
+gribmap -i A$amt.t${IC}z.$file.ctl
+
+done
+
+if [ "$amt" = "0254" ]; then
+   amtd=0.254
+fi
+if [ "$amt" = "1000" ]; then
+   amtd=1.000
+fi
+if [ "$amt" = "2540" ]; then
+   amtd=2.540
+fi
+if [ "$amt" = "5000" ]; then
+   amtd=5.000
+fi
+
+sed -e "s/_IC/$IC/"               \
+    -e "s/_CDATE/$CDATE/"         \
+    -e "s/_AMOUNT/$amt/"          \
+    -e "s/_AMT/$amtd/"            \
+    -e "s/_YMDH66/$YMDH66/"       \
+    -e "s/_YMDH72/$YMDH72/"       \
+    -e "s/_YMDH78/$YMDH78/"       \
+    -e "s/_YMDH84/$YMDH84/"       \
+    -e "s/_YMDH90/$YMDH90/"       \
+    -e "s/_YMDH96/$YMDH96/"       \
+    -e "s/_YMDH102/$YMDH102/"     \
+    -e "s/_YMDH108/$YMDH108/"     \
+    -e "s/_YMDH114/$YMDH114/"     \
+    -e "s/_YMDH120/$YMDH120/"     \
+    -e "s/_YMDH126/$YMDH126/"     \
+    -e "s/_YMDH132/$YMDH132/"     \
+    -e "s/_YMDH138/$YMDH138/"     \
+    -e "s/_YMDH144/$YMDH144/"     \
+    -e "s/_YMDH150/$YMDH150/"     \
+    -e "s/_YMDH156/$YMDH156/"     \
+    -e "s/_YMDH162/$YMDH162/"     \
+    -e "s/_YMDH168/$YMDH168/"     \
+    -e "s/_YMDH174/$YMDH174/"     \
+    -e "s/_YMDH180/$YMDH180/"     \
+    -e "s/_YMDH186/$YMDH186/"     \
+    -e "s/_YMDH192/$YMDH192/"     \
+    -e "s/_YMDH198/$YMDH198/"     \
+    -e "s/_YMDH204/$YMDH204/"     \
+    -e "s/_YMDH210/$YMDH210/"     \
+    -e "s/_YMDH216/$YMDH216/"     \
+    -e "s/_YMDH222/$YMDH222/"     \
+    -e "s/_YMDH228/$YMDH228/"     \
+    -e "s/_YMDH234/$YMDH234/"     \
+    -e "s/_YMDH240/$YMDH240/"     \
+    -e "s/_YMDH246/$YMDH246/"     \
+    -e "s/_YMDH252/$YMDH252/"     \
+    -e "s/_YMDH258/$YMDH258/"     \
+    -e "s/_YMDH264/$YMDH264/"     \
+    -e "s/_YMDH270/$YMDH270/"     \
+    -e "s/_YMDH276/$YMDH276/"     \
+    -e "s/_YMDH282/$YMDH282/"     \
+    -e "s/_YMDH288/$YMDH288/"     \
+    -e "s/_YMDH294/$YMDH294/"     \
+    -e "s/_YMDH300/$YMDH300/"     \
+    -e "s/_YMDH306/$YMDH306/"     \
+    -e "s/_YMDH312/$YMDH312/"     \
+    -e "s/_YMDH318/$YMDH318/"     \
+    -e "s/_YMDH324/$YMDH324/"     \
+    -e "s/_YMDH330/$YMDH330/"     \
+    -e "s/_YMDH336/$YMDH336/"     \
+    -e "s/_YMDH342/$YMDH342/"     \
+    -e "s/_YMDH348/$YMDH348/"     \
+    -e "s/_YMDH354/$YMDH354/"     \
+    -e "s/_YMDH360/$YMDH360/"     \
+    -e "s/_YMDH12/$YMDH12/"       \
+    -e "s/_YMDH18/$YMDH18/"       \
+    -e "s/_YMDH24/$YMDH24/"       \
+    -e "s/_YMDH30/$YMDH30/"       \
+    -e "s/_YMDH36/$YMDH36/"       \
+    -e "s/_YMDH42/$YMDH42/"       \
+    -e "s/_YMDH48/$YMDH48/"       \
+    -e "s/_YMDH54/$YMDH54/"       \
+    -e "s/_YMDH60/$YMDH60/"       \
+    -e "s/_YMDH0/$YMDH0/"         \
+    -e "s/_YMDH6/$YMDH6/"         \
+    $cmd/PQPF.GS              >A$amt.t${IC}z.gs 
+
+grads -cbl "run A$amt.t${IC}z.gs"
+#grads -cl "run A$amt.t${IC}z.gs"
+
+for tm2 in 6 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120  \
+           126 132 138 144 150 156 162 168 174 180 186 192 198 204 210   \
+           216 222 228 234 240 246 252 258 264 270 276 282 288 294 300   \
+           306 312 318 324 330 336 342 348 354 360
+do
+ 
+tm1=`expr $tm2 - 6 `
+
+#ftpemcrzdm emcrzdm put $RZDMDIR/$ymd $tmpdir a$amt\_$CDATE\_F$tm1\-$tm2.png
+
+done
+scp *.png   wd20yl@emcrzdm:$RZDMDIR/$ymd
+
+###
+### to generate html scripts
+###
+
+sed -e "s/YYYYMMDDHH/$YYYY$mm$DD$HH/"  \
+    -e "s/YYYYMMDD/$YYYY$mm$DD/"       \
+    -e "s/AMNT/$amt/"                  \
+    $cmd/today.HTML >a$amt.t$IC\z.html
+
+ftpemcrzdm emcrzdm put $RZDMDIR/$ymd $tmpdir a$amt.t$IC\z.html       
+
+done
+
+if [ $IC -eq 00 ]; then
+
+sed -e "s/YYYYMMDD/$YYYY$mm$DD/"    \
+    $cmd/PQPF_6h_H.HTML   >PQPF_6h.html
+
+for hhour in 24 48 72 96 120 144 168 192 216 240 264 288 312 336 360 384 408 432
+do
+ SYMD=`$nhours -$hhour $CDATE | cut -c1-8`
+ 
+ sed -e "s/YYYYMMDD/$SYMD/"  \
+     $cmd/PQPF_6h_M.HTML   >>PQPF_6h.html
+done
+
+cat $cmd/PQPF_6h_E.HTML   >>PQPF_6h.html
+
+RZDMDIR=/home/people/emc/www/htdocs/gmb/yluo/html                             
+
+ftpemcrzdm emcrzdm put $RZDMDIR $tmpdir PQPF_6h.html  
+
+fi
+
+fi
+

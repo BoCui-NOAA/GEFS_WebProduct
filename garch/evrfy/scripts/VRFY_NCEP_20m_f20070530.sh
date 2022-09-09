@@ -30,7 +30,7 @@
 #set -x
 date;pwd
 
-tmpdir=$GTMP/yan.luo/vfens 
+tmpdir=$GTMP/$LOGNAME/vfens 
 
 if [ -s $tmpdir ]; then
   rm $tmpdir/*
@@ -44,7 +44,7 @@ fi
 ### 2. Set up the climate data entry, grib utility entry.
 ###
 
-dat=$SHOME/yan.luo/gvrfy/data
+dat=$SHOME/$LOGNAME/gvrfy/data
 
 ########################################################################
 #   
@@ -239,14 +239,14 @@ pwd
 
 #/nfsuser/g01/wx20yz/evrfy/exec/vrfy_23m_40 <input0
 #/nfsuser/g01/wx20yz/evrfy/exec/vrfy_et_14m <input0
-$SHOME/yan.luo/evrfy/exec/VRFY_20m_f20070530 <input0
+$SHOME/$LOGNAME/evrfy/exec/VRFY_20m_f20070530 <input0
 
 cp scores.ens scores.z$ilv
 
 done
 
 #cat scores.z1000 scores.z500 >$NGLOBAL/wx20yz/global/exp_2006_evrfy/SCORESs.$stymd\00
-cat scores.z1000 scores.z500 >$NGLOBAL/yan.luo/evfscores_20m/SCORESs.$stymd\00
+cat scores.z1000 scores.z500 >$NGLOBAL/$LOGNAME/evfscores_20m/SCORESs.$stymd\00
 #cat             outlier.z500 >$GLOBAL/evfscores/OUTLIEs.$stymd\00
 
 ### run seperated job since 02/01/2001

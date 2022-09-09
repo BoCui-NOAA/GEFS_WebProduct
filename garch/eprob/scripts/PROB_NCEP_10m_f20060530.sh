@@ -17,8 +17,8 @@ else
   cd $tmpdir
 fi
 
-sorc=$SHOME/yan.luo/eprob/scripts
-bindir=$SHOME/yan.luo/bin
+sorc=$SHOME/$LOGNAME/eprob/scripts
+bindir=$SHOME/$LOGNAME/bin
 
 ################################################################
 ymdh=$CDATE           
@@ -102,7 +102,7 @@ cat input2 input1 input3 > param
 
 export sorc YYMM ymdh tmpdir
 
-$SHOME/yan.luo/eprob/exec/VFPROB_10m_f20060530 <param
+$SHOME/$LOGNAME/eprob/exec/VFPROB_10m_f20060530 <param
 
 cp prob.ens $SHOME/$LOGNAME/global/vfprob/PROB10.$ymdh
 

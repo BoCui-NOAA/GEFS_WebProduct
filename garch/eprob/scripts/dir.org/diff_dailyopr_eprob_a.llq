@@ -1,0 +1,12 @@
+1c1
+<  vi $SHOME/$LOGNAME/evrfy/scripts/dailyopr_evrfy_f.llq
+---
+>  vi $SHOME/yan.luo/evrfy/scripts/dailyopr_evrfy_f.llq
+33c33
+< cd $SHOME/$LOGNAME/eprob/scripts
+---
+> cd $SHOME/yan.luo/eprob/scripts
+41c41
+< cd $SHOME/$LOGNAME/naefs/scripts
+---
+> cd $SHOME/yan.luo/naefs/scripts

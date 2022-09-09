@@ -1,0 +1,43 @@
+
+ batch job - setting node_usage = not shared
+
+1. Using 1d climatology, wgrib to get required YYYYMMDDHH, to calculate AN.
+
+real    1m34.96s
+user    0m5.57s
+sys     0m7.41s
+
+2. Using 2.5d climatology, wgrib to get required YYYYYMMDDHH, to interpolate
+   to 1d, then calculate AN
+
+real    0m38.25s
+user    0m6.54s
+sys     0m5.74s
+
+
+3. copygb cost for climate mean
+
+real    0m1.72s
+user    0m0.81s
+sys     0m0.02s
+
+4. copygb cost for climate stdv
+
+real    0m0.86s
+user    0m0.79s
+sys     0m0.05s
+
+
+5. using arrange daily cycle 1d climatology (no wgrib anymore)
+
+          #1           #2          #3
+real    0m10.70s    0m6.62s     0m8.73s
+user    0m5.02s     0m4.66s     0m4.81s
+sys     0m4.10s     0m4.58s     0m4.32s
+
+6. using arrange daily 1d climatology (no wgrib anymore)
+
+real    0m7.20s     0m6.77s     0m10.57s
+user    0m4.82s     0m4.88s     0m4.61s
+sys     0m6.41s     0m5.65s     0m5.39s
+

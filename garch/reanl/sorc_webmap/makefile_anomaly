@@ -1,0 +1,16 @@
+SHELL=  /bin/sh
+CMD=	climate_anomaly_map.exe 
+FC=     ${FCMP}
+FOPTS=  -r8  -convert big_endian     
+#FOPTS=  -r8   -convert big_endian  
+LOPTS=
+INCS=
+SRCS=   ANOMALY_map.f QUANOR.f QUASTN.f PELNOR.f CDFNOR.f                  
+#LIBS=   /nwprod/lib/libbacio_4.a \
+#        /nwprod/lib/libw3nco_d.a \
+#        /nwprod/lib/libip_d.a \
+#        /nwprod/lib/libsp_d.a 
+$(CMD): $(SRCS)
+	$(FC) $(FOPTS) $(SRCS) $(LIBS) -o $(CMD)
+vrfy0:	$(SRCS)
+	$(FC) $(FOPTS) $(SRCS) /nwprod/w3lib90/iplib_4_604 $(LIBS) -o vfprob

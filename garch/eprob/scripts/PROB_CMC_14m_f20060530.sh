@@ -7,7 +7,7 @@
 #set -x
 date;pwd
 
-tmpdir=$GTMP/yan.luo/vfprob_cmc14m_f
+tmpdir=$GTMP/$LOGNAME/vfprob_cmc14m_f
 
 if [ -s $tmpdir ]; then
   rm $tmpdir/*
@@ -17,8 +17,8 @@ else
   cd $tmpdir
 fi
 
-sorc=$SHOME/yan.luo/eprob/scripts
-bindir=$SHOME/yan.luo/bin
+sorc=$SHOME/$LOGNAME/eprob/scripts
+bindir=$SHOME/$LOGNAME/bin
 
 ################################################################
 ymdh=$CDATE           
@@ -102,9 +102,9 @@ cat input2 input1 input3 > param
 export sorc YYMM ymdh tmpdir
 
 #/nfsuser/g01/wx20yz/eprob/exec/VFPROB_cmc10m_f20060530 <param
-$SHOME/yan.luo/eprob/exec/VFPROB_14m_f20060530 <param
+$SHOME/$LOGNAME/eprob/exec/VFPROB_14m_f20060530 <param
 
-cp prob.ens $SHOME/yan.luo/global/vfprob/PROB14m.$ymdh
+cp prob.ens $SHOME/$LOGNAME/global/vfprob/PROB14m.$ymdh
 
 rm input1 input2 input3 param
 ####################################################################

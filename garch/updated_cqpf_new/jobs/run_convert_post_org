@@ -1,0 +1,172 @@
+#!/bin/sh
+#
+#########################
+# ecmwf fcst
+# prcp: 12 hr accumlation 
+# tmax/tmin: 3hr interval
+#########################
+
+#set -x
+EXECUTIL_grib=/apps/ops/prod/libs/intel/19.1.3.304/grib_util/1.2.2/bin
+EXECUTIL_prod=/apps/ops/prod/nco/core/prod_util.v2.0.5/exec
+WGRIB=$EXECUTIL_grib/wgrib
+nhours=$EXECUTIL_prod/ndate
+
+export PDY=`echo $CDATE | cut -c1-8`
+export cyc=`echo $CDATE | cut -c9-10`
+
+GLOBAL=/lfs/h2/emc/ens/noscrub/emc.ens/common/data
+NGLOBAL=/lfs/h2/emc/vpppg/noscrub/yan.luo
+COMIN=$GLOBAL/ecm_ens
+COMOUT=$NGLOBAL/ecmwf_gefs/ecmwf.$PDY/$cyc/pgrba
+
+mkdir -p $COMOUT
+cd $COMOUT
+
+varlist=" prcp "
+
+hourlist="  12 24 36 48 60 72 84 96 \
+          108 120 132 144 156 168 180 192 \
+          204 216 228 240 252 "
+
+memberlist=" 1   2   3   4   5   6   7   8   9  10  11  12  13  14  15 \
+            16  17  18  19  20  21  22  23  24  25  26  27  28  29  30 \
+            31  32  33  34  35  36  37  38  39  40  41  42  43  44  45 \
+            46  47  48  49  50   0"
+
+#varlist=" t200 prcp  "
+#memberlist="30 50 "
+#hourlist=" 222 228 234 240 "
+
+for nfhrs in $hourlist; do
+outfile=ecmwf_prcp.t${cyc}z.pgrbaf${nfhrs}
+    >$outfile
+for mem in $memberlist; do
+
+    if [ $mem -ge 26 ]; then
+      ensnum=`expr 25 - $mem `
+      typenum=`expr $mem - 25 `
+    elif [ $mem -eq 0 ]; then
+      ensnum=-$mem 
+    else
+      ensnum=+$mem 
+    fi
+
+#    >$outfile
+
+    for var in $varlist; do
+
+      infile=${COMIN}/precip.${PDY}${cyc}
+
+      if [ "$var" = "prcp" ]; then
+        if [ $nfhrs -eq 0 ]; then
+          nfhrs_m12=0
+        elif [ $nfhrs -eq 6 ]; then
+          nfhrs_m12=250
+        else
+          nfhrs_m12=`expr $nfhrs - 12 `
+        fi
+        $WGRIB -ncep_ens $infile | grep "${nfhrs_m12}-${nfhrs}hr " | grep ":ens${ensnum}:" \
+                                 | $WGRIB -i $infile  -grib -append -o $outfile
+
+      elif [ "$var" = "t2min" -o "$var" = "t2max" ]; then
+        if [ $nfhrs -eq 0 ]; then
+          $WGRIB -ncep_ens $infile | grep "anl:type=${typenum}" | grep ":ens${ensnum}:" \
+                                   | $WGRIB -i $infile  -grib -append -o $outfile
+        else
+          nfhrs_m3=`expr $nfhrs - 3 `
+          $WGRIB -ncep_ens $infile | grep "${nfhrs_m3}-${nfhrs}hr:type=" | grep ":ens${ensnum}:" \
+                                   | $WGRIB -i $infile  -grib -append -o $outfile
+        fi
+
+      else
+        if [ $nfhrs -eq 0 ]; then
+#         $WGRIB -ncep_ens $infile | grep "anl:type=${typenum}" | grep ":ens${ensnum}:" \
+          $WGRIB -ncep_ens $infile | grep "anl:type=" | grep ":ens${ensnum}:" \
+                                   | $WGRIB -i $infile  -grib -append -o $outfile
+        else
+          $WGRIB -ncep_ens $infile | grep ":${nfhrs}hr " | grep ":ens${ensnum}:" \
+                                   | $WGRIB -i $infile  -grib -append -o $outfile
+        fi
+      fi
+
+    done
+
+  done 
+done
+
+hourlist=" 264 276 288 300 \
+           312 324 336 348 360 "
+
+for nfhrs in $hourlist; do
+outfile=ecmwf_prcp.t${cyc}z.pgrbaf${nfhrs}
+    >$outfile
+for mem in $memberlist; do
+
+    if [ $mem -ge 26 ]; then
+      ensnum=`expr 25 - $mem `
+      typenum=`expr $mem - 25 `
+    elif [ $mem -eq 0 ]; then
+      ensnum=-$mem 
+    else
+      ensnum=+$mem 
+    fi
+
+#    >$outfile
+    for var in $varlist; do
+
+      infile=${COMIN}/precip.${PDY}${cyc}
+
+      if [ "$var" = "prcp" ]; then
+        if [ $nfhrs -eq 0 ]; then
+          nfhrs_m12=0
+        elif [ $nfhrs -eq 6 ]; then
+          nfhrs_m12=250
+        else
+          nfhrs_m12=`expr $nfhrs - 12 `
+        case $nfhrs in
+        264) nfhrs_m12_new=252;nfhrs_new=8;;
+        276) nfhrs_m12_new=8;nfhrs_new=20;;
+        288) nfhrs_m12_new=20;nfhrs_new=32;;
+        300) nfhrs_m12_new=32;nfhrs_new=44;;
+        312) nfhrs_m12_new=44;nfhrs_new=56;;
+        324) nfhrs_m12_new=56;nfhrs_new=68;;
+        336) nfhrs_m12_new=68;nfhrs_new=80;;
+        348) nfhrs_m12_new=80;nfhrs_new=92;;
+        360) nfhrs_m12_new=92;nfhrs_new=104
+        esac
+
+        fi
+        $WGRIB -ncep_ens $infile | grep "${nfhrs_m12_new}-${nfhrs_new}hr " | grep ":ens${ensnum}:" \
+                                 | $WGRIB -i $infile  -grib -append -o $outfile
+
+      elif [ "$var" = "t2min" -o "$var" = "t2max" ]; then
+        if [ $nfhrs -eq 0 ]; then
+          $WGRIB -ncep_ens $infile | grep "anl:type=${typenum}" | grep ":ens${ensnum
+}:" \
+                                   | $WGRIB -i $infile  -grib -append -o $outfile
+        else
+          nfhrs_m3=`expr $nfhrs - 3 `
+          $WGRIB -ncep_ens $infile | grep "${nfhrs_m3}-${nfhrs}hr:type=" | grep ":en
+s${ensnum}:" \
+                                   | $WGRIB -i $infile  -grib -append -o $outfile
+        fi
+
+      else
+        if [ $nfhrs -eq 0 ]; then
+#         $WGRIB -ncep_ens $infile | grep "anl:type=${typenum}" | grep ":ens${ensnu         }:" \
+         
+          $WGRIB -ncep_ens $infile | grep "anl:type=" | grep ":ens${ensnum}:" \
+                                   | $WGRIB -i $infile  -grib -append -o $outfile
+        else
+          $WGRIB -ncep_ens $infile | grep ":${nfhrs}hr " | grep ":ens${ensnum}:" \
+                                   | $WGRIB -i $infile  -grib -append -o $outfile
+        fi
+      fi
+
+    done
+
+  done
+done
+
+

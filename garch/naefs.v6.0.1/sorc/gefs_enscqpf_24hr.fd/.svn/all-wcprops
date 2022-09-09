@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/projects/!svn/ver/70849/naefs/branches/naefs.v6.0.0/sorc/gefs_pgrb_enspqpf.fd
+END
+init_parm.f90
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/projects/!svn/ver/70849/naefs/branches/naefs.v6.0.0/sorc/gefs_pgrb_enspqpf.fd/init_parm.f90
+END
+gefs_pgrb_enspqpf.f90
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/projects/!svn/ver/70849/naefs/branches/naefs.v6.0.0/sorc/gefs_pgrb_enspqpf.fd/gefs_pgrb_enspqpf.f90
+END
+printinfr.f90
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/projects/!svn/ver/70849/naefs/branches/naefs.v6.0.0/sorc/gefs_pgrb_enspqpf.fd/printinfr.f90
+END
+makefile
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/projects/!svn/ver/70849/naefs/branches/naefs.v6.0.0/sorc/gefs_pgrb_enspqpf.fd/makefile
+END
+makefile_nonmodule
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/projects/!svn/ver/70849/naefs/branches/naefs.v6.0.0/sorc/gefs_pgrb_enspqpf.fd/makefile_nonmodule
+END
