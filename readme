@@ -1,28 +1,34 @@
-Summary
+How to Run and Generate GEFS/NAEFS Web Products
 
-clone the whole package from develop branch of https://github.com/BoCui-NOAA/naefs_cqpf
+clone the whole package from develop branch of git@github.com:BoCui-NOAA/NAEFS_WebProduct.git
 
-git clone git@github.com:BoCui-NOAA/naefs_cqpf.git
-cd naefs_cqpf
+git clone git@github.com:BoCui-NOAA/NAEFS_WebProduct.git
+cd NAEFS_WebProduct
 mv ccpa    /lfs/h2/emc/vpppg/save/$LOGNAME
 mv cqpf    /lfs/h2/emc/vpppg/save/$LOGNAME
 mv garch   /lfs/h2/emc/vpppg/save/$LOGNAME
 mv run_web /lfs/h2/emc/vpppg/save/$LOGNAME
+
+# run script job_link, so sub-directories in garch are linked to the dir in /lfs/h2/emc/vpppg/save/$LOGNAME
+# the original scripts define 
 cd /lfs/h2/emc/vpppg/save/$LOGNAME/garch
-# Job_link ( all directoried are linked to /lfs/h2/emc/vpppg/save/$LOGNAME)
+job_link
+
 cd /lfs/h2/emc/vpppg/save/$LOGNAME/run_web
-# Run the following  3 jobs
+
+# Run the 3 jobs to generate GEFS web products
+
 CCPA_archive_cactus
 test_cactus
 GARCH_cactus
 
-
-# Note: there are 4 directories generated on /lfs/h2/emc/vpppg/noscrub/$LOGNAME
+# Note 1: there are 4 directories generated on /lfs/h2/emc/vpppg/noscrub/$LOGNAME
 
 COM_TAR
 fno_gefs
 ncep_gefs
 ncep_gefs_0.5d
 
+# Note 2: there are 4 directories generated on /lfs/h2/emc/vpppg/noscrub/$LOGNAME
 
 
