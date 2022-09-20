@@ -1,7 +1,9 @@
-home=/lfs/h2/emc/vpppg/save/bo.cui/Save_Yan.Luo
+# Copy Yan Luo directories to 4 sub-directories: run_web, ccpa, cqpf and harch
 
-mkdir $home/run 
-cd $home/run
+home=/lfs/h2/emc/vpppg/save/bo.cui 
+
+mkdir $home/run_web 
+cd $home/run_web
 
 cp -p /lfs/h2/emc/vpppg/save/yan.luo/tskr_prec/3hr_CCPA/run/CCPA_archive_cactus .
 cp -p /u/yan.luo/save/arch/test_cactus .
@@ -13,7 +15,7 @@ cp -p /lfs/h2/emc/vpppg/save/yan.luo/CSTAR/work_update/MAIN_CSH/cactus_opt_12z.s
 cp -p /lfs/h2/emc/vpppg/save/yan.luo/CSTAR/work_ecmwf/MAIN_CSH/cactus_ecm_00z.sh .
 cp -p /lfs/h2/emc/vpppg/save/yan.luo/CSTAR/work_ecmwf/MAIN_CSH/cactus_ecm_12z.sh .
 
-exit
+ 
 # Introduction to each job:
 # CCPA_archive_cactus
 # Function: archive real-time CCPA data and plot CCPA images and send them to the webpage.
