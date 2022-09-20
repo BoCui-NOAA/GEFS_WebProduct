@@ -65,30 +65,7 @@ cp -rp /lfs/h2/emc/vpppg/save/yan.luo/wpqpf .
 cp -rp /lfs/h2/emc/vpppg/save/yan.luo/grads .
 cp -rp /u/yan.luo/save/xbin .
 
-
-# CSTAR job
-# It includes 6 jobs:
-# /lfs/h2/emc/vpppg/save/yan.luo/CSTAR/work/MAIN_CSH/cactus_def_00z.sh
-# /lfs/h2/emc/vpppg/save/yan.luo/CSTAR/work/MAIN_CSH/cactus_def_12z.sh
-# /lfs/h2/emc/vpppg/save/yan.luo/CSTAR/work_update/MAIN_CSH/cactus_opt_00z.sh
-# /lfs/h2/emc/vpppg/save/yan.luo/CSTAR/work_update/MAIN_CSH/cactus_opt_12z.sh
-# /lfs/h2/emc/vpppg/save/yan.luo/CSTAR/work_ecmwf/MAIN_CSH/cactus_ecm_00z.sh
-# /lfs/h2/emc/vpppg/save/yan.luo/CSTAR/work_ecmwf/MAIN_CSH/cactus_ecm_12z.sh
-# Function: 
-# - analyze global ensemble sensitivity from GEFS, CMC, NAEFS, and ECMWF and generate sensitivity plots
-# - analyze  fuzzy clustering from GEFS, CMC, NAEFS, and ECMWF and generate clustering plots
-# - run twice per day for 00z and 12z
-# - early CSTAR developers notes are enclosed in the package
-# Webpages:
-# ftp://ftp.emc.ncep.noaa.gov/gc_wmb/yluo/CSTAR
-# http://www.emc.ncep.noaa.gov/gmb/yluo/CSTAR_ECMWF  (password protected)
-# (Need to open a help ticket to request a password protected function for the folder CSTAR_ECMWF. )
-# Required files under the following directory:
-
-mkdir $home/cstar
-cd $home/cstar
-
-cp -rp /lfs/h2/emc/vpppg/save/yan.luo/CSTAR .
+ 
 
 
 
