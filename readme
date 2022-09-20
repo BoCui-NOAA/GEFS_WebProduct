@@ -10,7 +10,7 @@ mv garch   /lfs/h2/emc/vpppg/save/$LOGNAME
 mv run_web /lfs/h2/emc/vpppg/save/$LOGNAME
 
 # run script job_link, so sub-directories in garch are linked to the dir in /lfs/h2/emc/vpppg/save/$LOGNAME
-# the original scripts define 
+
 cd /lfs/h2/emc/vpppg/save/$LOGNAME/garch
 job_link
 
