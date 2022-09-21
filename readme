@@ -1,9 +1,9 @@
 How to Run and Generate GEFS/NAEFS Web Products
 
-clone the whole package from develop branch of git@github.com:BoCui-NOAA/NAEFS_WebProduct.git
+clone the whole package from develop branch of git@github.com:BoCui-NOAA/GEFS_WebProduct.git
 
-git clone git@github.com:BoCui-NOAA/NAEFS_WebProduct.git
-cd NAEFS_WebProduct
+git clone git@github.com:BoCui-NOAA/GEFS_WebProduct.git
+cd GEFS_WebProduct
 mv ccpa    /lfs/h2/emc/vpppg/save/$LOGNAME
 mv cqpf    /lfs/h2/emc/vpppg/save/$LOGNAME
 mv garch   /lfs/h2/emc/vpppg/save/$LOGNAME
