@@ -20,6 +20,14 @@ CDATE=20$Date$HH
 echo "CDATE=$CDATE"
 
 CUE=dev_transfer
+
+dir_in=/home/people/emc/www/htdocs/gmb/wx20cb
+dir_out=/home/people/emc/www/htdocs/gmb/yluo
+ssh -l bocui emcrzdm "cp $dir_in/CCPA.html $dir_out"
+ssh -l bocui emcrzdm "cp $dir_in/CCPA_prod.html $dir_out"
+ssh -l bocui emcrzdm "rm -rf $dir_out/ccpa/*"
+ssh -l bocui emcrzdm "cp -rp $dir_in/ccpa/* $dir_out/ccpa"
+
 ###
 ### Submit the CCPA job
 ###

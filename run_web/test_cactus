@@ -80,6 +80,10 @@ export MMDD=`echo $CDATE | cut -c5-8`
 export DD=`echo $CDATE | cut -c7-8`
 export HH=`echo $CDATE | cut -c9-10`
 
+dir_in=/home/people/emc/www/htdocs/gmb/wx20cb/GEFS_VRFY
+dir_out=/home/people/emc/www/htdocs/gmb/yluo/GEFS_VRFY
+ssh -l bocui emcrzdm "cp $dir_in/* $dir_out/"
+
 # NEXT JOB TIME is 7:00am EST for summer time   
 # NEXT JOB TIME is 6:00am EST for winter time
 
@@ -92,7 +96,7 @@ CUE=dev_transfer
 ### Submit the schedual job itself   
 ###
 
-out=$GTMP/$LOGNAME/output/test_cactus.out; rm $out
+out=$GTMP/$LOGNAME/output/test_cactus.out
 #job=$SHOME/run_web/test_cactus
 job=/lfs/h2/emc/vpppg/save/$LOGNAME/run_web/test_cactus
 $SSUB -a NAEFS-DEV -q $CUE -p 1/1/S -r 1024/1 -w ${NEXT_JOB_TIME} -t 6:00:00 -j test_cactus -o $out $job
@@ -111,9 +115,10 @@ echo " cactus is the production machine! "
 echo " Send web plots through cactus "
 
 echo "++++++ Submit the CQPF plotting job ++++++"
-out=$GTMP/$LOGNAME/output/run_cqpf_plot.out; rm $out
+out=$GTMP/$LOGNAME/output/run_cqpf_plot.out
 job=$SHOME/plot_cqpf/scripts/run_cqpf_plot.sh
-$SSUB -a GEFS-DEV -q $CUE -p 1/1/S -r 1024/1 -w +0000 -t 6:00:00 -j RUN_CQPF_PLOT -o $out $job
+$SSUB -a NAEFS-DEV -q $CUE -p 1/1/S -r 1024/1 -w +0000 -t 6:00:00 -j RUN_CQPF_PLOT -o $out $job
 
 fi #if [  $prod == dogwood ]; then
+
 
