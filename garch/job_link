@@ -1,4 +1,5 @@
-dirlist=" earch_00  evrfy    global  gvrfy    jif0603   naefs.v6.0.1  sbin  web_glb_js 
+
+dirlist=" earch_00  evrfy    global  gvrfy    jif0603   naefs.v6.0.1  sbin  web_glb_js
           eprob grads     jif0406  reanl   updated_cqpf_new  wpqpf"
 
 com=/lfs/h2/emc/vpppg/save/$LOGNAME
@@ -11,12 +12,14 @@ for dir in $dirlist; do
   ln -fs $com/garch/$dir/* .
 done
 
-mkdir $com/xbin 
-mkdir $com/bin 
+mkdir $com/xbin
+mkdir $com/bin
 cp $com/garch/xbin/* $com/xbin
 cp $com/garch/bin/*  $com/bin
 
 cd /lfs/h2/emc/vpppg/noscrub/$LOGNAME
 mkdir CDAS
 cd CDAS
-ln -fd /lfs/h2/emc/vpppg/save/$LOGNAME/garch/CDAS/* .
+ln -fs /lfs/h2/emc/vpppg/save/$LOGNAME/garch/CDAS/* .
+ln -fs /lfs/h1/ops/prod/packages/naefs.v6.1.0/fix/cmean_1d.*
+ln -fs /lfs/h1/ops/prod/packages/naefs.v6.1.0/fix/cstdv_1d.*
