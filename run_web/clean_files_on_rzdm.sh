@@ -24,13 +24,18 @@ export YMDM20=`$nhours -480 $CDATE | cut -c1-8`
 echo $YMDM20
 
 #for dir in cpqpf_24h cpqpf_6h pqpf_6h cpqpf_cmc amap mmap omap CSTAR_ECMWF   
-for dir in cpqpf_24h cpqpf_6h pqpf_6h cpqpf_cmc amap mmap omap
+for dir in cpqpf_24h cpqpf_6h pqpf_6h amap mmap 
 do
 
 ssh bocui@emcrzdm.ncep.noaa.gov "rm -rf /home/people/emc/www/htdocs/gmb/wx20cb/$dir/$YMDM20"
 ssh bocui@emcrzdm.ncep.noaa.gov "rm -rf /home/people/emc/www/htdocs/gmb/yluo/$dir/$YMDM20"
 
 done
+
+com=/lfs/h2/emc/vpppg/noscrub/$LOGNAME
+rm -rf $com/ncep_gefs_0.5d/gefs.$YMDM20
+rm -rf $com/ncep_gefs/gefs.$YMDM20
+rm -rf $com/com/naefs/prod/gefs.$YMDM20
 
 echo  "deleting files is done!"
 
