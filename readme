@@ -29,6 +29,11 @@ fno_gefs
 ncep_gefs
 ncep_gefs_0.5d
 
-# Note 2: there are 4 directories generated on /lfs/h2/emc/vpppg/noscrub/$LOGNAME
+# Note 2: The following files and directories will be generated on emcrzdm account
+
+CCPA_archive_cactus:  CCPA.html CCPA_prod.html ccpa 
+GARCH_cactus:         html_pqpf  html/opr pqpf_6h  pqpf  mmap js (need allow.cfg and index.php)
+test_cactus:          GEFS_VRFY cpqpf_6h cpqpf_24h 
+
 
 
