@@ -32,7 +32,8 @@ cd $SHOME/$LOGNAME/run_web;pwd
 ###
 
 Date=`date +%y%m%d`
-export CDATE=20$Date\00
+CDATE=20$Date\00
+CDATE=2023070800
 echo "CDATE=$CDATE"
 
 ###
@@ -80,15 +81,6 @@ export MMDD=`echo $CDATE | cut -c5-8`
 export DD=`echo $CDATE | cut -c7-8`
 export HH=`echo $CDATE | cut -c9-10`
 
-# Dir on emcrzdm: pqpf_6h, html/opr, html_pqpf, pqpf, mmap, js (need allow.cfg and index.php)
-
-#dir_in=/home/people/emc/www/htdocs/gmb/wx20cb
-#dir_out=/home/people/emc/www/htdocs/gmb/yluo
-#ssh -l bocui emcrzdm "cp $dir_in/html_pqpf/* $dir_out/html_pqpf/"
-#ssh -l bocui emcrzdm "cp $dir_in/html/opr* $dir_out/html/opr/"
-#ssh -l bocui emcrzdm "cp -rp $dir_in/pqpf_6h/* $dir_out/pqpf_6h/"
-#ssh -l bocui emcrzdm "cp -rp $dir_in/pqpf/* $dir_out/pqpf/"
-#ssh -l bocui emcrzdm "cp -rp $dir_in/mmap/* $dir_out/mmap/"
 
 # NEXT JOB TIME is 7:00am EST for summer time   
 # NEXT JOB TIME is 6:00am EST for winter time
@@ -108,67 +100,7 @@ job=/u/$LOGNAME/save/updated_cqpf_new/jobs/get_gefs_apcp.sh
 
 echo "++++++ Submit extract 0.5 deg model precipitation forecast data Job              ++++++"
 
+export CDATE=2023071200
 out=$GTMP/$LOGNAME/output/save_gefs_data.out; rm $out
 job=/u/$LOGNAME/save/naefs.v6.0.1/mycron/save_gefs_data.sh 
-$SSUB -a GEFS-DEV -q $CUE -p 1/1/S -r 512/1 -w +0100 -t 6:00:00 -j SAVE_GEFS_APCP -o $out $job
-
-###
-### Submit the schedual job itself   
-###
-
-echo "++++++ Submite the GARCH job ++++++"
-#out=/u/$LOGNAME/save/arch/GARCHcactus.out; tail -1000 $out > $GTMP/$LOGNAME/tmpfile; mv $GTMP/$LOGNAME/tmpfile $out
-out=$GTMP/$LOGNAME/output/GARCHcactus.out
-job=/lfs/h2/emc/vpppg/save/bo.cui/run_web/GARCH_cactus
-$SSUB -a GEFS-DEV -q $CUE -p 1/1/S -r 1024/1 -w ${NEXT_JOB_TIME} -t 6:00:00 -j GARCH_cactus -o $out $job
-
-eval primary=`cat  /lfs/h1/ops/prod/config/prodmachinefile | grep primary`
-eval backup=`cat  /lfs/h1/ops/prod/config/prodmachinefile | grep backup`
-
-echo $primary "and " $backup
-
-isdogwood=primary:dogwood
-
-if [  $primary != $isdogwood ]; then
-   echo  " Check plotting jobs on dogwood!"
-else
-echo " cactus is the production machine! "
-echo " Send web plots through cactus "
-
-
-echo "++++++ Submite the ENSPOST_00 job ++++++"
-### contains 6-hourly precipitation types map job ###
-### contains 24-hour CMRF/MRF CPQPF/PQPF comparing forecast maps  ###
-###    all 24hr maps are inside of $HOME/wpqpf/scripts/www_200312.qsub
-### adding CMC's test 24-hr QPF and PQPF maps to this jib -08/17/2004
-export CDATE=$CDATEp00
-out=$GTMP/$LOGNAME/output/ens00.out; rm -f $out
-job=$SHOME/$LOGNAME/garch/earch_00/scripts/ENSPOST_00.sh
-#$SSUB -a NAEFS-DEV -q $CUE -p 1/1/S -r 512/1 -w +0000 -t 6:00:00 -j ens00 -o $out $job
-
-###
-### Submit daily esemble verification job and probability job
-###  plot RMOP ( Relative measurement of predictability ) maps
-###
-
-echo "++++++ Submite the EPROB_f job ++++++"
-export CDATE=$CDATEp00
-out=$GTMP/$LOGNAME/output/eprob_f.out; rm -f $out
-job=$SHOME/$LOGNAME/garch/eprob/scripts/dailyopr_eprob_f.llq
-#$SSUB -a GEFS-DEV -q $CUE -p 1/1/S -r 512/1 -w +0120 -t 6:00:00 -j eprob_f -o $out $job
-
-echo "++++++ Submite the EPROB_a job ++++++"
-export CDATE=$CDATEp00
-out=$GTMP/$LOGNAME/output/eprob_a.out; rm -f $out
-job=$SHOME/$LOGNAME/eprob/scripts/dailyopr_eprob_a.llq
-#sub_wcoss2 -a GEFS-DEV -q $CUE -p 1/1/S -r 512/1 -w +0130 -t 6:00:00 -j eprob_a -o $out $job
-#$SSUB -a GEFS-DEV -q $CUE -p 1/1/S -r 512/1 -w +0130 -t 6:00:00 -j eprob_a -o $out $job
-
-fi #if [  $prod == dogwood ]; then
-
-#$SHOME/ccpa/tskr_prec/3hr_CCPA/jobs/JCCPA_CONUS.sms.prod.archiveonly_cactus $YMDM15 $YMDM1
-#$SHOME/cqpf/plot_cqpf/scripts/run_ccpa.sh $CDATEm360 $CDATEp00
-#$SHOME/$LOGNAME/run_web/clean_files_on_rzdm.sh > $SHOME/$LOGNAME/run_web/clean_files_on_rzdm.log
-
-
-
+$SSUB -a GEFS-DEV -q $CUE -p 1/1/S -r 512/1 -w +0000 -t 6:00:00 -j SAVE_GEFS_APCP -o $out $job

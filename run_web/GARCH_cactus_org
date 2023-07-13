@@ -32,7 +32,7 @@ cd $SHOME/$LOGNAME/run_web;pwd
 ###
 
 Date=`date +%y%m%d`
-export CDATE=20$Date\00
+CDATE=20$Date\00
 echo "CDATE=$CDATE"
 
 ###
@@ -82,13 +82,13 @@ export HH=`echo $CDATE | cut -c9-10`
 
 # Dir on emcrzdm: pqpf_6h, html/opr, html_pqpf, pqpf, mmap, js (need allow.cfg and index.php)
 
-#dir_in=/home/people/emc/www/htdocs/gmb/wx20cb
-#dir_out=/home/people/emc/www/htdocs/gmb/yluo
-#ssh -l bocui emcrzdm "cp $dir_in/html_pqpf/* $dir_out/html_pqpf/"
-#ssh -l bocui emcrzdm "cp $dir_in/html/opr* $dir_out/html/opr/"
-#ssh -l bocui emcrzdm "cp -rp $dir_in/pqpf_6h/* $dir_out/pqpf_6h/"
-#ssh -l bocui emcrzdm "cp -rp $dir_in/pqpf/* $dir_out/pqpf/"
-#ssh -l bocui emcrzdm "cp -rp $dir_in/mmap/* $dir_out/mmap/"
+dir_in=/home/people/emc/www/htdocs/gmb/wx20cb
+dir_out=/home/people/emc/www/htdocs/gmb/yluo
+ssh -l bocui emcrzdm "cp $dir_in/html_pqpf/* $dir_out/html_pqpf/"
+ssh -l bocui emcrzdm "cp $dir_in/html/opr* $dir_out/html/opr/"
+ssh -l bocui emcrzdm "cp -rp $dir_in/pqpf_6h/* $dir_out/pqpf_6h/"
+ssh -l bocui emcrzdm "cp -rp $dir_in/pqpf/* $dir_out/pqpf/"
+ssh -l bocui emcrzdm "cp -rp $dir_in/mmap/* $dir_out/mmap/"
 
 # NEXT JOB TIME is 7:00am EST for summer time   
 # NEXT JOB TIME is 6:00am EST for winter time
@@ -104,7 +104,7 @@ echo "++++++ Submit process 1 deg model precipitation forecast data Job         
 export CDATE=$YMDM1\00
 out=$GTMP/$LOGNAME/output/get_gefs_apcp.out; rm $out
 job=/u/$LOGNAME/save/updated_cqpf_new/jobs/get_gefs_apcp.sh
-#$SSUB -a GEFS-DEV -q $CUE -p 1/1/S -r 1024/1 -w +0000 -t 6:00:00 -j GET_GEFS_APCP -o $out $job
+$SSUB -a GEFS-DEV -q $CUE -p 1/1/S -r 1024/1 -w +0000 -t 6:00:00 -j GET_GEFS_APCP -o $out $job
 
 echo "++++++ Submit extract 0.5 deg model precipitation forecast data Job              ++++++"
 
@@ -144,7 +144,7 @@ echo "++++++ Submite the ENSPOST_00 job ++++++"
 export CDATE=$CDATEp00
 out=$GTMP/$LOGNAME/output/ens00.out; rm -f $out
 job=$SHOME/$LOGNAME/garch/earch_00/scripts/ENSPOST_00.sh
-#$SSUB -a NAEFS-DEV -q $CUE -p 1/1/S -r 512/1 -w +0000 -t 6:00:00 -j ens00 -o $out $job
+$SSUB -a NAEFS-DEV -q $CUE -p 1/1/S -r 512/1 -w +0000 -t 6:00:00 -j ens00 -o $out $job
 
 ###
 ### Submit daily esemble verification job and probability job
@@ -155,14 +155,14 @@ echo "++++++ Submite the EPROB_f job ++++++"
 export CDATE=$CDATEp00
 out=$GTMP/$LOGNAME/output/eprob_f.out; rm -f $out
 job=$SHOME/$LOGNAME/garch/eprob/scripts/dailyopr_eprob_f.llq
-#$SSUB -a GEFS-DEV -q $CUE -p 1/1/S -r 512/1 -w +0120 -t 6:00:00 -j eprob_f -o $out $job
+$SSUB -a GEFS-DEV -q $CUE -p 1/1/S -r 512/1 -w +0120 -t 6:00:00 -j eprob_f -o $out $job
 
 echo "++++++ Submite the EPROB_a job ++++++"
 export CDATE=$CDATEp00
 out=$GTMP/$LOGNAME/output/eprob_a.out; rm -f $out
 job=$SHOME/$LOGNAME/eprob/scripts/dailyopr_eprob_a.llq
 #sub_wcoss2 -a GEFS-DEV -q $CUE -p 1/1/S -r 512/1 -w +0130 -t 6:00:00 -j eprob_a -o $out $job
-#$SSUB -a GEFS-DEV -q $CUE -p 1/1/S -r 512/1 -w +0130 -t 6:00:00 -j eprob_a -o $out $job
+$SSUB -a GEFS-DEV -q $CUE -p 1/1/S -r 512/1 -w +0130 -t 6:00:00 -j eprob_a -o $out $job
 
 fi #if [  $prod == dogwood ]; then
 

@@ -113,8 +113,7 @@ setpdy.sh
 # Define COM directories
 ########################
 
-export COMIN=/lfs/h1/ops/prod/com/gefs/v12.2
-#export COMIN=/lfs/h1/ops/prod/com/gefs/v12.2
+export COMIN=/lfs/h1/ops/prod/com/gefs/v12.3
 export COMOUT=/lfs/h2/emc/vpppg/noscrub/$LOGNAME/ncep_gefs_0.5d
 
 export COMINccpa=${COMINccpa:-${COMROOT}/ccpa/prod}

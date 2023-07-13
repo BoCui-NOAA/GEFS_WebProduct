@@ -14,6 +14,8 @@ COMOUT=$SHOME/data/daily_hrap_ccpav4
 exec_dir=/lfs/h1/ops/para/packages/ccpa.v4.2.0/exec
 tempdir=/lfs/h2/emc/ptmp/$LOGNAME/daily_ccpa_hrap
 
+mkdir -P $COMOUT
+
 CDATE=$1
 
 if [ -s $tempdir ]; then

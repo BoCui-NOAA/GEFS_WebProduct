@@ -20,11 +20,11 @@ echo $primary "and " $backup
 
 isdogwood=primary:dogwood
 
-if [  $primary != $isdogwood ]; then
-   echo  " Check plotting jobs on dogwood!"
-else
-echo " cactus is the production machine! "
-echo " Send web plots through cactus "
+#if [  $primary != $isdogwood ]; then
+#   echo  " Check plotting jobs on dogwood!"
+#else
+#echo " cactus is the production machine! "
+#echo " Send web plots through cactus "
 
 echo "++++++ Submite the cqpf plotting job ++++++"
 
@@ -40,6 +40,6 @@ echo " Job plot_cqpf_6hr_gb2.sh complete "
 ./plot_cqpf_24hr_gb2.sh $CDATEm96 5
 echo " Job plot_cqpf_24hr_gb2.sh complete "
 
-fi
+#fi
 
 exit
